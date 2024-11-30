@@ -2,7 +2,7 @@
 
 ## Description
 
-Le Gestionnaire de Tâches est une application Django conçue pour aider à gérer les tâches, les récompenses et les objectifs au sein d'une équipe ou d'un projet. Il permet de suivre les progrès quotidiens, hebdomadaires et mensuels, et de gérer les sous-managers responsables de différentes tâches.
+Le Gestionnaire de Tâches est une application Django conçue pour aider à gérer les tâches, les récompenses et les objectifs. Il permet de suivre les progrès quotidiens, hebdomadaires et mensuels, et de motiver l'execution des tâches par l'obtention de récompenses.
 
 ## Fonctionnalités
 
