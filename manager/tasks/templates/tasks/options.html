@@ -1,25 +1,86 @@
 {% extends "tasks/base.html" %}
 
 {% block title %}
-  Task Manager - options
+  Task Manager - Options
 {% endblock %}
 
 {% block content %}
-  <div class="container mx-auto">
-    <h1 class="text-center mt-3">Gestion des sous-manager</h1>
-    <div class="row">
-      <div class="d-flex justify-content-center">
-        <ol class="text-center list-style">
-          {% for submanager in submanagers %}
-          <li class=""><a href="{% url 'update_submanager' submanager.id %}">{{ submanager.name }}</a></li>
-          {% endfor %}
-        </ol>
-      </div>
-    </div>
-    <div class="row">
-      <div class="d-flex justify-content-center">
-        <a href="{% url 'add_submanager' %}" class="btn btn-primary">Ajouter un sous manager</a>
-      </div>
-    </div>
+<!-- Container principal -->
+<div class="container py-5" style="max-width: 800px;">
+  <!-- Titre principal -->
+  <div class="text-center mb-4">
+    <h1 class="fw-bold" style="font-family: 'Poppins', sans-serif; font-size: 2.5rem;">
+      Liste des Sous-Managers
+    </h1>
   </div>
+
+  <!-- Liste des sous-managers -->
+  <div class="card shadow-sm border-0 p-3 mb-5 bg-white rounded">
+    <ul class="list-group list-group-flush">
+      {% for submanager in submanagers %}
+      <li class="list-group-item d-flex align-items-center position-relative p-3" style="border: none;">
+        <!-- Lien englobant toute la carte -->
+        <a href="{% url 'submanager_page' submanager.id %}" class="stretched-link text-decoration-none"></a>
+
+        <!-- Contenu du sous-manager avec alignement horizontal -->
+        <span class="text-dark fw-semibold flex-grow-1 text-center">
+          {{ submanager.name }}
+        </span>
+        <!-- Bouton Modifier -->
+        <a class="btn btn-outline-secondary btn-sm" href="{% url 'update_submanager' submanager.id %}">
+          Modifier
+        </a>
+      </li>
+      {% empty %}
+      <li class="list-group-item text-center text-muted py-4">
+        Aucun sous-manager trouvé.
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Bouton Ajouter -->
+  <div class="text-center">
+    <a href="{% url 'add_submanager' %}" 
+       class="btn btn-primary px-5 py-1 shadow">
+      + Ajouter un Sous-Manager
+    </a>
+  </div>
+</div>
+
+<!-- Fonts et styles -->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f9f9f9;
+  }
+
+  .btn-primary {
+    background-color: #4a90e2;
+    border-color: #4a90e2;
+  }
+
+  .btn-primary:hover {
+    background-color: #357abd;
+    border-color: #357abd;
+  }
+
+  /* Centrage et mise en page des cartes */
+  .list-group-item {
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative; /* Nécessaire pour stretched-link */
+  }
+
+  .list-group-item:hover {
+    background-color: #f8f9fa;
+  }
+
+  /* Bouton Modifier */
+  .btn-outline-secondary {
+    z-index: 2; /* Assure que le bouton reste cliquable même avec stretched-link */
+  }
+</style>
 {% endblock %}

@@ -1,0 +1,84 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}
+  Task Manager - {{ submanager.name }}
+{% endblock %}
+
+{% block content %}
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <a class="nav-link btn" id="nav-home-tab" href="/" role="tab" aria-controls="nav-home" aria-selected="false">Home</a>
+  </div>
+</nav>
+
+<div class="d-flex justify-content-center vh-100">
+  <div class="container" style="max-width: 500px; margin-left: auto; margin-right: auto;">
+    <h1 class="text-center mt-5">{{ submanager.name }}</h1>
+
+    <h2 class="text-center mt-5">Objectif quotidien</h2>
+      <div class="progress-container mt-3">
+        <div class="progress-outer">
+          <div class="progress-inner" style="width: {{ daily_objectif_percentage }}%;">
+        </div>
+      </div>
+
+      <p class="text-center mt-3">
+        {{ total_coins_today }} / {{ daily_objectif }}
+      </p>
+    
+  </div>
+
+    <h2 class="text-center mt-5">Tâches</h2>
+    <div  class="list-group list-group-flush">
+      {% for task in tasks %}
+      <ul>
+        <li class="align-items-center position-relative p-3" style="border: none;">
+          {{ task.name }}
+      </ul>
+      {% endfor %}
+    </div>
+    <h2 class="text-center mt-5">Récompenses</h2>
+    <div  class="list-group list-group-flush">
+      {% for reward in rewards %}
+      <ul>
+        <li class="align-items-center position-relative p-3" style="border: none;">
+          {{ reward.name }}
+      </ul>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .progress-outer {
+    height: 30px;
+    width: 100%;
+    background-color: #f1f1f1;
+    border: 2px solid #007bff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+
+  .progress-inner {
+    height: 100%;
+    background: linear-gradient(90deg, #4a90e2, #357abd);
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    text-align: center;
+    line-height: 30px;
+    border-radius: 10px 0 0 10px;
+    transition: width 0.5s ease;
+  }
+
+  .progress-details {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+  }
+</style>
+{% endblock %}
