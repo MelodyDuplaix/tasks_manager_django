@@ -4,7 +4,22 @@
   Task Manager - options
 {% endblock %}
 
-
 {% block content %}
-  <h1>Gestion des sous-managers</h1>
+  <div class="container mx-auto">
+    <h1 class="text-center mt-3">Gestion des sous-manager</h1>
+    <div class="row">
+      <div class="d-flex justify-content-center">
+        <ol class="text-center list-style">
+          {% for submanager in submanagers %}
+          <li class=""><a href="{% url 'update_submanager' submanager.id %}">{{ submanager.name }}</a></li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+    <div class="row">
+      <div class="d-flex justify-content-center">
+        <a href="{% url 'add_submanager' %}" class="btn btn-primary">Ajouter un sous manager</a>
+      </div>
+    </div>
+  </div>
 {% endblock %}

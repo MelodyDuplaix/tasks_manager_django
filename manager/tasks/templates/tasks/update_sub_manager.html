@@ -1,0 +1,22 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}
+  Task Manager - Update sub-manager
+{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-center  vh-100">
+    <div class="container" style="max-width: 500px; margin-left: auto; margin-right: auto;">
+      <h1 class="text-center mt-5">Sous manager: {{ submanager.name }}</h1>
+      <form action="" method="post" class="justify-content-center mt-4">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <div class="d-flex justify-content-between mt-3">
+            <input type="submit" value="Modifier" class="btn btn-primary mx-2">
+            <a class="btn btn-danger mx-2" href="{% url 'delete_submanager' submanager.id %}">Supprimer</a>
+          </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
