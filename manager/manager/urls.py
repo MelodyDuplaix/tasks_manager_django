@@ -27,5 +27,5 @@ urlpatterns = [
     path('<int:submanager_id>/', views.submanager_page, name='submanager_page'),
     path('action/<int:task_id>', views.task_action, name='task_action'),
     path('reward/<int:reward_id>', views.reward_action, name='reward_action'),
-    path('option/<int:submanager_id>', views.sub_manager_option, name='sub_manager_options'),
+    path('options/<int:submanager_id>', views.sub_manager_option, name='sub_manager_options'),
 ]

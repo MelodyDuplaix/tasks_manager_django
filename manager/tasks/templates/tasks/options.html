@@ -5,28 +5,21 @@
 {% endblock %}
 
 {% block content %}
-<!-- Container principal -->
 <div class="container py-5" style="max-width: 800px;">
-  <!-- Titre principal -->
   <div class="text-center mb-4">
     <h1 class="fw-bold" style="font-family: 'Poppins', sans-serif; font-size: 2.5rem;">
       Liste des Sous-Managers
     </h1>
   </div>
 
-  <!-- Liste des sous-managers -->
-  <div class="card shadow-sm border-0 p-3 mb-5 bg-white rounded">
     <ul class="list-group list-group-flush">
       {% for submanager in submanagers %}
-      <li class="list-group-item d-flex align-items-center position-relative p-3" style="border: none;">
-        <!-- Lien englobant toute la carte -->
+      <li class="list-group-item d-flex align-items-center position-relative p-3 mt-2" style="border: none;">
         <a href="{% url 'submanager_page' submanager.id %}" class="stretched-link text-decoration-none"></a>
 
-        <!-- Contenu du sous-manager avec alignement horizontal -->
         <span class="text-dark fw-semibold flex-grow-1 text-center">
           {{ submanager.name }}
         </span>
-        <!-- Bouton Modifier -->
         <a class="btn btn-outline-secondary btn-sm" href="{% url 'update_submanager' submanager.id %}">
           Modifier
         </a>
@@ -37,10 +30,8 @@
       </li>
       {% endfor %}
     </ul>
-  </div>
 
-  <!-- Bouton Ajouter -->
-  <div class="text-center">
+  <div class="text-center mt-5">
     <a href="{% url 'add_submanager' %}" 
        class="btn btn-primary px-5 py-1 shadow">
       + Ajouter un Sous-Manager
@@ -48,7 +39,6 @@
   </div>
 </div>
 
-<!-- Fonts et styles -->
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
