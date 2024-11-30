@@ -64,10 +64,6 @@ Le Gestionnaire de Tâches est une application Django conçue pour aider à gér
 
 Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou ouvrir une issue pour toute suggestion ou amélioration.
 
-## Licence
-
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
-
 ## Todo
 
 - [x] Configurer le site d'administration
