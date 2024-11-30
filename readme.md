@@ -14,14 +14,14 @@ Liste des pages / fonctionnalités:
 - Gestion des sous-manager
 - page d'historique des tâches
 
-/ : page menu principale
-sous-manager/ : page d'accès aux pages du sous-manager
-sous-manager/tasks/ : page pour voir et cliquer sur les tâches et récompenses, suivre l'objectif quotidien
-sous-manager/options/ : (objectifs, gérer tâches, gérer récompenses)
-options/ : gestion des sous manager
-historique/ : page d'historique
-hebdomadaire/ : objectif mensuel
-mensuel/ objectif mensuel
+- [ ] / : page menu principale
+- [ ] sous-manager/ : page d'accès aux pages du sous-manager
+- [ ] sous-manager/tasks/ : page pour voir et cliquer sur les tâches et récompenses, suivre l'objectif quotidien
+- [ ] sous-manager/options/ : (objectifs, gérer tâches, gérer récompenses)
+- [x] options/ : gestion des sous manager
+- [ ] historique/ : page d'historique
+- [ ] hebdomadaire/ : objectif mensuel
+- [ ] mensuel/ objectif mensuel
 
 Liste des modèles:
 - tâche (avec option tâche ponctuelle)
