@@ -1,43 +1,83 @@
-Liste des pages / fonctionnalités:
-- voir les tâches et récompense / cliquer pour en faire une / suivre l'objectif quotidien
-- suivi hebodmaire
-- suivi mensuel
-- options (objectifs, gérer tâches, gérer récompenses)
-- Gestion des sous-manager
-- page d'historique des tâches
+# Gestionnaire de Tâches
 
-- [x] admin/ : site d'administration
-- [x] / : page menu principale et gestion des sous manager
-- [x] update-sous-manager/sous-manager/ : modification du sous manager
-- [x] add-sous-manager/ : ajout d'un sous manager
-- [x] delete-sous-manager/ : supression d'un sous manager
-- [x] sous-manager/ : page pour voir et cliquer sur les tâches et récompenses, suivre l'objectif quotidien
-- [ ] sous-manager/options/ : (objectifs, gérer tâches, gérer récompenses)
-- [ ] historique/ : page d'historique
-- [ ] hebdomadaire/ : objectif mensuel
-- [ ] mensuel/ objectif mensuel
+## Description
 
-Liste des modèles:
-- tâche (avec option tâche ponctuelle)
-  - nom -> champs de caractère
-  - nombre de pièce -> entier
-  - ponctuel ? -> booléen
-  - type -> champs de caractère (ou choices ?)
-  - sous-mmanager -> clé étrangère
-- récompense
-  - nom -> champs de caractère
-  - nombre de pièce -> entier
-  - sous-manager -> clé étrangère
-- action (qui serviront à calculer le solde daily, total, mensuel, hebdomadaire)
-  - nom -> champs de caractère
-  - date -> datetime
-  - sous-manager -> clé étrangère
-  - type -> champs de caractère (ou choices ?)
-  - nombre de pièce -> entier
-  - sous-manager -> clé étrangère
-- objectif (daily, mensuel, hebdomadaire)
-  - name -> champs de caractère
-  - nombre de pièce -> entier
-  - sous-manager -> clé étrangère
-- sous-manager (clé étrangère dans les autres modèles)
-  - nom -> champs de caractère
+Le Gestionnaire de Tâches est une application Django conçue pour aider à gérer les tâches, les récompenses et les objectifs au sein d'une équipe ou d'un projet. Il permet de suivre les progrès quotidiens, hebdomadaires et mensuels, et de gérer les sous-managers responsables de différentes tâches.
+
+## Fonctionnalités
+
+- **Voir et gérer les tâches et récompenses** : Afficher les tâches et les récompenses disponibles, cliquer pour exécuter une tâche et suivre l'objectif quotidien.
+- **Suivi des objectifs** : Suivi des objectifs quotidiens, hebdomadaires et mensuels.
+- **Gestion des sous-managers** : Ajouter, modifier et supprimer des sous-managers.
+- **Page d'historique des tâches** : Voir l'historique des tâches complétées.
+- **Options de gestion** : Configurer les objectifs, gérer les tâches et les récompenses.
+
+## Instructions d'installation
+
+1. **Cloner le dépôt** :
+   ```bash
+   git clone <URL_du_dépôt>
+   cd manager
+   ```
+
+2. **Installer les dépendances** :
+   Assurez-vous que Python et pip sont installés, puis exécutez :
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Appliquer les migrations de la base de données** :
+   ```bash
+   python manage.py migrate
+   ```
+
+4. **Démarrer le serveur** :
+   ```bash
+   python manage.py runserver
+   ```
+
+5. **Accéder à l'application** :
+   Ouvrez votre navigateur et allez sur `http://localhost:8000` pour utiliser le Gestionnaire de Tâches.
+
+## Structure du Projet
+
+- **admin/** : Interface d'administration pour gérer le contenu.
+- **/** : Page principale du menu et gestion des sous-managers.
+- **update-sous-manager/** : Modifier un sous-manager existant.
+- **add-sous-manager/** : Ajouter un nouveau sous-manager.
+- **delete-sous-manager/** : Supprimer un sous-manager.
+- **sous-manager/** : Page pour gérer les tâches et récompenses et suivre les objectifs quotidiens.
+- **sous-manager/options/** : Options pour configurer les objectifs, les tâches et les récompenses.
+- **historique/** : Page pour voir l'historique des tâches.
+- **hebdomadaire/** : Suivi des objectifs hebdomadaires.
+- **mensuel/** : Suivi des objectifs mensuels.
+
+## Modèles
+
+- **Tâche** : Nom, nombre de pièces, ponctuelle, type, sous-manager.
+- **Récompense** : Nom, nombre de pièces, sous-manager.
+- **Action** : Nom, date, type, nombre de pièces, sous-manager.
+- **Objectif** : Nom, nombre de pièces, sous-manager.
+- **Sous-Manager** : Nom, clé étrangère dans d'autres modèles.
+
+## Contribution
+
+Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou ouvrir une issue pour toute suggestion ou amélioration.
+
+## Licence
+
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+## Todo
+
+- [x] Configurer le site d'administration
+- [x] Ajouter la page principale pour voir les sous managers
+- [x] Ajouter la page de modification d'un sous manager
+- [x] Ajouter la page d'ajout d'un sous manager
+- [x] Ajouter la suppression d'un sous manager
+- [x] Créer la page principale du sous manager (actionner des taches et récompenses, suivre l'objectif quotidien)
+- [ ] Compléter les options pour configurer les objectifs, gérer les tâches et les récompenses.
+- [ ] Implémenter la page d'historique des tâches.
+- [ ] Ajouter le suivi des objectifs hebdomadaires.
+- [ ] Ajouter le suivi des objectifs mensuels.
+
