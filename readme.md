@@ -11,7 +11,7 @@ Liste des pages / fonctionnalités:
 - [x] update-sous-manager/sous-manager/ : modification du sous manager
 - [x] add-sous-manager/ : ajout d'un sous manager
 - [x] delete-sous-manager/ : supression d'un sous manager
-- [/] sous-manager/ : page pour voir et cliquer sur les tâches et récompenses, suivre l'objectif quotidien
+- [x] sous-manager/ : page pour voir et cliquer sur les tâches et récompenses, suivre l'objectif quotidien
 - [ ] sous-manager/options/ : (objectifs, gérer tâches, gérer récompenses)
 - [ ] historique/ : page d'historique
 - [ ] hebdomadaire/ : objectif mensuel

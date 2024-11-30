@@ -76,7 +76,7 @@ def delete_submanager(request, submanager_id):
     """
     submanager = SubManager.objects.get(id=submanager_id)
     submanager.delete()
-    return redirect('options')
+    return redirect('home')
 
 
 def submanager_page(request, submanager_id):
@@ -92,16 +92,56 @@ def submanager_page(request, submanager_id):
     """
     submanager = SubManager.objects.get(id=submanager_id)
     daily_objectif = Objectif.objects.get(name='quotidien')
-    historique = Action.objects.all().filter(sub_manager=submanager, date__date=datetime.date.today())
+    historique = Action.objects.all().filter(sub_manager=submanager, date__date=datetime.date.today(), coins_number__gt=0)
     total_coins_today = sum(action.coins_number for action in historique)
     daily_objectif_percentage = (total_coins_today / daily_objectif.coins_number) * 100
     tasks = Task.objects.all().filter(type__sub_manager=submanager)
     rewards = Reward.objects.all().filter(sub_manager=submanager)
+    types = TaskType.objects.all().filter(sub_manager=submanager)
+    historique_total = Action.objects.all().filter(sub_manager=submanager)
+    total_coins = sum(historique_total.values_list('coins_number', flat=True))
     return render(request, 'tasks/submanager_page.html', 
                   {'submanager': submanager, 
                    'daily_objectif_percentage': daily_objectif_percentage, 
                    'daily_objectif': daily_objectif.coins_number,
                    'total_coins_today': total_coins_today,
                    'tasks': tasks,
-                   'rewards': rewards,}) 
+                   'rewards': rewards,
+                   'types': types,
+                   'total_coins': total_coins}) 
 
+def task_action(request, task_id):
+    """
+    Register the action for the task with the given ID.
+
+    Args:
+        request: The HTTP request object.
+        task_id: The ID of the Task to be registered as an action.
+
+    Returns:
+        HttpResponse: The rendered sub-manager page with its name and details.
+    """
+    task = Task.objects.get(id=task_id)
+    action = Action(name=task.name, type=task.type, date=datetime.datetime.now(), coins_number=task.coins_number, sub_manager=task.type.sub_manager)
+    action.save()
+    return redirect('submanager_page', submanager_id=task.type.sub_manager.id)
+
+def reward_action(request, reward_id):
+    """
+    Register the action for the reward with the given ID.
+
+    Args:
+        request: The HTTP request object.
+        reward_id: The ID of the Reward to be registered as an action.
+
+    Returns:
+        HttpResponse: The rendered sub-manager page with its name and details.
+    """
+    reward = Reward.objects.get(id=reward_id)
+    action = Action(name=reward.name, type=None, date=datetime.datetime.now(), coins_number= -reward.coins_number, sub_manager=reward.sub_manager)
+    action.save()
+    return redirect('submanager_page', submanager_id=reward.sub_manager.id)
+
+def sub_manager_option(request, submanager_id):
+    submanager = SubManager.objects.get(id=submanager_id)
+    return render(request, 'tasks/sub_manager_options.html', {'submanager': submanager})
