@@ -1,6 +1,6 @@
 A faire :
 - [x] créer les modèles
-- [ ] activer le site d'administration
+- [x] activer le site d'administration
 - [ ] faire les pages
 - [ ] faire les formulaires et affichages divers
 - [ ] ajouter les chanegements des objets via affichages et formulaires
