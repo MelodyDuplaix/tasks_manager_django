@@ -1,11 +1,3 @@
-A faire :
-- [x] créer les modèles
-- [x] activer le site d'administration
-- [ ] faire les pages
-- [ ] faire les formulaires et affichages divers
-- [ ] ajouter les chanegements des objets via affichages et formulaires
-
-
 Liste des pages / fonctionnalités:
 - voir les tâches et récompense / cliquer pour en faire une / suivre l'objectif quotidien
 - suivi hebodmaire
@@ -14,11 +6,13 @@ Liste des pages / fonctionnalités:
 - Gestion des sous-manager
 - page d'historique des tâches
 
-- [x] / : page menu principale
-- [ ] sous-manager/ : page d'accès aux pages du sous-manager
-- [ ] sous-manager/tasks/ : page pour voir et cliquer sur les tâches et récompenses, suivre l'objectif quotidien
+- [x] admin/ : site d'administration
+- [x] / : page menu principale et gestion des sous manager
+- [x] update-sous-manager/sous-manager/ : modification du sous manager
+- [x] add-sous-manager/ : ajout d'un sous manager
+- [x] delete-sous-manager/ : supression d'un sous manager
+- [/] sous-manager/ : page pour voir et cliquer sur les tâches et récompenses, suivre l'objectif quotidien
 - [ ] sous-manager/options/ : (objectifs, gérer tâches, gérer récompenses)
-- [x] options/ : gestion des sous manager
 - [ ] historique/ : page d'historique
 - [ ] hebdomadaire/ : objectif mensuel
 - [ ] mensuel/ objectif mensuel
