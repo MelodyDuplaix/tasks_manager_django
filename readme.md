@@ -76,4 +76,7 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 - [ ] Implémenter la page d'historique des tâches.
 - [ ] Ajouter le suivi des objectifs hebdomadaires.
 - [ ] Ajouter le suivi des objectifs mensuels.
+- [ ] Ajouter des configurations de bases (objectifs de base) à l'ajout d'un sous-manager
+- [ ] Mettre en place des vérifications des erreurs
+- [ ] Mettre en place des tests
 
