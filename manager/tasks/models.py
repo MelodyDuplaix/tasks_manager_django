@@ -15,7 +15,7 @@ class TaskType(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-class task(models.Model):
+class Task(models.Model):
     name = models.fields.CharField(max_length=500)
     coins_number = models.fields.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(1000)])
     ponctuel = models.fields.BooleanField(default=False)
