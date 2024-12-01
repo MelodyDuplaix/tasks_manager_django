@@ -287,3 +287,67 @@ def update_reward(request, submanager_id, reward_id):
     else:
         form = RewardForm(instance=reward)
     return render(request, 'tasks/update_reward.html', {'form': form, 'reward': reward, 'submanager': submanager})
+
+def confirm_delete_task(request, submanager_id, task_id):
+    """
+    Display a confirmation page for deleting a task.
+
+    Args:
+        request: The HTTP request object.
+        submanager_id: The ID of the SubManager the task belongs to.
+        task_id: The ID of the Task to be deleted.
+
+    Returns:
+        HttpResponse: The rendered confirmation page for deleting the task.
+    """
+    task = Task.objects.get(id=task_id)
+    submanager = task.type.sub_manager
+    return render(request, 'tasks/confirm_delete_task.html', {'task': task, 'submanager': submanager})
+
+def confirm_delete_reward(request, submanager_id, reward_id):
+    """
+    Display a confirmation page for deleting a reward.
+
+    Args:
+        request: The HTTP request object.
+        submanager_id: The ID of the SubManager the reward belongs to.
+        reward_id: The ID of the Reward to be deleted.
+
+    Returns:
+        HttpResponse: The rendered confirmation page for deleting the reward.
+    """
+    reward = Reward.objects.get(id=reward_id)
+    submanager = reward.sub_manager
+    return render(request, 'tasks/confirm_delete_reward.html', {'reward': reward, 'submanager': submanager})
+
+def delete_task(request, submanager_id, task_id):
+    """
+    Delete the task with the given ID from the database.
+
+    Args:
+        request: The HTTP request object.
+        submanager_id: The ID of the SubManager the task belongs to.
+        task_id: The ID of the Task to be deleted.
+
+    Returns:
+        HttpResponse: A redirect to the sub-manager options page.
+    """
+    task = Task.objects.get(id=task_id)
+    task.delete()
+    return redirect('sub_manager_options', submanager_id=submanager_id)
+
+def delete_reward(request, submanager_id, reward_id):
+    """
+    Delete the reward with the given ID from the database.
+
+    Args:
+        request: The HTTP request object.
+        submanager_id: The ID of the SubManager the reward belongs to.
+        reward_id: The ID of the Reward to be deleted.
+
+    Returns:
+        HttpResponse: A redirect to the sub-manager options page.
+    """
+    reward = Reward.objects.get(id=reward_id)
+    reward.delete()
+    return redirect('sub_manager_options', submanager_id=submanager_id)

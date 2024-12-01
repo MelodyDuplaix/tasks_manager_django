@@ -24,6 +24,9 @@
             <a class="btn btn-outline-secondary btn-sm" href="{% url 'update_task' submanager.id task.id %}">
               Modifier
             </a>
+            <a class="btn btn-outline-danger btn-sm" href="{% url 'confirm_delete_task' submanager.id task.id %}">
+              Supprimer
+            </a>
           </li>
           {% endfor %}
           <a href="{% url 'add_task' submanager.id %}" class="text-decoration-none">
@@ -45,6 +48,9 @@
             </span>
             <a class="btn btn-outline-secondary btn-sm" href="{% url 'update_reward' submanager.id reward.id %}">
               Modifier
+            </a>
+            <a class="btn btn-outline-danger btn-sm" href="{% url 'confirm_delete_reward' submanager.id reward.id %}">
+              Supprimer
             </a>
           </li>
           {% endfor %}

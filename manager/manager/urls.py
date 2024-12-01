@@ -33,4 +33,8 @@ urlpatterns = [
     path('<int:submanager_id>/add-reward', views.add_reward, name='add_reward'),
     path('<int:submanager_id>/update-task/<int:task_id>', views.update_task, name='update_task'),
     path('<int:submanager_id>/update-reward/<int:reward_id>', views.update_reward, name='update_reward'),
+    path('<int:submanager_id>/delete-task/<int:task_id>', views.delete_task, name='delete_task'),
+    path('<int:submanager_id>/delete-reward/<int:reward_id>', views.delete_reward, name='delete_reward'),
+    path('<int:submanager_id>/confirm-delete-task/<int:task_id>', views.confirm_delete_task, name='confirm_delete_task'),
+    path('<int:submanager_id>/confirm-delete-reward/<int:reward_id>', views.confirm_delete_reward, name='confirm_delete_reward'),
 ]
