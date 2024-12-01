@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.contrib import messages
 from tasks.models import SubManager, Reward, Objectif, Action, TaskType, Task
-from tasks.forms import SubManagerForm, ObjectifForm
+from tasks.forms import SubManagerForm, ObjectifForm, TaskForm, RewardForm
 
 import datetime
 
@@ -157,6 +157,8 @@ def sub_manager_option(request, submanager_id):
     """
     submanager = get_object_or_404(SubManager, id=submanager_id)
     objectifs = Objectif.objects.filter(sub_manager=submanager)
+    tasks = Task.objects.filter(type__sub_manager=submanager)
+    rewards = Reward.objects.filter(sub_manager=submanager)
 
     if request.method == 'POST':
         objectif_id = request.POST.get('objectif_id')
@@ -174,6 +176,8 @@ def sub_manager_option(request, submanager_id):
         'submanager': submanager,
         'objectifs': objectifs,
         'forms': forms,
+        'tasks': tasks,
+        'rewards': rewards
     })
 
 def history(request, submanager_id):
@@ -191,3 +195,49 @@ def history(request, submanager_id):
     history = Action.objects.all().filter(sub_manager=submanager).order_by('-date')
     return render(request, 'tasks/history.html', {'submanager': submanager, 'history': history})
 
+def add_task(request, submanager_id):
+    """
+    Add a new task to the database for the given sub-manager.
+
+    Args:
+        request: The HTTP request object.
+        submanager_id: The ID of the SubManager to add the task to.
+
+    Returns:
+        HttpResponse: The rendered add task page with the form to add a new task.
+    """
+    submanager = SubManager.objects.get(id=submanager_id)
+    if request.method == 'POST':
+        form = TaskForm(request.POST)
+        if form.is_valid():    
+            task = form.save(commit=False)
+            task.type = TaskType.objects.get(id=request.POST.get('type'))
+            task.save()
+            return redirect('sub_manager_options', submanager_id=submanager_id)
+    else:
+        form = TaskForm()
+    return render(request, 'tasks/add_task.html', {'form': form, 'submanager': submanager})   
+
+
+def add_reward(request, submanager_id):
+    """
+    Add a new reward to the database for the given sub-manager.
+
+    Args:
+        request: The HTTP request object.
+        submanager_id: The ID of the SubManager to add the reward to.
+
+    Returns:
+        HttpResponse: The rendered add reward page with the form to add a new reward.
+    """
+    submanager = SubManager.objects.get(id=submanager_id)
+    if request.method == 'POST':
+        form = RewardForm(request.POST)
+        if form.is_valid():
+            reward = form.save(commit=False)
+            reward.sub_manager = submanager
+            reward.save()
+            return redirect('sub_manager_options', submanager_id=submanager_id)
+    else:
+        form = RewardForm()
+    return render(request, 'tasks/add_reward.html', {'form': form, 'submanager': submanager})

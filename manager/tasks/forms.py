@@ -1,5 +1,5 @@
 from django import forms
-from tasks.models import SubManager, Objectif
+from tasks.models import SubManager, Objectif, Task, Reward
 
 class SubManagerForm(forms.ModelForm):
    class Meta:
@@ -20,3 +20,14 @@ class ObjectifForm(forms.ModelForm):
                 'max': 1000,
             }),
         }
+
+
+class TaskForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ['name', 'coins_number', 'ponctuel', 'type']
+
+class RewardForm(forms.ModelForm):
+    class Meta:
+        model = Reward
+        fields = ['name', 'coins_number']

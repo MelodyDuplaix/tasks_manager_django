@@ -14,6 +14,44 @@
       </p>
       <h1 class="text-center mt-5">Gérer le sous manager {{ submanager.name }}</h1>
       <div class="list-group list-group-flush">
+        <h2 class="text-center mt-5">Tâches</h2>
+        <ul class="list-group">
+          {% for task in tasks %}
+          <li class="list-group-item d-flex align-items-center position-relative p-2">
+            <span class="text-dark fw-semibold flex-grow-1 text-center">
+              {{ task.name }}
+            </span>
+          </li>
+          {% endfor %}
+          <a href="{% url 'add_task' submanager.id %}" class="text-decoration-none">
+            <li class="list-group-item d-flex align-items-center position-relative p-2 list-group-item-action">
+              <span class="text-dark fw-semibold flex-grow-1 text-center">
+                Ajouter une tâche
+              </span>
+            </li>
+          </a>
+        </ul>
+      </div>
+      <div class="list-group list-group-flush">
+        <h2 class="text-center mt-5">Récompenses</h2>
+        <ul class="list-group">
+          {% for reward in rewards %}
+          <li class="list-group-item d-flex align-items-center position-relative p-2">
+            <span class="text-dark fw-semibold flex-grow-1 text-center">
+              {{ reward.name }}
+            </span>
+          </li>
+          {% endfor %}
+          <a href="{% url 'add_reward' submanager.id %}" class="text-decoration-none">
+            <li class="list-group-item d-flex align-items-center position-relative p-2 list-group-item-action">
+              <span class="text-dark fw-semibold flex-grow-1 text-center">
+                Ajouter une recompense
+              </span>
+            </li>
+          </a>
+        </ul>
+      </div>
+      <div class="list-group list-group-flush">
         <h2 class="text-center mt-5">Objectifs</h2>
         <ul class="list-group">
           {% for objectif in objectifs %}
