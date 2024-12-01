@@ -241,3 +241,49 @@ def add_reward(request, submanager_id):
     else:
         form = RewardForm()
     return render(request, 'tasks/add_reward.html', {'form': form, 'submanager': submanager})
+
+def update_task(request, submanager_id, task_id):
+    """
+    Update the details of an existing task. 
+
+    Args:
+        request: The HTTP request object, expected to be a POST request for 
+            form submission.
+        task_id: The ID of the Task to be updated.
+
+    Returns:
+        HttpResponse: The rendered update task page with the form to update the task.
+    """
+    task = get_object_or_404(Task, id=task_id)
+    submanager = task.type.sub_manager
+    if request.method == 'POST':
+        form = TaskForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('sub_manager_options', submanager_id=submanager_id)
+    else:
+        form = TaskForm(instance=task)
+    return render(request, 'tasks/update_task.html', {'form': form, 'task': task, 'submanager': submanager})
+
+def update_reward(request, submanager_id, reward_id):
+    """
+    Update the details of an existing reward. 
+
+    Args:
+        request: The HTTP request object, expected to be a POST request for 
+            form submission.
+        reward_id: The ID of the Reward to be updated.
+
+    Returns:
+        HttpResponse: The rendered update reward page with the form to update the reward.
+    """
+    reward = get_object_or_404(Reward, id=reward_id)
+    submanager = reward.sub_manager
+    if request.method == 'POST':
+        form = RewardForm(request.POST, instance=reward)
+        if form.is_valid():
+            form.save()
+            return redirect('sub_manager_options', submanager_id=submanager_id)
+    else:
+        form = RewardForm(instance=reward)
+    return render(request, 'tasks/update_reward.html', {'form': form, 'reward': reward, 'submanager': submanager})

@@ -31,4 +31,6 @@ urlpatterns = [
     path('history/<int:submanager_id>', views.history, name='history'),
     path('<int:submanager_id>/add-task', views.add_task, name='add_task'),
     path('<int:submanager_id>/add-reward', views.add_reward, name='add_reward'),
+    path('<int:submanager_id>/update-task/<int:task_id>', views.update_task, name='update_task'),
+    path('<int:submanager_id>/update-reward/<int:reward_id>', views.update_reward, name='update_reward'),
 ]
