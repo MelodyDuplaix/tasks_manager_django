@@ -78,7 +78,9 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 - [x] Ajouter le suivi des objectifs mensuels.
 - [ ] Ajouter des configurations de bases (objectifs de base) à l'ajout d'un sous-manager
 - [ ] A la création d'une tâche, n'avoir que les types du sous manager actuel
-- [ ] Ajouter des filtres sur l'historique
+- [ ] Ajouter les fonctionnalités des tâches ponctuelles
+- [ ] Ajouter des filtres sur l'historique (filtres par date et sous manager)
 - [ ] Mettre en place des vérifications des erreurs
 - [ ] Mettre en place des tests
+- [ ] Ajouter un bouton annuler dernière action
 
