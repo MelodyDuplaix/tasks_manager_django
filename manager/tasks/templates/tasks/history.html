@@ -1,0 +1,39 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}
+  Task Manager - History
+{% endblock %}
+
+{% block content %}
+<div class="mt-3 d-flex justify-content-center vh-100">
+  <div class="container" style="max-width: 800px; margin-left: auto; margin-right: auto;">
+    <p class="text-center">
+        <a href="{% url 'submanager_page' submanager.id %}" class="btn btn-outline-secondary">Retour</a>
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Home</a>
+    </p>
+    <h1 class="text-center mt-5">Historique des tâches</h1>
+    <table class="table table-striped mt-4">
+      <thead>
+        <tr>
+          <th scope="col">Nom</th>
+          <th scope="col">Date</th>
+          <th scope="col">Type</th>
+          <th scope="col">Nombre de Pièces</th>
+          <th scope="col">Sub Manager</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for action in history %}
+        <tr>
+          <td>{{ action.name }}</td>
+          <td>{{ action.date|date:"d/m/Y H:i" }}</td>
+          <td>{{ action.type|default:"" }}</td>
+          <td>{{ action.coins_number }}</td>
+          <td>{{ action.sub_manager }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

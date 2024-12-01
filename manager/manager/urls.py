@@ -28,4 +28,5 @@ urlpatterns = [
     path('action/<int:task_id>', views.task_action, name='task_action'),
     path('reward/<int:reward_id>', views.reward_action, name='reward_action'),
     path('options/<int:submanager_id>', views.sub_manager_option, name='sub_manager_options'),
+    path('history/<int:submanager_id>', views.history, name='history'),
 ]

@@ -18,7 +18,7 @@ def options(request):
         HttpResponse: The rendered options page with a list of sub-managers.
     """
     submanagers = SubManager.objects.all()
-    return render(request, 'tasks/options.html', {'submanagers': submanagers})
+    return render(request, 'tasks/home.html', {'submanagers': submanagers})
 
 def update_submanager(request, submanager_id):
     """
@@ -143,5 +143,30 @@ def reward_action(request, reward_id):
     return redirect('submanager_page', submanager_id=reward.sub_manager.id)
 
 def sub_manager_option(request, submanager_id):
+    """
+    Display the page for managing a specific sub-manager with its options.
+
+    Args:
+        request: The HTTP request object.
+        submanager_id: The ID of the SubManager to be displayed.
+
+    Returns:
+        HttpResponse: The rendered sub-manager options page with its options.
+    """
     submanager = SubManager.objects.get(id=submanager_id)
     return render(request, 'tasks/sub_manager_options.html', {'submanager': submanager})
+
+def history(request, submanager_id):
+    """
+    Display the page with the history of actions for the given sub-manager.
+
+    Args:
+        request: The HTTP request object.
+        submanager_id: The ID of the SubManager to be displayed.
+
+    Returns:
+        HttpResponse: The rendered history page with the list of actions.
+    """
+    submanager = SubManager.objects.get(id=submanager_id)
+    history = Action.objects.all().filter(sub_manager=submanager).order_by('-date')
+    return render(request, 'tasks/history.html', {'submanager': submanager, 'history': history})
