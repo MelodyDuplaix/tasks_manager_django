@@ -40,7 +40,7 @@ def update_submanager(request, submanager_id):
         form = SubManagerForm(request.POST, instance=submanager)
         if form.is_valid():
             form.save()
-            return redirect('options')
+            return redirect('home')
     else:
         form = SubManagerForm(instance=submanager)
     return render(request, 'tasks/update_sub_manager.html', {'submanager': submanager, 'form': form})
@@ -60,7 +60,7 @@ def add_submanager(request):
         form = SubManagerForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('options')
+            return redirect('home')
     else:
         form = SubManagerForm()
     return render(request, 'tasks/add_sub_manager.html', {'form': form})
