@@ -37,4 +37,6 @@ urlpatterns = [
     path('<int:submanager_id>/delete-reward/<int:reward_id>', views.delete_reward, name='delete_reward'),
     path('<int:submanager_id>/confirm-delete-task/<int:task_id>', views.confirm_delete_task, name='confirm_delete_task'),
     path('<int:submanager_id>/confirm-delete-reward/<int:reward_id>', views.confirm_delete_reward, name='confirm_delete_reward'),
+    path('weekly/', views.weekly, name='weekly'),
+    path('monthly/', views.monthly, name='monthly'),
 ]

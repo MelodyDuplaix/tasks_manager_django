@@ -74,8 +74,8 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 - [x] Créer la page principale du sous manager (actionner des taches et récompenses, suivre l'objectif quotidien)
 - [x] Implémenter la page d'historique des tâches.
 - [x] Compléter les options pour configurer les objectifs, gérer les tâches et les récompenses.
-- [ ] Ajouter le suivi des objectifs hebdomadaires.
-- [ ] Ajouter le suivi des objectifs mensuels.
+- [x] Ajouter le suivi des objectifs hebdomadaires.
+- [x] Ajouter le suivi des objectifs mensuels.
 - [ ] Ajouter des configurations de bases (objectifs de base) à l'ajout d'un sous-manager
 - [ ] A la création d'une tâche, n'avoir que les types du sous manager actuel
 - [ ] Ajouter des filtres sur l'historique

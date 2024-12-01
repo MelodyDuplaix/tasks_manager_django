@@ -351,3 +351,75 @@ def delete_reward(request, submanager_id, reward_id):
     reward = Reward.objects.get(id=reward_id)
     reward.delete()
     return redirect('sub_manager_options', submanager_id=submanager_id)
+
+def weekly(request):
+    """
+    Display a page with the total of coins for each sub-manager for the current week.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered weekly page with the data for each sub-manager.
+    """
+    current_week_start = datetime.date.today() - datetime.timedelta(days=datetime.date.today().weekday())
+    current_week_end = current_week_start + datetime.timedelta(days=6)
+    submanagers = SubManager.objects.all()
+
+    data_by_submanager = {}
+    for submanager in submanagers:
+        actions = Action.objects.filter(
+            sub_manager=submanager,
+            date__date__range=(current_week_start, current_week_end),
+            coins_number__gt=0
+        )
+        total_coins = sum(action.coins_number for action in actions)
+
+        objectif_weekly = Objectif.objects.filter(sub_manager=submanager, name='hebdomadaire').first()
+        objectif_weekly_value = objectif_weekly.coins_number if objectif_weekly else 0
+
+        percentage = (total_coins / objectif_weekly_value * 100) if objectif_weekly_value else 0
+
+        data_by_submanager[submanager] = {
+            'total_coins': total_coins,
+            'objectif_weekly': objectif_weekly_value,
+            'percentage': percentage
+        }
+
+    return render(request, 'tasks/weekly.html', {'data_by_submanager': data_by_submanager})
+
+def monthly(request):
+    """
+    Display a page with the total of coins for each sub-manager for the current month.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered monthly page with the data for each sub-manager.
+    """
+    current_month_start = datetime.date.today().replace(day=1)
+    current_month_end = current_month_start + datetime.timedelta(days=31)
+    submanagers = SubManager.objects.all()
+
+    data_by_submanager = {}
+    for submanager in submanagers:
+        actions = Action.objects.filter(
+            sub_manager=submanager,
+            date__date__range=(current_month_start, current_month_end),
+            coins_number__gt=0
+        )
+        total_coins = sum(action.coins_number for action in actions)
+
+        objectif_monthly = Objectif.objects.filter(sub_manager=submanager, name='mensuel').first()
+        objectif_monthly_value = objectif_monthly.coins_number if objectif_monthly else 0
+
+        percentage = (total_coins / objectif_monthly_value * 100) if objectif_monthly_value else 0
+
+        data_by_submanager[submanager] = {
+            'total_coins': total_coins,
+            'objectif_monthly': objectif_monthly_value,
+            'percentage': percentage
+        }
+
+    return render(request, 'tasks/monthly.html', {'data_by_submanager': data_by_submanager})
