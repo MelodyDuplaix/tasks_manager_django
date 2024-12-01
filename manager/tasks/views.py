@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from django.contrib import messages
 from tasks.models import SubManager, Reward, Objectif, Action, TaskType, Task
-from tasks.forms import SubManagerForm
+from tasks.forms import SubManagerForm, ObjectifForm
+
 import datetime
 
 import unicodedata
@@ -153,8 +155,26 @@ def sub_manager_option(request, submanager_id):
     Returns:
         HttpResponse: The rendered sub-manager options page with its options.
     """
-    submanager = SubManager.objects.get(id=submanager_id)
-    return render(request, 'tasks/sub_manager_options.html', {'submanager': submanager})
+    submanager = get_object_or_404(SubManager, id=submanager_id)
+    objectifs = Objectif.objects.filter(sub_manager=submanager)
+
+    if request.method == 'POST':
+        objectif_id = request.POST.get('objectif_id')
+        objectif = get_object_or_404(Objectif, id=objectif_id, sub_manager=submanager)
+        form = ObjectifForm(request.POST, instance=objectif)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"L'objectif '{objectif.name}' a été mis à jour.")
+            return redirect('sub_manager_options', submanager_id=submanager_id)
+        else:
+            messages.error(request, "Une erreur est survenue lors de la mise à jour.")
+
+    forms = {objectif.id: ObjectifForm(instance=objectif) for objectif in objectifs}
+    return render(request, 'tasks/sub_manager_options.html', {
+        'submanager': submanager,
+        'objectifs': objectifs,
+        'forms': forms,
+    })
 
 def history(request, submanager_id):
     """
@@ -170,3 +190,4 @@ def history(request, submanager_id):
     submanager = SubManager.objects.get(id=submanager_id)
     history = Action.objects.all().filter(sub_manager=submanager).order_by('-date')
     return render(request, 'tasks/history.html', {'submanager': submanager, 'history': history})
+

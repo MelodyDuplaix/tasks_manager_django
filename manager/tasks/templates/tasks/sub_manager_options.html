@@ -1,7 +1,8 @@
 {% extends "tasks/base.html" %}
+{% load custom_tags %}
 
 {% block title %}
-  Task Manager - Add sub-manager
+  Task Manager - Gérer le sous-manager
 {% endblock %}
 
 {% block content %}
@@ -12,6 +13,25 @@
         <a href="{% url 'home' %}" class="btn btn-outline-secondary">Home</a>
       </p>
       <h1 class="text-center mt-5">Gérer le sous manager {{ submanager.name }}</h1>
+      <div class="list-group list-group-flush">
+        <h2 class="text-center mt-5">Objectifs</h2>
+        <ul class="list-group">
+          {% for objectif in objectifs %}
+          <li class="list-group-item d-flex align-items-center position-relative p-2">
+            <span class="text-dark fw-semibold flex-grow-1 text-center">
+              {{ objectif.name }}
+            </span>
+            <form method="POST" class="ms-3">
+              {% csrf_token %}
+              <input type="hidden" name="objectif_id" value="{{ objectif.id }}">
+              {{ forms|dict_get:objectif.id }}
+              <button type="submit" class="btn btn-primary btn-sm mt-2">Modifier</button>
+            </form>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
   </div>
+</div>
 {% endblock %}
