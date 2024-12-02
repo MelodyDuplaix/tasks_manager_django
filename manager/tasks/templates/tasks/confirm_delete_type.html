@@ -1,0 +1,22 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}
+  Task Manager - Delete type
+{% endblock %}
+
+{% block content %}
+    <div class="mt-3 d-flex justify-content-center vh-100">
+        <div class="container" style="max-width: 500px; margin-left: auto; margin-right: auto;">
+        <p class="text-center">
+          <a href="{% url 'sub_manager_options' submanager.id %}" class="btn btn-outline-secondary">Retour</a>
+          <a href="{% url 'home' %}" class="btn btn-outline-secondary">Home</a>
+        </p>
+      <h1 class="text-center mt-5">Etes vous certain de vouloir supprimer ce type de tâche ?</h1>
+      <p class="text-center mt-5">
+        <span><b>{{ type.name }}</b></span><br>
+        <span><i>{{ type.sub_manager }}</i></span><br>
+      </p>
+      <p class="text-center mt-5"><a href="{% url 'delete_type' submanager.id type.id %}" class="btn btn-danger">Supprimer</a></p>
+    </div>
+  </div>
+{% endblock %}

@@ -1,6 +1,6 @@
-from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.utils import timezone
+from django.db import models # type: ignore
+from django.core.validators import MaxValueValidator, MinValueValidator # type: ignore
+from django.utils import timezone # type: ignore
 
 class SubManager(models.Model):
     name = models.fields.CharField(max_length=500)

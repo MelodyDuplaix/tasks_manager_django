@@ -14,8 +14,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path
+from django.contrib import admin # type: ignore
+from django.urls import path # type: ignore
 from tasks import views
 
 urlpatterns = [
@@ -38,4 +38,8 @@ urlpatterns = [
     path('<int:submanager_id>/confirm-delete-reward/<int:reward_id>', views.confirm_delete_reward, name='confirm_delete_reward'),
     path('weekly/', views.weekly, name='weekly'),
     path('monthly/', views.monthly, name='monthly'),
+    path('<int:submanager_id>/add-type', views.add_type, name='add_type'),
+    path('<int:submanager_id>/delete-type/<int:type_id>', views.delete_type, name='delete_type'),
+    path('<int:submanager_id>/update-type/<int:type_id>', views.update_type, name='update_type'),
+    path('<int:submanager_id>/confirm-delete-type/<int:type_id>', views.confirm_delete_type, name='confirm_delete_type'),
 ]

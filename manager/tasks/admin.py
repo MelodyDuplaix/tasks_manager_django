@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin # type: ignore
 from tasks.models import SubManager, TaskType, Task, Reward, Action
 
 class TaskTypeAdmin(admin.ModelAdmin):
