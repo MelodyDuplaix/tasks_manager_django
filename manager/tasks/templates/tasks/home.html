@@ -31,13 +31,9 @@
       {% for submanager in submanagers %}
       <li class="list-group-item d-flex align-items-center position-relative p-3 mt-2" style="border: none;">
         <a href="{% url 'submanager_page' submanager.id %}" class="stretched-link text-decoration-none"></a>
-
         <span class="text-dark fw-semibold flex-grow-1 text-center">
           {{ submanager.name }}
         </span>
-        <a class="btn btn-outline-secondary btn-sm" href="{% url 'update_submanager' submanager.id %}">
-          Modifier
-        </a>
       </li>
       {% empty %}
       <li class="list-group-item text-center text-muted py-4">

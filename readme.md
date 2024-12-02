@@ -37,7 +37,7 @@ Le Gestionnaire de Tâches est une application Django conçue pour aider à gér
    ```
 
 5. **Accéder à l'application** :
-   Ouvrez votre navigateur et allez sur `http://localhost:8000` pour utiliser le Gestionnaire de Tâches.
+   Ouvrez votre navigateur et allez sur [http://localhost:8000](http://localhost:8000) pour utiliser le Gestionnaire de Tâches.
 
 ## Structure du Projet
 
@@ -76,11 +76,13 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 - [x] Compléter les options pour configurer les objectifs, gérer les tâches et les récompenses.
 - [x] Ajouter le suivi des objectifs hebdomadaires.
 - [x] Ajouter le suivi des objectifs mensuels.
-- [ ] Ajouter des configurations de bases (objectifs de base) à l'ajout d'un sous-manager
+- [x] Ajouter des configurations de bases (objectifs de base) à l'ajout d'un sous-manager
+- [ ] Ajout d'un endroit pour ajouter des types de tâches par sous manager (donc dans la page d'option d'un sous manager)
 - [ ] A la création d'une tâche, n'avoir que les types du sous manager actuel
 - [ ] Ajouter les fonctionnalités des tâches ponctuelles
 - [ ] Ajouter des filtres sur l'historique (filtres par date et sous manager)
 - [ ] Mettre en place des vérifications des erreurs
 - [ ] Mettre en place des tests
 - [ ] Ajouter un bouton annuler dernière action
+- [ ] Voir la possibilité d'un mode sombre ?
 

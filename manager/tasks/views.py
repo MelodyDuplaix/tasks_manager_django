@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.contrib import messages
-from tasks.models import SubManager, Reward, Objectif, Action, TaskType, Task
-from tasks.forms import SubManagerForm, ObjectifForm, TaskForm, RewardForm
+from tasks.models import SubManager, Reward, Action, TaskType, Task
+from tasks.forms import SubManagerForm, TaskForm, RewardForm
 
 import datetime
 
@@ -22,28 +22,6 @@ def options(request):
     submanagers = SubManager.objects.all()
     return render(request, 'tasks/home.html', {'submanagers': submanagers})
 
-def update_submanager(request, submanager_id):
-    """
-    Update the details of an existing sub-manager.
-
-    Args:
-        request: The HTTP request object, expected to be a POST request for 
-            form submission.
-        submanager_id: The ID of the SubManager to be updated.
-
-    Returns:
-        HttpResponse: The rendered update sub-manager page with the form to 
-        edit the sub-manager details.
-    """
-    submanager = SubManager.objects.get(id=submanager_id)
-    if request.method == 'POST':
-        form = SubManagerForm(request.POST, instance=submanager)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-    else:
-        form = SubManagerForm(instance=submanager)
-    return render(request, 'tasks/update_sub_manager.html', {'submanager': submanager, 'form': form})
 
 def add_submanager(request):
     """
@@ -60,6 +38,7 @@ def add_submanager(request):
         form = SubManagerForm(request.POST)
         if form.is_valid():
             form.save()
+
             return redirect('home')
     else:
         form = SubManagerForm()
@@ -93,10 +72,10 @@ def submanager_page(request, submanager_id):
         HttpResponse: The rendered sub-manager page with its name and details.
     """
     submanager = SubManager.objects.get(id=submanager_id)
-    daily_objectif = Objectif.objects.get(name='quotidien')
+    daily_objectif = submanager.daily_objectif
     historique = Action.objects.all().filter(sub_manager=submanager, date__date=datetime.date.today(), coins_number__gt=0)
     total_coins_today = sum(action.coins_number for action in historique)
-    daily_objectif_percentage = (total_coins_today / daily_objectif.coins_number) * 100
+    daily_objectif_percentage = (total_coins_today / daily_objectif) * 100
     tasks = Task.objects.all().filter(type__sub_manager=submanager)
     rewards = Reward.objects.all().filter(sub_manager=submanager)
     types = TaskType.objects.all().filter(sub_manager=submanager)
@@ -105,7 +84,7 @@ def submanager_page(request, submanager_id):
     return render(request, 'tasks/submanager_page.html', 
                   {'submanager': submanager, 
                    'daily_objectif_percentage': daily_objectif_percentage, 
-                   'daily_objectif': daily_objectif.coins_number,
+                   'daily_objectif': daily_objectif,
                    'total_coins_today': total_coins_today,
                    'tasks': tasks,
                    'rewards': rewards,
@@ -156,26 +135,23 @@ def sub_manager_option(request, submanager_id):
         HttpResponse: The rendered sub-manager options page with its options.
     """
     submanager = get_object_or_404(SubManager, id=submanager_id)
-    objectifs = Objectif.objects.filter(sub_manager=submanager)
     tasks = Task.objects.filter(type__sub_manager=submanager)
     rewards = Reward.objects.filter(sub_manager=submanager)
 
     if request.method == 'POST':
         objectif_id = request.POST.get('objectif_id')
-        objectif = get_object_or_404(Objectif, id=objectif_id, sub_manager=submanager)
-        form = ObjectifForm(request.POST, instance=objectif)
+        form = SubManagerForm(request.POST, instance=submanager)
         if form.is_valid():
             form.save()
-            messages.success(request, f"L'objectif '{objectif.name}' a été mis à jour.")
+            messages.success(request, f"Les objectifs ont bien été mis à jour.")
             return redirect('sub_manager_options', submanager_id=submanager_id)
         else:
             messages.error(request, "Une erreur est survenue lors de la mise à jour.")
 
-    forms = {objectif.id: ObjectifForm(instance=objectif) for objectif in objectifs}
+    form = SubManagerForm(instance=submanager)
     return render(request, 'tasks/sub_manager_options.html', {
         'submanager': submanager,
-        'objectifs': objectifs,
-        'forms': forms,
+        'form': form,
         'tasks': tasks,
         'rewards': rewards
     })
@@ -375,14 +351,13 @@ def weekly(request):
         )
         total_coins = sum(action.coins_number for action in actions)
 
-        objectif_weekly = Objectif.objects.filter(sub_manager=submanager, name='hebdomadaire').first()
-        objectif_weekly_value = objectif_weekly.coins_number if objectif_weekly else 0
+        objectif_weekly = submanager.weekly_objectif
 
-        percentage = (total_coins / objectif_weekly_value * 100) if objectif_weekly_value else 0
+        percentage = (total_coins / objectif_weekly * 100) if objectif_weekly else 0
 
         data_by_submanager[submanager] = {
             'total_coins': total_coins,
-            'objectif_weekly': objectif_weekly_value,
+            'objectif_weekly': objectif_weekly,
             'percentage': percentage
         }
 
@@ -411,14 +386,13 @@ def monthly(request):
         )
         total_coins = sum(action.coins_number for action in actions)
 
-        objectif_monthly = Objectif.objects.filter(sub_manager=submanager, name='mensuel').first()
-        objectif_monthly_value = objectif_monthly.coins_number if objectif_monthly else 0
+        objectif_monthly = submanager.monthly_objectif
 
-        percentage = (total_coins / objectif_monthly_value * 100) if objectif_monthly_value else 0
+        percentage = (total_coins / objectif_monthly * 100) if objectif_monthly else 0
 
         data_by_submanager[submanager] = {
             'total_coins': total_coins,
-            'objectif_monthly': objectif_monthly_value,
+            'objectif_monthly': objectif_monthly,
             'percentage': percentage
         }
 

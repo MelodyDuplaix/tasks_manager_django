@@ -21,7 +21,6 @@ from tasks import views
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', views.options, name='home'),
-    path('update_submanager/<int:submanager_id>/', views.update_submanager, name='update_submanager'),
     path('add_submanager/', views.add_submanager, name='add_submanager'),
     path('delete_submanager/<int:submanager_id>', views.delete_submanager, name='delete_submanager'),
     path('<int:submanager_id>/', views.submanager_page, name='submanager_page'),

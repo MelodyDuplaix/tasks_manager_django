@@ -64,21 +64,16 @@
         </ul>
       </div>
       <div class="list-group list-group-flush">
-        <h2 class="text-center mt-5">Objectifs</h2>
-        <ul class="list-group">
-          {% for objectif in objectifs %}
-          <li class="list-group-item d-flex align-items-center position-relative p-2">
-            <span class="text-dark fw-semibold flex-grow-1 text-center">
-              {{ objectif.name }}
-            </span>
-            <form method="POST" class="ms-3">
-              {% csrf_token %}
-              <input type="hidden" name="objectif_id" value="{{ objectif.id }}">
-              {{ forms|dict_get:objectif.id }}
+        <h2 class="text-center mt-5">Nom et Objectifs</h2>
+          <form method="POST" class="ms-3 d-flex justify-content-between">
+            {% csrf_token %}
+            <input type="hidden" name="objectif_id" value="{{ objectif.id }}">
+            <div>
+              {{ form.as_p }}
               <button type="submit" class="btn btn-primary btn-sm mt-2">Modifier</button>
-            </form>
-          </li>
-          {% endfor %}
+            </div>
+            <a class="btn btn-danger btn-sm mt-2 align-self-end" href="{% url 'delete_submanager' submanager.id %}">Supprimer</a>
+          </form>
         </ul>
       </div>
     </div>
