@@ -57,8 +57,7 @@ Le Gestionnaire de Tâches est une application Django conçue pour aider à gér
 - **Tâche** : Nom, nombre de pièces, ponctuelle, type, sous-manager.
 - **Récompense** : Nom, nombre de pièces, sous-manager.
 - **Action** : Nom, date, type, nombre de pièces, sous-manager.
-- **Objectif** : Nom, nombre de pièces, sous-manager.
-- **Sous-Manager** : Nom, clé étrangère dans d'autres modèles.
+- **Sous-Manager** : Nom, objectif quotidien, mensuel, hebdomadaire,  clé étrangère dans d'autres modèles.
 
 ## Contribution
 
