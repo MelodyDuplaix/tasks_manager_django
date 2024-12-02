@@ -11,15 +11,50 @@
         <a href="{% url 'submanager_page' submanager.id %}" class="btn btn-outline-secondary">Retour</a>
         <a href="{% url 'home' %}" class="btn btn-outline-secondary">Home</a>
     </p>
-    <h1 class="text-center mt-5">Historique des tâches</h1>
+    <h1 class="text-center mt-5">Historique des tâches pour {{ submanager.name }}</h1>
+    
+    <form method="get" class="mt-4">
+      <div class="row">
+        <div class="col-md-6">
+          <label for="date_start" class="form-label">Date et heure de début :</label>
+          <input type="datetime-local" name="date_start" value="{{ filters.date_start }}" class="form-control">
+        </div>
+
+        <div class="col-md-6">
+          <label for="date_end" class="form-label">Date et heure de fin :</label>
+          <input type="datetime-local" name="date_end" value="{{ filters.date_end }}" class="form-control">
+        </div>
+      </div>
+
+      <div class="text-end mt-3">
+        <button type="submit" class="btn btn-primary">Filtrer</button>
+        <a href="{% url 'history' submanager.id %}" class="btn btn-secondary">Réinitialiser</a>
+      </div>
+    </form>
+
     <table class="table table-striped mt-4">
       <thead>
         <tr>
-          <th scope="col">Nom</th>
-          <th scope="col">Date</th>
-          <th scope="col">Type</th>
-          <th scope="col">Nombre de Pièces</th>
-          <th scope="col">Sub Manager</th>
+          <th scope="col">
+            <a href="?order_by={{ filters.reverse_order_name }}">
+              Nom {% if filters.order_by == 'name' %}↑{% elif filters.order_by == '-name' %}↓{% endif %}
+            </a>
+          </th>
+          <th scope="col">
+            <a href="?order_by={{ filters.reverse_order_date }}">
+              Date {% if filters.order_by == 'date' %}↑{% elif filters.order_by == '-date' %}↓{% endif %}
+            </a>
+          </th>
+          <th scope="col">
+            <a href="?order_by={{ filters.reverse_order_type }}">
+              Type {% if filters.order_by == 'type' %}↑{% elif filters.order_by == '-type' %}↓{% endif %}
+            </a>
+          </th>
+          <th scope="col">
+            <a href="?order_by={{ filters.reverse_order_coins_number }}">
+              Nombre de Pièces {% if filters.order_by == 'coins_number' %}↑{% elif filters.order_by == '-coins_number' %}↓{% endif %}
+            </a>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -29,7 +64,10 @@
           <td>{{ action.date|date:"d/m/Y H:i" }}</td>
           <td>{{ action.type|default:"" }}</td>
           <td>{{ action.coins_number }}</td>
-          <td>{{ action.sub_manager }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" class="text-center">Aucune action trouvée.</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -37,3 +75,4 @@
   </div>
 </div>
 {% endblock %}
+

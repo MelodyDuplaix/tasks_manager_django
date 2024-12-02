@@ -78,8 +78,8 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 - [x] Ajouter des configurations de bases (objectifs de base) à l'ajout d'un sous-manager
 - [x] Ajouter un endroit pour ajouter des types de tâches par sous manager (donc dans la page d'option d'un sous manager)
 - [x] A la création d'une tâche, n'avoir que les types du sous manager actuel
-- [ ] Ajouter les fonctionnalités des tâches ponctuelles
-- [ ] Ajouter des filtres sur l'historique (filtres par date et sous manager)
+- [x] Ajouter les fonctionnalités des tâches ponctuelles
+- [x] Ajouter des filtres sur l'historique (filtres par date et sous manager)
 - [ ] Implémenter la modifications des actions correspondantes lors de la modification d'une tâche
 - [ ] Mettre en place des vérifications des erreurs
 - [ ] Mettre en place des tests

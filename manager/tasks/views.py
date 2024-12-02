@@ -2,10 +2,10 @@ from django.shortcuts import render, get_object_or_404 # type: ignore
 from django.http import HttpResponse # type: ignore
 from django.shortcuts import redirect # type: ignore
 from django.contrib import messages # type: ignore
+from django.utils.timezone import make_aware # type: ignore
 from tasks.models import SubManager, Reward, Action, TaskType, Task, PonctualTask
 from tasks.forms import SubManagerForm, TaskForm, RewardForm, TypeForm, PonctualTaskForm
-
-import datetime
+from datetime import datetime, timedelta, date
 
 def options(request):
     """
@@ -71,7 +71,7 @@ def submanager_page(request, submanager_id):
     """
     submanager = SubManager.objects.get(id=submanager_id)
     daily_objectif = submanager.daily_objectif
-    historique = Action.objects.all().filter(sub_manager=submanager, date__date=datetime.date.today(), coins_number__gt=0)
+    historique = Action.objects.all().filter(sub_manager=submanager, date__date=date.today(), coins_number__gt=0)
     total_coins_today = sum(action.coins_number for action in historique)
     daily_objectif_percentage = (total_coins_today / daily_objectif) * 100
     tasks = Task.objects.all().filter(type__sub_manager=submanager)
@@ -187,9 +187,46 @@ def history(request, submanager_id):
     Returns:
         HttpResponse: The rendered history page with the list of actions.
     """
-    submanager = SubManager.objects.get(id=submanager_id)
-    history = Action.objects.all().filter(sub_manager=submanager).order_by('-date')
-    return render(request, 'tasks/history.html', {'submanager': submanager, 'history': history})
+    submanager = get_object_or_404(SubManager, id=submanager_id)
+    actions = Action.objects.filter(sub_manager=submanager)
+
+    date_start = request.GET.get('date_start', '')  # Début de plage
+    date_end = request.GET.get('date_end', '')  # Fin de plage
+    current_order = request.GET.get('order_by', '-date')  # Tri actuel (par défaut : date descendante)
+
+    if date_start or date_end:
+        if date_start and not date_end:
+            start_date = datetime.strptime(date_start, "%Y-%m-%dT%H:%M").date()
+            actions = actions.filter(date__date=start_date)
+        elif date_end and not date_start:
+            end_date = datetime.strptime(date_end, "%Y-%m-%dT%H:%M").date()
+            actions = actions.filter(date__date=end_date)
+        else:
+            start_datetime = make_aware(datetime.strptime(date_start, "%Y-%m-%dT%H:%M"))
+            end_datetime = make_aware(datetime.strptime(date_end, "%Y-%m-%dT%H:%M")) + timedelta(days=1)
+            actions = actions.filter(date__gte=start_datetime, date__lt=end_datetime)
+
+    reverse_order = current_order.lstrip('-')
+    if current_order.startswith('-'):
+        reverse_order = reverse_order
+    else:
+        reverse_order = f"-{reverse_order}"
+
+    actions = actions.order_by(current_order)
+
+    return render(request, 'tasks/history.html', {
+        'submanager': submanager,
+        'history': actions,
+        'filters': {
+            'date_start': date_start,
+            'date_end': date_end,
+            'order_by': current_order,
+            'reverse_order_name': 'name' if current_order == '-name' else '-name',
+            'reverse_order_date': 'date' if current_order == '-date' else '-date',
+            'reverse_order_type': 'type' if current_order == '-type' else '-type',
+            'reverse_order_coins_number': 'coins_number' if current_order == '-coins_number' else '-coins_number',
+        },
+    })
 
 def add_task(request, submanager_id):
     """
