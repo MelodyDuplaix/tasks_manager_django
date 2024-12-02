@@ -80,10 +80,11 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 - [x] A la création d'une tâche, n'avoir que les types du sous manager actuel
 - [ ] Ajouter les fonctionnalités des tâches ponctuelles
 - [ ] Ajouter des filtres sur l'historique (filtres par date et sous manager)
+- [ ] Implémenter la modifications des actions correspondantes lors de la modification d'une tâche
 - [ ] Mettre en place des vérifications des erreurs
 - [ ] Mettre en place des tests
 - [ ] Ajouter un bouton annuler dernière action
 - [ ] Ajouter des barres de progressions fusionnées de tous les sous-managers
 - [ ] Voir la possibilité d'un mode sombre ?
-- [ ] Voir pour pourvoir désactiver temporairement un sous manager
+- [ ] Voir pour pouvoir désactiver temporairement un sous manager
 

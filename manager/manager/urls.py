@@ -42,4 +42,9 @@ urlpatterns = [
     path('<int:submanager_id>/delete-type/<int:type_id>', views.delete_type, name='delete_type'),
     path('<int:submanager_id>/update-type/<int:type_id>', views.update_type, name='update_type'),
     path('<int:submanager_id>/confirm-delete-type/<int:type_id>', views.confirm_delete_type, name='confirm_delete_type'),
+    path('<int:submanager_id>/add-ponctual-task', views.add_ponctual_task, name='add_ponctual_task'),
+    path('ponctual-action/<int:task_id>', views.ponctual_task_action, name='ponctual_task_action'),
+    path('<int:submanager_id>/update-ponctual-task/<int:task_id>', views.update_ponctual_task, name='update_ponctual_task'),
+    path('<int:submanager_id>/confirm-delete-ponctual-task/<int:task_id>', views.confirm_delete_ponctual_task, name='confirm_delete_ponctual_task'),
+    path('<int:submanager_id>/delete-ponctual-task/<int:task_id>', views.delete_ponctual_task, name='delete_ponctual_task'),
 ]

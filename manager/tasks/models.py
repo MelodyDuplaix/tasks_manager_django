@@ -21,8 +21,15 @@ class TaskType(models.Model):
 class Task(models.Model):
     name = models.fields.CharField(max_length=500)
     coins_number = models.fields.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(1000)])
-    ponctuel = models.fields.BooleanField(default=False)
     type = models.ForeignKey(TaskType, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return f"{self.name}"
+
+class PonctualTask(models.Model):
+    name = models.fields.CharField(max_length=500)
+    coins_number = models.fields.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(1000)])
+    sub_manager = models.ForeignKey(SubManager, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return f"{self.name}"

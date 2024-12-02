@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404 # type: ignore
 from django.http import HttpResponse # type: ignore
 from django.shortcuts import redirect # type: ignore
 from django.contrib import messages # type: ignore
-from tasks.models import SubManager, Reward, Action, TaskType, Task
-from tasks.forms import SubManagerForm, TaskForm, RewardForm, TypeForm
+from tasks.models import SubManager, Reward, Action, TaskType, Task, PonctualTask
+from tasks.forms import SubManagerForm, TaskForm, RewardForm, TypeForm, PonctualTaskForm
 
 import datetime
 
@@ -79,6 +79,7 @@ def submanager_page(request, submanager_id):
     types = TaskType.objects.all().filter(sub_manager=submanager)
     historique_total = Action.objects.all().filter(sub_manager=submanager)
     total_coins = sum(historique_total.values_list('coins_number', flat=True))
+    ponctuals = PonctualTask.objects.all().filter(sub_manager=submanager)
     return render(request, 'tasks/submanager_page.html', 
                   {'submanager': submanager, 
                    'daily_objectif_percentage': daily_objectif_percentage, 
@@ -87,7 +88,8 @@ def submanager_page(request, submanager_id):
                    'tasks': tasks,
                    'rewards': rewards,
                    'types': types,
-                   'total_coins': total_coins}) 
+                   'total_coins': total_coins,
+                   'ponctuals': ponctuals}) 
 
 def task_action(request, task_id):
     """
@@ -104,6 +106,24 @@ def task_action(request, task_id):
     action = Action(name=task.name, type=task.type, date=datetime.datetime.now(), coins_number=task.coins_number, sub_manager=task.type.sub_manager)
     action.save()
     return redirect('submanager_page', submanager_id=task.type.sub_manager.id)
+
+def ponctual_task_action(request, task_id):
+    """
+    Register the action for the task with the given ID.
+
+    Args:
+        request: The HTTP request object.
+        task_id: The ID of the Task to be registered as an action.
+
+    Returns:
+        HttpResponse: The rendered sub-manager page with its name and details.
+    """
+    task = PonctualTask.objects.get(id=task_id)
+    submanager = task.sub_manager
+    action = Action(name=task.name, type=None, date=datetime.datetime.now(), coins_number=task.coins_number, sub_manager=task.sub_manager)
+    action.save()
+    task.delete()
+    return redirect('submanager_page', submanager_id=submanager.id)
 
 def reward_action(request, reward_id):
     """
@@ -246,6 +266,29 @@ def update_task(request, submanager_id, task_id):
         form.fields['type'].queryset = TaskType.objects.filter(sub_manager=submanager)
     return render(request, 'tasks/update_task.html', {'form': form, 'task': task, 'submanager': submanager})
 
+def update_ponctual_task(request, submanager_id, task_id):
+    """
+    Update the details of an existing ponctual task. 
+
+    Args:
+        request: The HTTP request object, expected to be a POST request for 
+            form submission.
+        task_id: The ID of the Task to be updated.
+
+    Returns:
+        HttpResponse: The rendered update task page with the form to update the task.
+    """
+    task = get_object_or_404(PonctualTask, id=task_id)
+    submanager = task.sub_manager
+    if request.method == 'POST':
+        form = PonctualTaskForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('submanager_page', submanager_id=submanager_id)
+    else:
+        form = PonctualTaskForm(instance=task)
+    return render(request, 'tasks/update_task.html', {'form': form, 'task': task, 'submanager': submanager})
+
 def update_reward(request, submanager_id, reward_id):
     """
     Update the details of an existing reward. 
@@ -285,6 +328,22 @@ def confirm_delete_task(request, submanager_id, task_id):
     submanager = task.type.sub_manager
     return render(request, 'tasks/confirm_delete_task.html', {'task': task, 'submanager': submanager})
 
+def confirm_delete_ponctual_task(request, submanager_id, task_id):
+    """
+    Display a confirmation page for deleting a poncutal task.
+
+    Args:
+        request: The HTTP request object.
+        submanager_id: The ID of the SubManager the task belongs to.
+        task_id: The ID of the Task to be deleted.
+
+    Returns:
+        HttpResponse: The rendered confirmation page for deleting the task.
+    """
+    task = PonctualTask.objects.get(id=task_id)
+    submanager = task.sub_manager
+    return render(request, 'tasks/confirm_delete_ponctual_task.html', {'task': task, 'submanager': submanager})
+
 def confirm_delete_reward(request, submanager_id, reward_id):
     """
     Display a confirmation page for deleting a reward.
@@ -316,6 +375,22 @@ def delete_task(request, submanager_id, task_id):
     task = Task.objects.get(id=task_id)
     task.delete()
     return redirect('sub_manager_options', submanager_id=submanager_id)
+
+def delete_ponctual_task(request, submanager_id, task_id):
+    """
+    Delete the ponctual task with the given ID from the database.
+
+    Args:
+        request: The HTTP request object.
+        submanager_id: The ID of the SubManager the task belongs to.
+        task_id: The ID of the Task to be deleted.
+
+    Returns:
+        HttpResponse: A redirect to the sub-manager options page.
+    """
+    task = PonctualTask.objects.get(id=task_id)
+    task.delete()
+    return redirect('submanager_page', submanager_id=submanager_id)
 
 def delete_reward(request, submanager_id, reward_id):
     """
@@ -481,3 +556,27 @@ def confirm_delete_type(request, submanager_id, type_id):
     submanager = SubManager.objects.get(id=submanager_id)
     type = TaskType.objects.get(id=type_id)
     return render(request, 'tasks/confirm_delete_type.html', {'submanager': submanager, 'type': type})
+
+
+def add_ponctual_task(request, submanager_id):
+    """
+    Add a new ponctual task to the sub-manager with the given ID.
+
+    Args:
+        request: The HTTP request object.
+        submanager_id: The ID of the SubManager to add the task to.
+
+    Returns:
+        HttpResponse: A redirect to the sub-manager options page.
+    """
+    submanager = SubManager.objects.get(id=submanager_id)
+    if request.method == 'POST':
+        form = PonctualTaskForm(request.POST)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.sub_manager = submanager
+            task.save()
+            return redirect('submanager_page', submanager_id=submanager_id)
+    else:
+        form = PonctualTaskForm()
+    return render(request, 'tasks/add_ponctual_task.html', {'form': form, 'submanager': submanager})

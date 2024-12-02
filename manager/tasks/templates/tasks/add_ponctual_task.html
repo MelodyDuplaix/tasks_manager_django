@@ -1,17 +1,17 @@
 {% extends "tasks/base.html" %}
 
 {% block title %}
-  Task Manager - Add reward
+  Task Manager - Add ponctual task
 {% endblock %}
 
 {% block content %}
     <div class="mt-3 d-flex justify-content-center vh-100">
         <div class="container" style="max-width: 1000px; margin-left: auto; margin-right: auto;">
         <p class="text-center">
-          <a href="{% url 'sub_manager_options' submanager.id %}" class="btn btn-outline-secondary">Retour</a>
+          <a href="{% url 'submanager_page' submanager.id %}" class="btn btn-outline-secondary">Retour</a>
           <a href="{% url 'home' %}" class="btn btn-outline-secondary">Home</a>
         </p>
-      <h1 class="text-center mt-5">Ajouter une récompense à  {{ submanager.name }}</h1>
+      <h1 class="text-center mt-5">Ajouter une tache ponctuelle à  {{ submanager.name }}</h1>
       <form action="" method="post" class="justify-content-center mt-4">
           {% csrf_token %}
           {{ form.as_p }}
