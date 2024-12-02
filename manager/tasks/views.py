@@ -185,13 +185,16 @@ def add_task(request, submanager_id):
     submanager = SubManager.objects.get(id=submanager_id)
     if request.method == 'POST':
         form = TaskForm(request.POST)
-        if form.is_valid():    
+        form.fields['type'].queryset = TaskType.objects.filter(sub_manager=submanager)
+
+        if form.is_valid():
             task = form.save(commit=False)
-            task.type = TaskType.objects.get(id=request.POST.get('type'))
             task.save()
             return redirect('sub_manager_options', submanager_id=submanager_id)
     else:
         form = TaskForm()
+        form.fields['type'].queryset = TaskType.objects.filter(sub_manager=submanager)
+
     return render(request, 'tasks/add_task.html', {'form': form, 'submanager': submanager})   
 
 
@@ -234,11 +237,13 @@ def update_task(request, submanager_id, task_id):
     submanager = task.type.sub_manager
     if request.method == 'POST':
         form = TaskForm(request.POST, instance=task)
+        form.fields['type'].queryset = TaskType.objects.filter(sub_manager=submanager)
         if form.is_valid():
             form.save()
             return redirect('sub_manager_options', submanager_id=submanager_id)
     else:
         form = TaskForm(instance=task)
+        form.fields['type'].queryset = TaskType.objects.filter(sub_manager=submanager)
     return render(request, 'tasks/update_task.html', {'form': form, 'task': task, 'submanager': submanager})
 
 def update_reward(request, submanager_id, reward_id):

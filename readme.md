@@ -77,11 +77,13 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 - [x] Ajouter le suivi des objectifs mensuels.
 - [x] Ajouter des configurations de bases (objectifs de base) à l'ajout d'un sous-manager
 - [x] Ajouter un endroit pour ajouter des types de tâches par sous manager (donc dans la page d'option d'un sous manager)
-- [ ] A la création d'une tâche, n'avoir que les types du sous manager actuel
+- [x] A la création d'une tâche, n'avoir que les types du sous manager actuel
 - [ ] Ajouter les fonctionnalités des tâches ponctuelles
 - [ ] Ajouter des filtres sur l'historique (filtres par date et sous manager)
 - [ ] Mettre en place des vérifications des erreurs
 - [ ] Mettre en place des tests
 - [ ] Ajouter un bouton annuler dernière action
+- [ ] Ajouter des barres de progressions fusionnées de tous les sous-managers
 - [ ] Voir la possibilité d'un mode sombre ?
+- [ ] Voir pour pourvoir désactiver temporairement un sous manager
 

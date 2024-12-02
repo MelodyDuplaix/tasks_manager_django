@@ -6,7 +6,6 @@ class SubManagerForm(forms.ModelForm):
         model = SubManager
         fields = '__all__'
 
-
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
