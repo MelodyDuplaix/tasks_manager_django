@@ -23,6 +23,7 @@
       <div class="list-group list-group-flush">
         <ul class="list-group">
           {% for submanager, data in data_by_submanager.items %}
+          {% if submanager.active %}
           <p><b>{{ submanager.name }}</b></p>
           <div class="progress-container mt-3">
             <div class="progress-outer">
@@ -32,6 +33,7 @@
           <p class="text-center mt-3">
             {{ data.total_coins }} / {{ data.objectif_monthly }}
           </p>
+          {% endif %}
           {% endfor %}
         </ul>
       </div>

@@ -14,7 +14,7 @@ class ActionAdmin(admin.ModelAdmin):
   list_display = ("name", "date","type","coins_number","sub_manager",)
 
 class SubManagerAdmin(admin.ModelAdmin):
-  list_display = ("name", "daily_objectif", "weekly_objectif", "monthly_objectif",)
+  list_display = ("name", "daily_objectif", "weekly_objectif", "monthly_objectif", "active",)
 
 class PonctualTaskAdmin(admin.ModelAdmin):
   list_display = ("name", "coins_number", "sub_manager",)

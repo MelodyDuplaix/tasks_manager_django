@@ -7,6 +7,7 @@ class SubManager(models.Model):
     daily_objectif = models.fields.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(1000)], default=10)
     weekly_objectif = models.fields.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(1000)], default=50)
     monthly_objectif = models.fields.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(1000)], default=200)
+    active = models.fields.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.name}"

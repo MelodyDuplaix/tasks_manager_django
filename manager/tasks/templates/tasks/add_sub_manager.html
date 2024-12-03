@@ -16,6 +16,12 @@
             <a href="{% url 'home' %}" class="btn btn-outline-danger">Annuler</a>
           </div>
       </form>
+      <div class="text-center mt-5">
+      <h1>Réactiver un sous manager</h1>
+      {% for submanager in inactive_submanagers %}
+        <a href="{% url 'activate_submanager' submanager.id %}" class="btn btn-outline-secondary">{{ submanager.name }}</a>
+      {% endfor %}
+      </div>
     </div>
   </div>
 {% endblock %}

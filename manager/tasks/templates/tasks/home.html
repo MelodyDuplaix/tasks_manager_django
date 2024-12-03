@@ -39,12 +39,14 @@
 
     <ul class="list-group list-group-flush">
       {% for submanager in submanagers %}
+      {% if submanager.active %}
       <li class="list-group-item d-flex align-items-center position-relative p-3 mt-2" style="border: none;">
         <a href="{% url 'submanager_page' submanager.id %}" class="stretched-link text-decoration-none"></a>
         <span class="text-dark fw-semibold flex-grow-1 text-center">
           {{ submanager.name }}
         </span>
       </li>
+      {% endif %}
       {% empty %}
       <li class="list-group-item text-center text-muted py-4">
         Aucun sous-manager trouvé.

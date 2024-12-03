@@ -18,11 +18,15 @@ def options(request):
         HttpResponse: The rendered options page with a list of sub-managers.
     """
     submanagers = SubManager.objects.all()
-    history = Action.objects.filter(coins_number__gt=0)
-    total_coins = sum( action.coins_number for action in history )
-    daily_objectif = sum( submanager.daily_objectif for submanager in submanagers )
+    history = Action.objects.filter(coins_number__gt=0, date__date=date.today())
+    total_coins = sum( action.coins_number for action in history if action.sub_manager.active)
+    daily_objectif = sum( submanager.daily_objectif for submanager in submanagers if submanager.active)
     percentage = (total_coins / daily_objectif * 100) if daily_objectif else 0
-    return render(request, 'tasks/home.html', {'submanagers': submanagers, 'total_coins': total_coins, 'daily_objectif': daily_objectif, 'percentage': percentage})
+    return render(request, 'tasks/home.html', 
+                  {'submanagers': submanagers, 
+                   'total_coins': total_coins, 
+                   'daily_objectif': daily_objectif, 
+                   'percentage': percentage})
 
 
 def add_submanager(request):
@@ -44,7 +48,9 @@ def add_submanager(request):
             return redirect('home')
     else:
         form = SubManagerForm()
-    return render(request, 'tasks/add_sub_manager.html', {'form': form})
+    
+    inactive_submanagers = SubManager.objects.filter(active=False)
+    return render(request, 'tasks/add_sub_manager.html', {'form': form, 'inactive_submanagers': inactive_submanagers})
 
 def delete_submanager(request, submanager_id):
     """
@@ -521,7 +527,7 @@ def weekly(request):
     """
     current_week_start = date.today() - timedelta(days=date.today().weekday())
     current_week_end = current_week_start + timedelta(days=6)
-    submanagers = SubManager.objects.all()
+    submanagers = SubManager.objects.filter(active=True)
 
     data_by_submanager = {}
     for submanager in submanagers:
@@ -569,7 +575,7 @@ def monthly(request):
     """
     current_month_start = date.today().replace(day=1)
     current_month_end = current_month_start + timedelta(days=31)
-    submanagers = SubManager.objects.all()
+    submanagers = SubManager.objects.filter(active=True)
 
     data_by_submanager = {}
     for submanager in submanagers:
@@ -724,3 +730,41 @@ def add_ponctual_task(request, submanager_id):
     else:
         form = PonctualTaskForm()
     return render(request, 'tasks/add_ponctual_task.html', {'form': form, 'submanager': submanager})
+
+def activate_submanager(request, submanager_id):
+    """
+    Activate the sub-manager with the given ID.
+
+    Args:
+        request: The HTTP request object.
+        submanager_id: The ID of the SubManager to be activated.
+
+    Returns:
+        HttpResponse: A redirect to the sub-manager options page.
+    """
+    submanager = SubManager.objects.get(id=submanager_id)
+    if not submanager:
+        messages.error(request, 'Sous manager non trouvée')
+        return redirect('home')
+    submanager.active = True
+    submanager.save()
+    return redirect('submanager_page', submanager_id=submanager_id)
+
+def desactivate_submanager(request, submanager_id):
+    """
+    Deactivate the sub-manager with the given ID.
+
+    Args:
+        request: The HTTP request object.
+        submanager_id: The ID of the SubManager to be deactivated.
+
+    Returns:
+        HttpResponse: A redirect to the sub-manager options page.
+    """
+    submanager = SubManager.objects.get(id=submanager_id)
+    if not submanager:
+        messages.error(request, 'Sous manager non trouvée')
+        return redirect('home')
+    submanager.active = False
+    submanager.save()
+    return redirect('home')
