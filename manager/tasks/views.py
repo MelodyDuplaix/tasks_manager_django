@@ -103,7 +103,7 @@ def task_action(request, task_id):
         HttpResponse: The rendered sub-manager page with its name and details.
     """
     task = Task.objects.get(id=task_id)
-    action = Action(name=task.name, type=task.type, date=datetime.datetime.now(), coins_number=task.coins_number, sub_manager=task.type.sub_manager)
+    action = Action(name=task.name, type=task.type, date=datetime.now(), coins_number=task.coins_number, sub_manager=task.type.sub_manager)
     action.save()
     return redirect('submanager_page', submanager_id=task.type.sub_manager.id)
 
@@ -120,7 +120,7 @@ def ponctual_task_action(request, task_id):
     """
     task = PonctualTask.objects.get(id=task_id)
     submanager = task.sub_manager
-    action = Action(name=task.name, type=None, date=datetime.datetime.now(), coins_number=task.coins_number, sub_manager=task.sub_manager)
+    action = Action(name=task.name, type=None, date=datetime.now(), coins_number=task.coins_number, sub_manager=task.sub_manager)
     action.save()
     task.delete()
     return redirect('submanager_page', submanager_id=submanager.id)
@@ -137,7 +137,7 @@ def reward_action(request, reward_id):
         HttpResponse: The rendered sub-manager page with its name and details.
     """
     reward = Reward.objects.get(id=reward_id)
-    action = Action(name=reward.name, type=None, date=datetime.datetime.now(), coins_number= -reward.coins_number, sub_manager=reward.sub_manager)
+    action = Action(name=reward.name, type=None, date=datetime.now(), coins_number= -reward.coins_number, sub_manager=reward.sub_manager)
     action.save()
     return redirect('submanager_page', submanager_id=reward.sub_manager.id)
 
@@ -291,10 +291,17 @@ def update_task(request, submanager_id, task_id):
         HttpResponse: The rendered update task page with the form to update the task.
     """
     task = get_object_or_404(Task, id=task_id)
+    name = task.name
+    type = task.type
     submanager = task.type.sub_manager
     if request.method == 'POST':
         form = TaskForm(request.POST, instance=task)
         form.fields['type'].queryset = TaskType.objects.filter(sub_manager=submanager)
+        history = Action.objects.filter(name=name, type=type, sub_manager=submanager)
+        for action in history:
+            action.name = form['name'].value()
+            action.type = TaskType.objects.get(id=form['type'].value())
+            action.save()
         if form.is_valid():
             form.save()
             return redirect('sub_manager_options', submanager_id=submanager_id)
@@ -455,8 +462,8 @@ def weekly(request):
     Returns:
         HttpResponse: The rendered weekly page with the data for each sub-manager.
     """
-    current_week_start = datetime.date.today() - datetime.timedelta(days=datetime.date.today().weekday())
-    current_week_end = current_week_start + datetime.timedelta(days=6)
+    current_week_start = date.today() - timedelta(days=date.today().weekday())
+    current_week_end = current_week_start + timedelta(days=6)
     submanagers = SubManager.objects.all()
 
     data_by_submanager = {}
@@ -490,8 +497,8 @@ def monthly(request):
     Returns:
         HttpResponse: The rendered monthly page with the data for each sub-manager.
     """
-    current_month_start = datetime.date.today().replace(day=1)
-    current_month_end = current_month_start + datetime.timedelta(days=31)
+    current_month_start = date.today().replace(day=1)
+    current_month_end = current_month_start + timedelta(days=31)
     submanagers = SubManager.objects.all()
 
     data_by_submanager = {}

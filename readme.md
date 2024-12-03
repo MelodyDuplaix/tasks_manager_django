@@ -80,7 +80,7 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 - [x] A la création d'une tâche, n'avoir que les types du sous manager actuel
 - [x] Ajouter les fonctionnalités des tâches ponctuelles
 - [x] Ajouter des filtres sur l'historique (filtres par date et sous manager)
-- [ ] Implémenter la modifications des actions correspondantes lors de la modification d'une tâche
+- [x] Implémenter la modifications des actions correspondantes lors de la modification d'une tâche
 - [ ] Mettre en place des vérifications des erreurs
 - [ ] Mettre en place des tests
 - [ ] Ajouter un bouton annuler dernière action
