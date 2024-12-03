@@ -12,6 +12,16 @@
     </h1>
   </div>
 
+  <p><b>Objectif quotidien total</b></p>
+  <div class="progress-container mt-3">
+    <div class="progress-outer">
+      <div class="progress-inner" style="width: {{ percentage }}%;">
+    </div>
+  </div>
+  <p class="text-center mt-3">
+    {{ total_coins }} / {{ daily_objectif }}
+  </p>
+
     <ul class="list-group list-group-flush my-4">
       <li class="list-group-item d-flex align-items-center position-relative p-3 mt-2" style="border: none;">
         <a href="{% url 'weekly' %}" class="stretched-link text-decoration-none"></a>
@@ -79,9 +89,39 @@
     background-color: #f8f9fa;
   }
 
-  /* Bouton Modifier */
   .btn-outline-secondary {
     z-index: 2; /* Assure que le bouton reste cliquable même avec stretched-link */
+  }
+
+  .progress-outer {
+    height: 30px;
+    width: 100%;
+    background-color: #f1f1f1;
+    border: 2px solid #007bff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+
+  .progress-inner {
+    height: 100%;
+    background: linear-gradient(90deg, #4a90e2, #357abd);
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    text-align: center;
+    line-height: 30px;
+    border-radius: 10px 0 0 10px;
+    transition: width 0.5s ease;
+  }
+
+  .progress-details {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
   }
 </style>
 {% endblock %}

@@ -18,7 +18,11 @@ def options(request):
         HttpResponse: The rendered options page with a list of sub-managers.
     """
     submanagers = SubManager.objects.all()
-    return render(request, 'tasks/home.html', {'submanagers': submanagers})
+    history = Action.objects.filter(coins_number__gt=0)
+    total_coins = sum( action.coins_number for action in history )
+    daily_objectif = sum( submanager.daily_objectif for submanager in submanagers )
+    percentage = (total_coins / daily_objectif * 100) if daily_objectif else 0
+    return render(request, 'tasks/home.html', {'submanagers': submanagers, 'total_coins': total_coins, 'daily_objectif': daily_objectif, 'percentage': percentage})
 
 
 def add_submanager(request):
@@ -485,7 +489,13 @@ def weekly(request):
             'percentage': percentage
         }
 
-    return render(request, 'tasks/weekly.html', {'data_by_submanager': data_by_submanager})
+    all_data = {
+        'total_coins': sum(data['total_coins'] for data in data_by_submanager.values()),
+        'objectif_weekly': sum(data['objectif_weekly'] for data in data_by_submanager.values()),
+        'percentage': sum(data['percentage'] for data in data_by_submanager.values()) / len(data_by_submanager)
+    }
+
+    return render(request, 'tasks/weekly.html', {'data_by_submanager': data_by_submanager, 'all_data': all_data})
 
 def monthly(request):
     """
@@ -520,7 +530,13 @@ def monthly(request):
             'percentage': percentage
         }
 
-    return render(request, 'tasks/monthly.html', {'data_by_submanager': data_by_submanager})
+    all_data = {
+        'total_coins': sum(data['total_coins'] for data in data_by_submanager.values()),
+        'objectif_monthly': sum(data['objectif_monthly'] for data in data_by_submanager.values()),
+        'percentage': sum(data['percentage'] for data in data_by_submanager.values()) / len(data_by_submanager)
+    }
+
+    return render(request, 'tasks/monthly.html', {'data_by_submanager': data_by_submanager, 'all_data': all_data})
 
 def add_type(request, submanager_id):
     """

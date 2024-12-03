@@ -11,6 +11,15 @@
           <a href="{% url 'home' %}" class="btn btn-outline-secondary">Home</a>
         </p>
       <h1 class="text-center mt-5">Suivi mensuel</h1>
+      <p><b>Ensemble</b></p>
+          <div class="progress-container mt-3">
+            <div class="progress-outer">
+              <div class="progress-inner" style="width: {{ all_data.percentage }}%;">
+            </div>
+          </div>
+          <p class="text-center mt-3">
+            {{ all_data.total_coins }} / {{ all_data.objectif_monthly }}
+          </p>
       <div class="list-group list-group-flush">
         <ul class="list-group">
           {% for submanager, data in data_by_submanager.items %}
