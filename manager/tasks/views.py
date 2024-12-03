@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, date
 
 def options(request):
     """
-    Display the options page which lists all sub-managers.
+    Display the main page which lists all sub-managers and others sub-pages.
     
     Args:
         request: The HTTP request object.
@@ -58,7 +58,10 @@ def delete_submanager(request, submanager_id):
         HttpResponse: A redirect to the options page.
     """
     submanager = SubManager.objects.get(id=submanager_id)
-    submanager.delete()
+    if submanager:
+        submanager.delete()
+    else:
+        messages.error(request, 'Sous manager non trouvé')
     return redirect('home')
 
 
@@ -74,6 +77,8 @@ def submanager_page(request, submanager_id):
         HttpResponse: The rendered sub-manager page with its name and details.
     """
     submanager = SubManager.objects.get(id=submanager_id)
+    if not submanager:
+        return redirect('home')
     daily_objectif = submanager.daily_objectif
     historique = Action.objects.all().filter(sub_manager=submanager, date__date=date.today(), coins_number__gt=0)
     total_coins_today = sum(action.coins_number for action in historique)
@@ -107,6 +112,9 @@ def task_action(request, task_id):
         HttpResponse: The rendered sub-manager page with its name and details.
     """
     task = Task.objects.get(id=task_id)
+    if not task:
+        messages.error(request, 'Tache non trouvée')
+        return redirect('home')
     action = Action(name=task.name, type=task.type, date=datetime.now(), coins_number=task.coins_number, sub_manager=task.type.sub_manager)
     action.save()
     return redirect('submanager_page', submanager_id=task.type.sub_manager.id)
@@ -123,6 +131,9 @@ def ponctual_task_action(request, task_id):
         HttpResponse: The rendered sub-manager page with its name and details.
     """
     task = PonctualTask.objects.get(id=task_id)
+    if not task:
+        messages.error(request, 'Tache non trouvée')
+        return redirect('home')
     submanager = task.sub_manager
     action = Action(name=task.name, type=None, date=datetime.now(), coins_number=task.coins_number, sub_manager=task.sub_manager)
     action.save()
@@ -141,6 +152,9 @@ def reward_action(request, reward_id):
         HttpResponse: The rendered sub-manager page with its name and details.
     """
     reward = Reward.objects.get(id=reward_id)
+    if not reward:
+        messages.error(request, 'Récompense non trouvée')
+        return redirect('home')
     action = Action(name=reward.name, type=None, date=datetime.now(), coins_number= -reward.coins_number, sub_manager=reward.sub_manager)
     action.save()
     return redirect('submanager_page', submanager_id=reward.sub_manager.id)
@@ -156,7 +170,10 @@ def sub_manager_option(request, submanager_id):
     Returns:
         HttpResponse: The rendered sub-manager options page with its options.
     """
-    submanager = get_object_or_404(SubManager, id=submanager_id)
+    submanager = SubManager.objects.get(id=submanager_id)
+    if not submanager:
+        messages.error(request, 'Sous manager non trouvée')
+        return redirect('home')
     tasks = Task.objects.filter(type__sub_manager=submanager)
     rewards = Reward.objects.filter(sub_manager=submanager)
     tasks_type = TaskType.objects.filter(sub_manager=submanager)
@@ -192,11 +209,14 @@ def history(request, submanager_id):
         HttpResponse: The rendered history page with the list of actions.
     """
     submanager = get_object_or_404(SubManager, id=submanager_id)
+    if not submanager:
+        messages.error(request, 'Sous manager non trouvée')
+        return redirect('home')
     actions = Action.objects.filter(sub_manager=submanager)
 
-    date_start = request.GET.get('date_start', '')  # Début de plage
-    date_end = request.GET.get('date_end', '')  # Fin de plage
-    current_order = request.GET.get('order_by', '-date')  # Tri actuel (par défaut : date descendante)
+    date_start = request.GET.get('date_start', '') 
+    date_end = request.GET.get('date_end', '') 
+    current_order = request.GET.get('order_by', '-date')
 
     if date_start or date_end:
         if date_start and not date_end:
@@ -244,6 +264,9 @@ def add_task(request, submanager_id):
         HttpResponse: The rendered add task page with the form to add a new task.
     """
     submanager = SubManager.objects.get(id=submanager_id)
+    if not submanager:
+        messages.error(request, 'Sous manager non trouvée')
+        return redirect('home')
     if request.method == 'POST':
         form = TaskForm(request.POST)
         form.fields['type'].queryset = TaskType.objects.filter(sub_manager=submanager)
@@ -271,6 +294,9 @@ def add_reward(request, submanager_id):
         HttpResponse: The rendered add reward page with the form to add a new reward.
     """
     submanager = SubManager.objects.get(id=submanager_id)
+    if not submanager:
+        messages.error(request, 'Sous manager non trouvée')
+        return redirect('home')
     if request.method == 'POST':
         form = RewardForm(request.POST)
         if form.is_valid():
@@ -294,7 +320,10 @@ def update_task(request, submanager_id, task_id):
     Returns:
         HttpResponse: The rendered update task page with the form to update the task.
     """
-    task = get_object_or_404(Task, id=task_id)
+    task = Task.objects.get(id=task_id)
+    if not task:
+        messages.error(request, 'Tache non trouvée')
+        return redirect('home')
     name = task.name
     type = task.type
     submanager = task.type.sub_manager
@@ -326,7 +355,10 @@ def update_ponctual_task(request, submanager_id, task_id):
     Returns:
         HttpResponse: The rendered update task page with the form to update the task.
     """
-    task = get_object_or_404(PonctualTask, id=task_id)
+    task = PonctualTask.objects.get(id=task_id)
+    if not task:
+        messages.error(request, 'Tache non trouvée')
+        return redirect('home')
     submanager = task.sub_manager
     if request.method == 'POST':
         form = PonctualTaskForm(request.POST, instance=task)
@@ -349,7 +381,10 @@ def update_reward(request, submanager_id, reward_id):
     Returns:
         HttpResponse: The rendered update reward page with the form to update the reward.
     """
-    reward = get_object_or_404(Reward, id=reward_id)
+    reward = Reward.objects.get(id=reward_id)
+    if not reward:
+        messages.error(request, 'Récompense non trouvée')
+        return redirect('home')
     submanager = reward.sub_manager
     if request.method == 'POST':
         form = RewardForm(request.POST, instance=reward)
@@ -373,6 +408,9 @@ def confirm_delete_task(request, submanager_id, task_id):
         HttpResponse: The rendered confirmation page for deleting the task.
     """
     task = Task.objects.get(id=task_id)
+    if not task:
+        messages.error(request, 'Tache non trouvée')
+        return redirect('home')
     submanager = task.type.sub_manager
     return render(request, 'tasks/confirm_delete_task.html', {'task': task, 'submanager': submanager})
 
@@ -389,6 +427,9 @@ def confirm_delete_ponctual_task(request, submanager_id, task_id):
         HttpResponse: The rendered confirmation page for deleting the task.
     """
     task = PonctualTask.objects.get(id=task_id)
+    if not task:
+        messages.error(request, 'Tache non trouvée')
+        return redirect('home')
     submanager = task.sub_manager
     return render(request, 'tasks/confirm_delete_ponctual_task.html', {'task': task, 'submanager': submanager})
 
@@ -405,6 +446,9 @@ def confirm_delete_reward(request, submanager_id, reward_id):
         HttpResponse: The rendered confirmation page for deleting the reward.
     """
     reward = Reward.objects.get(id=reward_id)
+    if not reward:
+        messages.error(request, 'Récompense non trouvée')
+        return redirect('home')
     submanager = reward.sub_manager
     return render(request, 'tasks/confirm_delete_reward.html', {'reward': reward, 'submanager': submanager})
 
@@ -421,6 +465,9 @@ def delete_task(request, submanager_id, task_id):
         HttpResponse: A redirect to the sub-manager options page.
     """
     task = Task.objects.get(id=task_id)
+    if not task:
+        messages.error(request, 'Tache non trouvée')
+        return redirect('home')
     task.delete()
     return redirect('sub_manager_options', submanager_id=submanager_id)
 
@@ -437,6 +484,9 @@ def delete_ponctual_task(request, submanager_id, task_id):
         HttpResponse: A redirect to the sub-manager options page.
     """
     task = PonctualTask.objects.get(id=task_id)
+    if not task:
+        messages.error(request, 'Tache non trouvée')
+        return redirect('home')
     task.delete()
     return redirect('submanager_page', submanager_id=submanager_id)
 
@@ -453,6 +503,9 @@ def delete_reward(request, submanager_id, reward_id):
         HttpResponse: A redirect to the sub-manager options page.
     """
     reward = Reward.objects.get(id=reward_id)
+    if not reward:
+        messages.error(request, 'Récompense non trouvée')
+        return redirect('home')
     reward.delete()
     return redirect('sub_manager_options', submanager_id=submanager_id)
 
@@ -477,6 +530,13 @@ def weekly(request):
             date__date__range=(current_week_start, current_week_end),
             coins_number__gt=0
         )
+        if not actions:
+            data_by_submanager[submanager] = {
+                'total_coins': 0,
+                'objectif_weekly': submanager.weekly_objectif,
+                'percentage': 0
+            }
+            continue
         total_coins = sum(action.coins_number for action in actions)
 
         objectif_weekly = submanager.weekly_objectif
@@ -518,6 +578,13 @@ def monthly(request):
             date__date__range=(current_month_start, current_month_end),
             coins_number__gt=0
         )
+        if not actions:
+            data_by_submanager[submanager] = {
+                'total_coins': 0,
+                'objectif_monthly': submanager.monthly_objectif,
+                'percentage': 0
+            }
+            continue
         total_coins = sum(action.coins_number for action in actions)
 
         objectif_monthly = submanager.monthly_objectif
@@ -550,6 +617,9 @@ def add_type(request, submanager_id):
         HttpResponse: A redirect to the sub-manager options page.
     """
     submanager = SubManager.objects.get(id=submanager_id)
+    if not submanager:
+        messages.error(request, 'Sous manager non trouvée')
+        return redirect('home')
     if request.method == 'POST':
         form = TypeForm(request.POST)
         if form.is_valid():
@@ -574,7 +644,13 @@ def update_type(request, submanager_id, type_id):
         HttpResponse: A redirect to the sub-manager options page.
     """
     submanager = SubManager.objects.get(id=submanager_id)
+    if not submanager:
+        messages.error(request, 'Sous manager non trouvée') 
+        return redirect('home')
     type = TaskType.objects.get(id=type_id)
+    if not type:
+        messages.error(request, 'Type de tâche non trouvée')
+        return redirect('home')
     if request.method == 'POST':
         form = TypeForm(request.POST, instance=type)
         if form.is_valid():
@@ -596,8 +672,10 @@ def delete_type(request, submanager_id, type_id):
     Returns:
         HttpResponse: A redirect to the sub-manager options page.
     """
-    submanager = SubManager.objects.get(id=submanager_id)
     type = TaskType.objects.get(id=type_id)
+    if not type:
+        messages.error(request, 'Type de tâche non trouvée')
+        return redirect('home')
     type.delete()
     return redirect('sub_manager_options', submanager_id=submanager_id)
 
@@ -614,6 +692,9 @@ def confirm_delete_type(request, submanager_id, type_id):
         HttpResponse: A redirect to the sub-manager options page.
     """
     submanager = SubManager.objects.get(id=submanager_id)
+    if not submanager:
+        messages.error(request, 'Sous manager non trouvée')
+        return redirect('home')
     type = TaskType.objects.get(id=type_id)
     return render(request, 'tasks/confirm_delete_type.html', {'submanager': submanager, 'type': type})
 
@@ -630,6 +711,9 @@ def add_ponctual_task(request, submanager_id):
         HttpResponse: A redirect to the sub-manager options page.
     """
     submanager = SubManager.objects.get(id=submanager_id)
+    if not submanager:
+        messages.error(request, 'Sous manager non trouvée')
+        return redirect('home')
     if request.method == 'POST':
         form = PonctualTaskForm(request.POST)
         if form.is_valid():
