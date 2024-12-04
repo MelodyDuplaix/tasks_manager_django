@@ -86,6 +86,6 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 - [x] Voir pour pouvoir désactiver temporairement un sous manager
 - [ ] Mettre en place des tests
 - [ ] Ajouter un bouton annuler dernière action
-- [ ] Mettre en place des vérifications des erreurs approfondies
+- [ ] Mettre en place des vérifications des erreurs approfondies (dont vérification de l'état inactif d'un sous manager lors de l'accès à l'url d'activation)
 - [ ] Voir la possibilité d'un mode sombre ?
 
