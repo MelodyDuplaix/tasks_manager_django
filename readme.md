@@ -84,8 +84,9 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 - [x] Ajouter des barres de progressions fusionnées de tous les sous-managers
 - [x] Mettre en place des vérifications des erreurs de base
 - [x] Voir pour pouvoir désactiver temporairement un sous manager
-- [ ] Mettre en place des tests
+- [x] Mettre en place des tests unitaires
 - [ ] Ajouter un bouton annuler dernière action
 - [ ] Mettre en place des vérifications des erreurs approfondies (dont vérification de l'état inactif d'un sous manager lors de l'accès à l'url d'activation)
 - [ ] Voir la possibilité d'un mode sombre ?
+- [ ] Mettre en place des tests d'intégrations et fonctionnels
 
