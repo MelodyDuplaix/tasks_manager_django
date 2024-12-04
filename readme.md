@@ -86,7 +86,11 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 - [x] Voir pour pouvoir désactiver temporairement un sous manager
 - [x] Mettre en place des tests unitaires
 - [ ] Ajouter un bouton annuler dernière action
+- [ ] Ajout du nombre total de pièce des lignes à la fin du tableau d'historique
 - [ ] Mettre en place des vérifications des erreurs approfondies (dont vérification de l'état inactif d'un sous manager lors de l'accès à l'url d'activation)
+- [ ] Avoir des pièces par sous types avec une possibilité d'avoir un nombre de pièce différente pour valider la journée (par exemple, il faut 10 pièces, dont 2 en sous type 1, 3 en sous type 2 et 2 en sous type 3)
+- [ ] avoir la possibilité de timers pour mesurer le temps sur les taches (bouton finir la journée, et enregistrement des heures quand on clique sur un bouton) 
+- [ ] ajouter des stats sur les temps que l'on passe sur les taches
 - [ ] Voir la possibilité d'un mode sombre ?
 - [ ] Mettre en place des tests d'intégrations et fonctionnels
 
