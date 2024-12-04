@@ -3,6 +3,7 @@ from django.http import HttpResponse # type: ignore
 from django.shortcuts import redirect # type: ignore
 from django.contrib import messages # type: ignore
 from django.utils.timezone import make_aware # type: ignore
+from django.utils import timezone #type: ignore
 from tasks.models import SubManager, Reward, Action, TaskType, Task, PonctualTask
 from tasks.forms import SubManagerForm, TaskForm, RewardForm, TypeForm, PonctualTaskForm
 from datetime import datetime, timedelta, date
@@ -121,7 +122,7 @@ def task_action(request, task_id):
     if not task:
         messages.error(request, 'Tache non trouvée')
         return redirect('home')
-    action = Action(name=task.name, type=task.type, date=datetime.now(), coins_number=task.coins_number, sub_manager=task.type.sub_manager)
+    action = Action(name=task.name, type=task.type, date=timezone.now(), coins_number=task.coins_number, sub_manager=task.type.sub_manager)
     action.save()
     return redirect('submanager_page', submanager_id=task.type.sub_manager.id)
 
@@ -141,7 +142,7 @@ def ponctual_task_action(request, task_id):
         messages.error(request, 'Tache non trouvée')
         return redirect('home')
     submanager = task.sub_manager
-    action = Action(name=task.name, type=None, date=datetime.now(), coins_number=task.coins_number, sub_manager=task.sub_manager)
+    action = Action(name=task.name, type=None, date=timezone.now(), coins_number=task.coins_number, sub_manager=task.sub_manager)
     action.save()
     task.delete()
     return redirect('submanager_page', submanager_id=submanager.id)
@@ -161,7 +162,7 @@ def reward_action(request, reward_id):
     if not reward:
         messages.error(request, 'Récompense non trouvée')
         return redirect('home')
-    action = Action(name=reward.name, type=None, date=datetime.now(), coins_number= -reward.coins_number, sub_manager=reward.sub_manager)
+    action = Action(name=reward.name, type=None, date=timezone.now(), coins_number= -reward.coins_number, sub_manager=reward.sub_manager)
     action.save()
     return redirect('submanager_page', submanager_id=reward.sub_manager.id)
 
@@ -554,12 +555,18 @@ def weekly(request):
             'objectif_weekly': objectif_weekly,
             'percentage': percentage
         }
-
-    all_data = {
-        'total_coins': sum(data['total_coins'] for data in data_by_submanager.values()),
-        'objectif_weekly': sum(data['objectif_weekly'] for data in data_by_submanager.values()),
-        'percentage': sum(data['percentage'] for data in data_by_submanager.values()) / len(data_by_submanager)
-    }
+    if not any(data_by_submanager.values()):
+        all_data = {
+            'total_coins': 0,
+            'objectif_weekly': 0,
+            'percentage': 0
+        }
+    else:
+        all_data = {
+            'total_coins': sum(data['total_coins'] for data in data_by_submanager.values()),
+            'objectif_weekly': sum(data['objectif_weekly'] for data in data_by_submanager.values()),
+            'percentage': sum(data['percentage'] for data in data_by_submanager.values()) / len(data_by_submanager)
+        }
 
     return render(request, 'tasks/weekly.html', {'data_by_submanager': data_by_submanager, 'all_data': all_data})
 
@@ -603,11 +610,18 @@ def monthly(request):
             'percentage': percentage
         }
 
-    all_data = {
-        'total_coins': sum(data['total_coins'] for data in data_by_submanager.values()),
-        'objectif_monthly': sum(data['objectif_monthly'] for data in data_by_submanager.values()),
-        'percentage': sum(data['percentage'] for data in data_by_submanager.values()) / len(data_by_submanager)
-    }
+    if not any(data_by_submanager.values()):
+        all_data = {
+            'total_coins': 0,
+            'objectif_weekly': 0,
+            'percentage': 0
+        }
+    else:
+        all_data = {
+            'total_coins': sum(data['total_coins'] for data in data_by_submanager.values()),
+            'objectif_monthly': sum(data['objectif_monthly'] for data in data_by_submanager.values()),
+            'percentage': sum(data['percentage'] for data in data_by_submanager.values()) / len(data_by_submanager)
+        }
 
     return render(request, 'tasks/monthly.html', {'data_by_submanager': data_by_submanager, 'all_data': all_data})
 
