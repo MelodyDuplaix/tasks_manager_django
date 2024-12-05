@@ -233,14 +233,14 @@ def history(request, submanager_id):
 
     if date_start or date_end:
         if date_start and not date_end:
-            start_date = datetime.strptime(date_start, "%Y-%m-%dT%H:%M").date()
+            start_date = datetime.strptime(date_start, "%Y-%m-%d").date()
             actions = actions.filter(date__date=start_date)
         elif date_end and not date_start:
-            end_date = datetime.strptime(date_end, "%Y-%m-%dT%H:%M").date()
+            end_date = datetime.strptime(date_end, "%Y-%m-%d").date()
             actions = actions.filter(date__date=end_date)
         else:
-            start_datetime = make_aware(datetime.strptime(date_start, "%Y-%m-%dT%H:%M"))
-            end_datetime = make_aware(datetime.strptime(date_end, "%Y-%m-%dT%H:%M")) + timedelta(days=1)
+            start_datetime = make_aware(datetime.strptime(date_start, "%Y-%m-%d"))
+            end_datetime = make_aware(datetime.strptime(date_end, "%Y-%m-%d")) + timedelta(days=1)
             actions = actions.filter(date__gte=start_datetime, date__lt=end_datetime)
 
     reverse_order = current_order.lstrip('-')
