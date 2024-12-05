@@ -251,6 +251,9 @@ def history(request, submanager_id):
 
     actions = actions.order_by(current_order)
 
+    total_coins = sum(action.coins_number for action in actions)
+    print("total de pièce : ",total_coins)
+
     return render(request, 'tasks/history.html', {
         'submanager': submanager,
         'history': actions,
@@ -261,8 +264,9 @@ def history(request, submanager_id):
             'reverse_order_name': 'name' if current_order == '-name' else '-name',
             'reverse_order_date': 'date' if current_order == '-date' else '-date',
             'reverse_order_type': 'type' if current_order == '-type' else '-type',
-            'reverse_order_coins_number': 'coins_number' if current_order == '-coins_number' else '-coins_number',
+            'reverse_order_coins_number': 'coins_number' if current_order == '-coins_number' else '-coins_number'
         },
+            'total_coins': total_coins
     })
 
 def add_task(request, submanager_id):
