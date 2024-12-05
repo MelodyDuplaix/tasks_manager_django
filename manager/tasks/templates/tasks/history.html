@@ -64,6 +64,7 @@
           <td>{{ action.date|date:"d/m/Y H:i" }}</td>
           <td>{{ action.type|default:"" }}</td>
           <td>{{ action.coins_number }}</td>
+          <td><a href="{% url 'confirm_delete_action' action.sub_manager.id action.id%}" class="btn btn-outline-danger btn-sm"> Annuler</a></td>
         </tr>
         {% empty %}
         <tr>

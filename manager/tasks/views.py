@@ -806,3 +806,42 @@ def desactivate_submanager(request, submanager_id):
     submanager.active = False
     submanager.save()
     return redirect('home')
+
+def delete_action(request, submanager_id, action_id):
+    """ 
+    Delete the action with the given ID from the database.
+
+    Args:
+        request: The HTTP request object.
+        action_id: The ID of the Action to be deleted.
+
+    Returns:
+        HttpResponse: A redirect to the sub-manager options page.
+    """
+    try:
+        action = Action.objects.get(id=action_id)
+    except:
+        messages.error(request, 'Action non trouvée')
+        return redirect('history', submanager_id=submanager_id)
+    action.delete()
+    return redirect('history', submanager_id=submanager_id)
+
+def confirm_delete_action(request, submanager_id, action_id):
+    """
+    Confirm the deletion of the action with the given ID from the sub-manager with the given ID.
+
+    Args:
+        request: The HTTP request object.
+        submanager_id: The ID of the SubManager the action belongs to.
+        action_id: The ID of the Action to be deleted.
+
+    Returns:
+        HttpResponse: A redirect to the sub-manager options page.
+    """
+    try:
+        submanager = SubManager.objects.get(id=submanager_id)
+        action = Action.objects.get(id=action_id)
+    except:
+        messages.error(request, 'Sous manager ou action non trouvée')
+        return redirect('home')
+    return render(request, 'tasks/confirm_delete_action.html', {'submanager': submanager, 'action': action})
