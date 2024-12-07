@@ -88,7 +88,7 @@ def submanager_page(request, submanager_id):
     except:
         return redirect('home')
     daily_objectif = submanager.daily_objectif
-    historique = Action.objects.all().filter(sub_manager=submanager, date__date=date.today(), coins_number__gt=0)
+    historique = Action.objects.filter(sub_manager=submanager, date__date=timezone.now().date(), coins_number__gt=0)
     total_coins_today = sum(action.coins_number for action in historique)
     daily_objectif_percentage = (total_coins_today / daily_objectif) * 100
     tasks = Task.objects.all().filter(type__sub_manager=submanager)
@@ -97,6 +97,7 @@ def submanager_page(request, submanager_id):
     historique_total = Action.objects.all().filter(sub_manager=submanager)
     total_coins = sum(historique_total.values_list('coins_number', flat=True))
     ponctuals = PonctualTask.objects.all().filter(sub_manager=submanager)
+    print(f"daily_objectif : {daily_objectif}", f"total_coins_today : {total_coins_today}", f"daily_objectif_percentage : {daily_objectif_percentage}")
     return render(request, 'tasks/submanager_page.html', 
                   {'submanager': submanager, 
                    'daily_objectif_percentage': daily_objectif_percentage, 
