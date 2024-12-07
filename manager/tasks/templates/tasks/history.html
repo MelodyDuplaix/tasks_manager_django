@@ -14,21 +14,52 @@
     <h1 class="text-center mt-5">Historique des tâches pour {{ submanager.name }}</h1>
     
     <form method="get" class="mt-4">
-      <div class="row">
-        <div class="col-md-6">
-          <label for="date_start" class="form-label">Date de début :</label>
-          <input type="date" name="date_start" value="{{ filters.date_start }}" class="form-control">
+      <div class="d-flex justify-content-center container text-center">
+        <div class="row">
+          <div class="form-check form-switch col-auto mt-4">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Date unique</label>
+            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" onchange="
+              const date_start = document.getElementById('date_start');
+              const date_end = document.getElementById('date_end');
+              if (this.checked) {
+                date_start.type = 'date';
+                date_end.type = 'hidden';
+                date_start.name = 'date';
+                date_end.value = '';
+              } else {
+                date_start.type = 'date';
+                date_end.type = 'date';
+                date_start.name = 'date_start';
+              }
+              const label_date_end = document.querySelector(`label[for='date_end']`);
+              const label_date_start = document.querySelector(`label[for='date_start']`);
+              if (this.checked) {
+                date_start.type = 'date';
+                date_end.type = 'hidden';
+                label_date_end.style.display = 'none';
+                label_date_start.textContent = 'Date';
+              } else {
+                date_start.type = 'date';
+                date_end.type = 'date';
+                label_date_end.style.display = 'block';
+                label_date_start.textContent = 'Date de début';
+              }
+            ">
+          </div>  
+          <div class="col-auto">
+            <label for="date_start" class="form-label">Date de début</label>
+            <input type="date" name="date_start" value="{{ filters.date_start }}" class="form-control" id="date_start">
+          </div>
+          <div class="col-auto">
+            <label for="date_end" class="form-label">Date de fin</label>
+            <input type="date" name="date_end" value="{{ filters.date_end }}" class="form-control" id="date_end">
+          </div>
         </div>
 
-        <div class="col-md-6">
-          <label for="date_end" class="form-label">Date de fin :</label>
-          <input type="date" name="date_end" value="{{ filters.date_end }}" class="form-control">
+        <div class="text-end mt-3 ms-5">
+          <button type="submit" class="btn btn-primary">Filtrer</button>
+          <a href="{% url 'history' submanager.id %}" class="btn btn-secondary">Réinitialiser</a>
         </div>
-      </div>
-
-      <div class="text-end mt-3">
-        <button type="submit" class="btn btn-primary">Filtrer</button>
-        <a href="{% url 'history' submanager.id %}" class="btn btn-secondary">Réinitialiser</a>
       </div>
     </form>
 
