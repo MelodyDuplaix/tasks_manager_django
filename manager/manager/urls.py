@@ -38,6 +38,7 @@ urlpatterns = [
     path('<int:submanager_id>/confirm-delete-reward/<int:reward_id>/', views.confirm_delete_reward, name='confirm_delete_reward'),
     path('weekly/', views.weekly, name='weekly'),
     path('monthly/', views.monthly, name='monthly'),
+    path('yearly/', views.yearly, name='yearly'),
     path('<int:submanager_id>/add-type/', views.add_type, name='add_type'),
     path('<int:submanager_id>/delete-type/<int:type_id>/', views.delete_type, name='delete_type'),
     path('<int:submanager_id>/update-type/<int:type_id>/', views.update_type, name='update_type'),

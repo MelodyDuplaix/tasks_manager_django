@@ -650,6 +650,61 @@ def monthly(request):
 
     return render(request, 'tasks/monthly.html', {'data_by_submanager': data_by_submanager, 'all_data': all_data})
 
+def yearly(request):
+    """
+    Display a page with the total of coins for each sub-manager for the current year.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered yearly page with the data for each sub-manager.
+    """
+    current_year_start = date.today().replace(month=1, day=1)
+    current_year_end = current_year_start + timedelta(days=365)
+    submanagers = SubManager.objects.filter(active=True)
+
+    data_by_submanager = {}
+    for submanager in submanagers:
+        actions = Action.objects.filter(
+            sub_manager=submanager,
+            date__date__range=(current_year_start, current_year_end),
+            coins_number__gt=0
+        )
+        if not actions:
+            data_by_submanager[submanager] = {
+                'total_coins': 0,
+                'objectif_yearly': submanager.yearly_objectif,
+                'percentage': 0
+            }            
+            continue
+        total_coins = sum(action.coins_number for action in actions)
+
+        objectif_yearly = submanager.yearly_objectif    
+
+        percentage = (total_coins / objectif_yearly * 100) if objectif_yearly else 0
+
+        data_by_submanager[submanager] = {
+            'total_coins': total_coins,
+            'objectif_yearly': objectif_yearly,
+            'percentage': percentage
+        }
+
+    if not any(data_by_submanager.values()):
+        all_data = {
+            'total_coins': 0,
+            'objectif_yearly': 0,
+            'percentage': 0
+        }
+    else:
+        all_data = {
+            'total_coins': sum(data['total_coins'] for data in data_by_submanager.values()),
+            'objectif_yearly': sum(data['objectif_yearly'] for data in data_by_submanager.values()),
+            'percentage': sum(data['percentage'] for data in data_by_submanager.values()) / len(data_by_submanager)
+        }
+
+    return render(request, 'tasks/yearly.html', {'data_by_submanager': data_by_submanager, 'all_data': all_data})
+
 def add_type(request, submanager_id):
     """
     Add a new type of task to the sub-manager with the given ID.
