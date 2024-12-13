@@ -1,13 +1,48 @@
 from django.shortcuts import render, get_object_or_404 # type: ignore
 from django.http import HttpResponse # type: ignore
-from django.shortcuts import redirect # type: ignore
+from django.shortcuts import redirect, render # type: ignore
 from django.contrib import messages # type: ignore
 from django.utils.timezone import make_aware # type: ignore
+from django.contrib.auth.forms import UserCreationForm # type: ignore
 from django.utils import timezone #type: ignore
+from django.contrib.auth.decorators import login_required # type: ignore
 from tasks.models import SubManager, Reward, Action, TaskType, Task, PonctualTask
 from tasks.forms import SubManagerForm, TaskForm, RewardForm, TypeForm, PonctualTaskForm
 from datetime import datetime, timedelta, date
 
+def signup(request):
+    """
+    Display the signup page.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered signup page.
+    """
+    
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # Redirige vers la page de connexion après l'inscription
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/signup.html', {'form': form})
+
+def profile(request):
+    """
+    Redirect to the home page.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered home page.
+    """
+    return redirect('home')
+
+@login_required
 def options(request):
     """
     Display the main page which lists all sub-managers and others sub-pages.
@@ -18,18 +53,26 @@ def options(request):
     Returns:
         HttpResponse: The rendered options page with a list of sub-managers.
     """
-    submanagers = SubManager.objects.all()
-    history = Action.objects.filter(coins_number__gt=0, date__date=date.today())
-    total_coins = sum( action.coins_number for action in history if action.sub_manager.active)
-    daily_objectif = sum( submanager.daily_objectif for submanager in submanagers if submanager.active)
+    # Filtrer les SubManager pour l'utilisateur connecté
+    submanagers = SubManager.objects.filter(user=request.user)
+    
+    # Filtrer les actions pour l'utilisateur connecté
+    history = Action.objects.filter(coins_number__gt=0, date__date=date.today(), sub_manager__user=request.user)
+    
+    # Calculer le total des coins et objectifs
+    total_coins = sum(action.coins_number for action in history if action.sub_manager.active)
+    daily_objectif = sum(submanager.daily_objectif for submanager in submanagers if submanager.active)
     percentage = (total_coins / daily_objectif * 100) if daily_objectif else 0
+    
     return render(request, 'tasks/home.html', 
                   {'submanagers': submanagers, 
                    'total_coins': total_coins, 
                    'daily_objectif': daily_objectif, 
-                   'percentage': percentage})
+                   'percentage': percentage,
+                   'user': request.user})
 
 
+@login_required
 def add_submanager(request):
     """
     Add a new sub-manager to the database.
@@ -44,15 +87,21 @@ def add_submanager(request):
     if request.method == 'POST':
         form = SubManagerForm(request.POST)
         if form.is_valid():
-            form.save()
+            # Ajouter le sous-manager avec l'utilisateur connecté
+            submanager = form.save(commit=False)
+            submanager.user = request.user
+            submanager.save()
 
             return redirect('home')
     else:
         form = SubManagerForm()
+
+    inactive_submanagers = SubManager.objects.filter(active=False, user=request.user)
     
-    inactive_submanagers = SubManager.objects.filter(active=False)
     return render(request, 'tasks/add_sub_manager.html', {'form': form, 'inactive_submanagers': inactive_submanagers})
 
+
+@login_required
 def delete_submanager(request, submanager_id):
     """
     Delete the sub-manager with the given ID from the database.
@@ -71,18 +120,8 @@ def delete_submanager(request, submanager_id):
         messages.error(request, 'Sous manager non trouvé')
     return redirect('home')
 
-
+@login_required
 def submanager_page(request, submanager_id):
-    """
-    Display the page for a specific sub-manager with its name and details.
-
-    Args:
-        request: The HTTP request object.
-        submanager_id: The ID of the SubManager to be displayed.
-
-    Returns:
-        HttpResponse: The rendered sub-manager page with its name and details.
-    """
     try:
         submanager = SubManager.objects.get(id=submanager_id)
     except:
@@ -97,7 +136,6 @@ def submanager_page(request, submanager_id):
     historique_total = Action.objects.all().filter(sub_manager=submanager)
     total_coins = sum(historique_total.values_list('coins_number', flat=True))
     ponctuals = PonctualTask.objects.all().filter(sub_manager=submanager)
-    print(f"daily_objectif : {daily_objectif}", f"total_coins_today : {total_coins_today}", f"daily_objectif_percentage : {daily_objectif_percentage}")
     return render(request, 'tasks/submanager_page.html', 
                   {'submanager': submanager, 
                    'daily_objectif_percentage': daily_objectif_percentage, 
@@ -107,8 +145,10 @@ def submanager_page(request, submanager_id):
                    'rewards': rewards,
                    'types': types,
                    'total_coins': total_coins,
-                   'ponctuals': ponctuals}) 
+                   'ponctuals': ponctuals})
 
+
+@login_required
 def task_action(request, task_id):
     """
     Register the action for the task with the given ID.
@@ -129,6 +169,7 @@ def task_action(request, task_id):
     action.save()
     return redirect('submanager_page', submanager_id=task.type.sub_manager.id)
 
+@login_required
 def ponctual_task_action(request, task_id):
     """
     Register the action for the task with the given ID.
@@ -151,6 +192,7 @@ def ponctual_task_action(request, task_id):
     task.delete()
     return redirect('submanager_page', submanager_id=submanager.id)
 
+@login_required
 def reward_action(request, reward_id):
     """
     Register the action for the reward with the given ID.
@@ -171,6 +213,7 @@ def reward_action(request, reward_id):
     action.save()
     return redirect('submanager_page', submanager_id=reward.sub_manager.id)
 
+@login_required
 def sub_manager_option(request, submanager_id):
     """
     Display the page for managing a specific sub-manager with its options.
@@ -210,6 +253,7 @@ def sub_manager_option(request, submanager_id):
         'tasks_type': tasks_type
     })
 
+@login_required
 def history(request, submanager_id):
     """
     Display the page with the history of actions for the given sub-manager.
@@ -273,6 +317,7 @@ def history(request, submanager_id):
             'total_coins': total_coins
     })
 
+@login_required
 def add_task(request, submanager_id):
     """
     Add a new task to the database for the given sub-manager.
@@ -303,7 +348,7 @@ def add_task(request, submanager_id):
 
     return render(request, 'tasks/add_task.html', {'form': form, 'submanager': submanager})   
 
-
+@login_required
 def add_reward(request, submanager_id):
     """
     Add a new reward to the database for the given sub-manager.
@@ -331,6 +376,7 @@ def add_reward(request, submanager_id):
         form = RewardForm()
     return render(request, 'tasks/add_reward.html', {'form': form, 'submanager': submanager})
 
+@login_required
 def update_task(request, submanager_id, task_id):
     """
     Update the details of an existing task. 
@@ -367,6 +413,7 @@ def update_task(request, submanager_id, task_id):
         form.fields['type'].queryset = TaskType.objects.filter(sub_manager=submanager)
     return render(request, 'tasks/update_task.html', {'form': form, 'task': task, 'submanager': submanager})
 
+@login_required
 def update_ponctual_task(request, submanager_id, task_id):
     """
     Update the details of an existing ponctual task. 
@@ -394,6 +441,7 @@ def update_ponctual_task(request, submanager_id, task_id):
         form = PonctualTaskForm(instance=task)
     return render(request, 'tasks/update_task.html', {'form': form, 'task': task, 'submanager': submanager})
 
+@login_required
 def update_reward(request, submanager_id, reward_id):
     """
     Update the details of an existing reward. 
@@ -421,6 +469,7 @@ def update_reward(request, submanager_id, reward_id):
         form = RewardForm(instance=reward)
     return render(request, 'tasks/update_reward.html', {'form': form, 'reward': reward, 'submanager': submanager})
 
+@login_required
 def confirm_delete_task(request, submanager_id, task_id):
     """
     Display a confirmation page for deleting a task.
@@ -441,6 +490,7 @@ def confirm_delete_task(request, submanager_id, task_id):
     submanager = task.type.sub_manager
     return render(request, 'tasks/confirm_delete_task.html', {'task': task, 'submanager': submanager})
 
+@login_required
 def confirm_delete_ponctual_task(request, submanager_id, task_id):
     """
     Display a confirmation page for deleting a poncutal task.
@@ -461,6 +511,7 @@ def confirm_delete_ponctual_task(request, submanager_id, task_id):
     submanager = task.sub_manager
     return render(request, 'tasks/confirm_delete_ponctual_task.html', {'task': task, 'submanager': submanager})
 
+@login_required
 def confirm_delete_reward(request, submanager_id, reward_id):
     """
     Display a confirmation page for deleting a reward.
@@ -481,6 +532,7 @@ def confirm_delete_reward(request, submanager_id, reward_id):
     submanager = reward.sub_manager
     return render(request, 'tasks/confirm_delete_reward.html', {'reward': reward, 'submanager': submanager})
 
+@login_required
 def delete_task(request, submanager_id, task_id):
     """
     Delete the task with the given ID from the database.
@@ -501,6 +553,7 @@ def delete_task(request, submanager_id, task_id):
     task.delete()
     return redirect('sub_manager_options', submanager_id=submanager_id)
 
+@login_required
 def delete_ponctual_task(request, submanager_id, task_id):
     """
     Delete the ponctual task with the given ID from the database.
@@ -521,6 +574,7 @@ def delete_ponctual_task(request, submanager_id, task_id):
     task.delete()
     return redirect('submanager_page', submanager_id=submanager_id)
 
+@login_required
 def delete_reward(request, submanager_id, reward_id):
     """
     Delete the reward with the given ID from the database.
@@ -541,6 +595,7 @@ def delete_reward(request, submanager_id, reward_id):
     reward.delete()
     return redirect('sub_manager_options', submanager_id=submanager_id)
 
+@login_required
 def weekly(request):
     """
     Display a page with the total of coins for each sub-manager for the current week.
@@ -553,7 +608,7 @@ def weekly(request):
     """
     current_week_start = date.today() - timedelta(days=date.today().weekday())
     current_week_end = current_week_start + timedelta(days=6)
-    submanagers = SubManager.objects.filter(active=True)
+    submanagers = SubManager.objects.filter(user=request.user, active=True)
 
     data_by_submanager = {}
     for submanager in submanagers:
@@ -595,6 +650,7 @@ def weekly(request):
 
     return render(request, 'tasks/weekly.html', {'data_by_submanager': data_by_submanager, 'all_data': all_data})
 
+@login_required
 def monthly(request):
     """
     Display a page with the total of coins for each sub-manager for the current month.
@@ -607,7 +663,7 @@ def monthly(request):
     """
     current_month_start = date.today().replace(day=1)
     current_month_end = current_month_start + timedelta(days=31)
-    submanagers = SubManager.objects.filter(active=True)
+    submanagers = SubManager.objects.filter(active=True, user=request.user)
 
     data_by_submanager = {}
     for submanager in submanagers:
@@ -650,6 +706,7 @@ def monthly(request):
 
     return render(request, 'tasks/monthly.html', {'data_by_submanager': data_by_submanager, 'all_data': all_data})
 
+@login_required
 def yearly(request):
     """
     Display a page with the total of coins for each sub-manager for the current year.
@@ -662,7 +719,7 @@ def yearly(request):
     """
     current_year_start = date.today().replace(month=1, day=1)
     current_year_end = current_year_start + timedelta(days=365)
-    submanagers = SubManager.objects.filter(active=True)
+    submanagers = SubManager.objects.filter(active=True, user=request.user)
 
     data_by_submanager = {}
     for submanager in submanagers:
@@ -705,6 +762,7 @@ def yearly(request):
 
     return render(request, 'tasks/yearly.html', {'data_by_submanager': data_by_submanager, 'all_data': all_data})
 
+@login_required
 def add_type(request, submanager_id):
     """
     Add a new type of task to the sub-manager with the given ID.
@@ -732,6 +790,7 @@ def add_type(request, submanager_id):
         form = TypeForm()
     return render(request, 'tasks/add_type.html', {'form': form, 'submanager': submanager})
 
+@login_required
 def update_type(request, submanager_id, type_id):
     """
     Update the type of task with the given ID in the sub-manager with the given ID.
@@ -762,6 +821,7 @@ def update_type(request, submanager_id, type_id):
         form = TypeForm(instance=type)
     return render(request, 'tasks/update_type.html', {'form': form, 'submanager': submanager, 'type': type})
 
+@login_required
 def delete_type(request, submanager_id, type_id):
     """
     Delete the type of task with the given ID from the sub-manager with the given ID.
@@ -782,6 +842,7 @@ def delete_type(request, submanager_id, type_id):
     type.delete()
     return redirect('sub_manager_options', submanager_id=submanager_id)
 
+@login_required
 def confirm_delete_type(request, submanager_id, type_id):
     """
     Confirm the deletion of the type of task with the given ID from the sub-manager with the given ID.
@@ -802,7 +863,7 @@ def confirm_delete_type(request, submanager_id, type_id):
     type = TaskType.objects.get(id=type_id)
     return render(request, 'tasks/confirm_delete_type.html', {'submanager': submanager, 'type': type})
 
-
+@login_required
 def add_ponctual_task(request, submanager_id):
     """
     Add a new ponctual task to the sub-manager with the given ID.
@@ -830,6 +891,7 @@ def add_ponctual_task(request, submanager_id):
         form = PonctualTaskForm()
     return render(request, 'tasks/add_ponctual_task.html', {'form': form, 'submanager': submanager})
 
+@login_required
 def activate_submanager(request, submanager_id):
     """
     Activate the sub-manager with the given ID.
@@ -850,6 +912,7 @@ def activate_submanager(request, submanager_id):
     submanager.save()
     return redirect('submanager_page', submanager_id=submanager_id)
 
+@login_required
 def desactivate_submanager(request, submanager_id):
     """
     Deactivate the sub-manager with the given ID.
@@ -870,6 +933,7 @@ def desactivate_submanager(request, submanager_id):
     submanager.save()
     return redirect('home')
 
+@login_required
 def delete_action(request, submanager_id, action_id):
     """ 
     Delete the action with the given ID from the database.
@@ -889,6 +953,7 @@ def delete_action(request, submanager_id, action_id):
     action.delete()
     return redirect('history', submanager_id=submanager_id)
 
+@login_required
 def confirm_delete_action(request, submanager_id, action_id):
     """
     Confirm the deletion of the action with the given ID from the sub-manager with the given ID.

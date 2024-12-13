@@ -4,7 +4,7 @@ from tasks.models import SubManager, Task, Reward, TaskType, PonctualTask
 class SubManagerForm(forms.ModelForm):
     class Meta:
         model = SubManager
-        exclude = ['active']
+        exclude = ['active', 'user']
 
 class TaskForm(forms.ModelForm):
     class Meta:

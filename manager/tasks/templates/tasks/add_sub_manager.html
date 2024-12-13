@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-  <div class="d-flex justify-content-center  vh-100">
+  <div class="d-flex justify-content-center vh-100">
     <div class="container" style="max-width: 1000px; margin-left: auto; margin-right: auto;">
       <h1 class="text-center mt-5">Ajouter un sous manager</h1>
       <form action="" method="post" class="justify-content-center mt-4">
@@ -17,10 +17,10 @@
           </div>
       </form>
       <div class="text-center mt-5">
-      <h1>Réactiver un sous manager</h1>
-      {% for submanager in inactive_submanagers %}
-        <a href="{% url 'activate_submanager' submanager.id %}" class="btn btn-outline-secondary">{{ submanager.name }}</a>
-      {% endfor %}
+        <h1>Réactiver un sous manager</h1>
+        {% for submanager in inactive_submanagers %}
+          <a href="{% url 'activate_submanager' submanager.id %}" class="btn btn-outline-secondary">{{ submanager.name }}</a>
+        {% endfor %}
       </div>
     </div>
   </div>

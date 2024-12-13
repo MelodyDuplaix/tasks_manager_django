@@ -1,6 +1,7 @@
 from django.db import models # type: ignore
 from django.core.validators import MaxValueValidator, MinValueValidator # type: ignore
 from django.utils import timezone # type: ignore
+from django.contrib.auth.models import User
 
 class SubManager(models.Model):
     name = models.fields.CharField(max_length=500)
@@ -9,6 +10,7 @@ class SubManager(models.Model):
     monthly_objectif = models.fields.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(2000)], default=200)
     yearly_objectif = models.fields.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(100000)], default=1000)
     active = models.fields.BooleanField(default=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.name}"
