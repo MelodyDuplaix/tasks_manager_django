@@ -4,6 +4,9 @@
 
 Le Gestionnaire de Tâches est une application Django conçue pour aider à gérer les tâches, les récompenses et les objectifs. Il permet de suivre les progrès quotidiens, hebdomadaires et mensuels, et de motiver l'execution des tâches par l'obtention de récompenses.
 
+L'application est visitable à cette adresse : https://melody37.pythonanywhere.com/ avec un système d'authentification.
+Vous pouvez donc créer un compte pour tester l'application.
+
 ## Fonctionnalités
 
 - **Voir et gérer les tâches et récompenses** : Afficher les tâches et les récompenses disponibles, cliquer pour exécuter une tâche et suivre l'objectif quotidien.
@@ -88,6 +91,8 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 - [x] Ajouter un bouton annuler action
 - [x] Ajout du nombre total de pièce des lignes à la fin du tableau d'historique
 - [x] Ajout d'un système d'authentification
+- [x] Déployer l'application
+- [ ] Améliorer l'authentification (oubli de mot de passe, etc)
 - [ ] Avoir des pièces par sous types avec une possibilité d'avoir un nombre de pièce différente pour valider la journée (par exemple, il faut 10 pièces, dont 2 en sous type 1, 3 en sous type 2 et 2 en sous type 3) (demander à Antoine plus de précisions sur son idée)
 - [ ] avoir la possibilité de timers pour mesurer le temps sur les taches (bouton finir la journée, et enregistrement des heures quand on clique sur un bouton) 
 - [ ] ajouter des stats sur les temps que l'on passe sur les taches
