@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="d-flex justify-content-center">
-  <div class="container" style="max-width: 1000px;">
+  <div class="container" style="max-width: 2000px;">
     <div class="row justify-content-center">
       <div class="col-4">
         <h2 class="text-center mb-4 mt-3">Se connecter</h2>
@@ -15,6 +15,7 @@
           {{ form.as_p }}
           <a href="{% url 'signup' %}" class="btn btn-outline-primary mx-2">S'inscrire</a>
           <button type="submit" class="btn btn-primary mx-2">Se connecter</button>
+          <a href="{% url 'password_reset' %}" class="btn btn-outline-danger mx-2">Oubli de mot de passe</a>
         </form>
       </div>
     </div>

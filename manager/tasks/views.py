@@ -7,8 +7,24 @@ from django.contrib.auth.forms import UserCreationForm # type: ignore
 from django.utils import timezone #type: ignore
 from django.contrib.auth.decorators import login_required # type: ignore
 from tasks.models import SubManager, Reward, Action, TaskType, Task, PonctualTask
-from tasks.forms import SubManagerForm, TaskForm, RewardForm, TypeForm, PonctualTaskForm
+from tasks.forms import SubManagerForm, TaskForm, RewardForm, TypeForm, PonctualTaskForm, PasswordResetForm, CustomUserCreationForm
 from datetime import datetime, timedelta, date
+from django.core.mail import send_mail # type: ignore
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
+
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'registration/password_reset.html'
+    email_template_name = 'registration/password_reset_email.html'
+    subject_template_name = 'registration/password_reset_subject.txt'
+    success_message = "Nous vous avons envoyé par e-mail des instructions pour définir votre mot de passe, " \
+                      "si un compte existe avec l'email que vous avez saisi. Vous devriez les recevoir sous peu." \
+                      " Si vous ne recevez pas d'e-mail, " \
+                      "assurez-vous d'avoir saisi l'adresse avec laquelle vous vous êtes inscrit et vérifiez votre dossier spam."
+    success_url = reverse_lazy('login')
+
+
 
 def signup(request):
     """
@@ -22,12 +38,12 @@ def signup(request):
     """
     
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('login')  # Redirige vers la page de connexion après l'inscription
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
 
 def profile(request):
@@ -41,6 +57,34 @@ def profile(request):
         HttpResponse: The rendered home page.
     """
     return redirect('home')
+
+def password_reset(request):
+    """
+    Display the password reset page.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered password reset page.
+    """
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            send_mail(
+                "Réinitialisation de mot de passe",
+                f"Pour réinitiliser votre mot de passe, veuillez accéder à cette page :",
+                from_email="melo.surseine@gmail.com",
+                fail_silently=False,
+                recipient_list=[email],
+            )
+            messages.success(request, 'Un email vous a ete envoye')
+            return redirect('login')
+    else:
+        form = PasswordResetForm()
+
+    return render(request, 'registration/password_reset.html', {'form': form})
 
 @login_required
 def options(request):
