@@ -1,9 +1,6 @@
-from django.shortcuts import render, get_object_or_404 # type: ignore
-from django.http import HttpResponse # type: ignore
-from django.shortcuts import redirect, render # type: ignore
+from django.shortcuts import render, get_object_or_404, redirect # type: ignore
 from django.contrib import messages # type: ignore
 from django.utils.timezone import make_aware # type: ignore
-from django.contrib.auth.forms import UserCreationForm # type: ignore
 from django.utils import timezone #type: ignore
 from django.contrib.auth.decorators import login_required # type: ignore
 from tasks.models import SubManager, Reward, Action, TaskType, Task, PonctualTask
@@ -13,6 +10,7 @@ from django.core.mail import send_mail # type: ignore
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Sum
 
 class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     template_name = 'registration/password_reset.html'
@@ -167,28 +165,28 @@ def delete_submanager(request, submanager_id):
 @login_required
 def submanager_page(request, submanager_id):
     try:
-        submanager = SubManager.objects.get(id=submanager_id)
-    except:
+        submanager = SubManager.objects.select_related('user').get(id=submanager_id)
+    except SubManager.DoesNotExist:
         return redirect('home')
+
     daily_objectif = submanager.daily_objectif
-    historique = Action.objects.filter(sub_manager=submanager, date__date=timezone.now().date(), coins_number__gt=0)
-    total_coins_today = sum(action.coins_number for action in historique)
-    daily_objectif_percentage = (total_coins_today / daily_objectif) * 100
-    tasks = Task.objects.all().filter(type__sub_manager=submanager)
-    rewards = Reward.objects.all().filter(sub_manager=submanager)
-    types = TaskType.objects.all().filter(sub_manager=submanager)
-    historique_total = Action.objects.all().filter(sub_manager=submanager)
-    total_coins = sum(historique_total.values_list('coins_number', flat=True))
-    ponctuals = PonctualTask.objects.all().filter(sub_manager=submanager)
+    historique = Action.objects.filter(sub_manager=submanager, date__date=timezone.now().date()).values_list('coins_number', flat=True)
+    daily_objectif_percentage = (sum(historique) / daily_objectif) * 100 if daily_objectif else 0
+    tasks = Task.objects.filter(type__sub_manager=submanager)
+    rewards = Reward.objects.filter(sub_manager=submanager)
+    types = TaskType.objects.filter(sub_manager=submanager)
+    historique_total = Action.objects.filter(sub_manager=submanager).values_list('coins_number', flat=True)
+    ponctuals = PonctualTask.objects.filter(sub_manager=submanager)
+
     return render(request, 'tasks/submanager_page.html', 
                   {'submanager': submanager, 
                    'daily_objectif_percentage': daily_objectif_percentage, 
                    'daily_objectif': daily_objectif,
-                   'total_coins_today': total_coins_today,
+                   'total_coins_today': sum(historique),
                    'tasks': tasks,
                    'rewards': rewards,
                    'types': types,
-                   'total_coins': total_coins,
+                   'total_coins': sum(historique_total),
                    'ponctuals': ponctuals})
 
 
@@ -309,56 +307,43 @@ def history(request, submanager_id):
     Returns:
         HttpResponse: The rendered history page with the list of actions.
     """
-    try:
-        submanager = get_object_or_404(SubManager, id=submanager_id)
-    except:
-        messages.error(request, 'Sous manager non trouvée')
-        return redirect('home')
+    submanager = get_object_or_404(SubManager, id=submanager_id)
     actions = Action.objects.filter(sub_manager=submanager)
 
-    date = request.GET.get('date', '')
-    date_start = request.GET.get('date_start', '') 
-    date_end = request.GET.get('date_end', '') 
+    date = request.GET.get('date')
+    date_start = request.GET.get('date_start')
+    date_end = request.GET.get('date_end')
     current_order = request.GET.get('order_by', '-date')
 
     if date:
-        date = datetime.strptime(date, "%Y-%m-%d").date()
-        actions = actions.filter(date__date=date)
-    elif date_end and date_start:
-        start_datetime = make_aware(datetime.strptime(date_start, "%Y-%m-%d"))
-        end_datetime = make_aware(datetime.strptime(date_end, "%Y-%m-%d")) + timedelta(days=1)
-        actions = actions.filter(date__range=(start_datetime, end_datetime))
-    elif date_start:
-        start_datetime = make_aware(datetime.strptime(date_start, "%Y-%m-%d"))
-        actions = actions.filter(date__gte=start_datetime)
-    elif date_end:
-        end_datetime = make_aware(datetime.strptime(date_end, "%Y-%m-%d")) + timedelta(days=1)
-        actions = actions.filter(date__lt=end_datetime)
-
-    reverse_order = current_order.lstrip('-')
-    if current_order.startswith('-'):
-        reverse_order = reverse_order
+        actions = actions.filter(date__date=datetime.strptime(date, "%Y-%m-%d").date())
     else:
-        reverse_order = f"-{reverse_order}"
+        if date_start:
+            start_datetime = make_aware(datetime.strptime(date_start, "%Y-%m-%d"))
+            actions = actions.filter(date__gte=start_datetime)
+        if date_end:
+            end_datetime = make_aware(datetime.strptime(date_end, "%Y-%m-%d")) + timedelta(days=1)
+            actions = actions.filter(date__lt=end_datetime)
 
     actions = actions.order_by(current_order)
 
-    total_coins = sum(action.coins_number for action in actions)
-    print("total de pièce : ",total_coins)
+    total_coins = actions.aggregate(total=Sum('coins_number'))['total'] or 0
+
+    filters = {
+        'date_start': date_start or '',
+        'date_end': date_end or '',
+        'order_by': current_order,
+        'reverse_order_name': 'name' if current_order == '-name' else '-name',
+        'reverse_order_date': 'date' if current_order == '-date' else '-date',
+        'reverse_order_type': 'type' if current_order == '-type' else '-type',
+        'reverse_order_coins_number': 'coins_number' if current_order == '-coins_number' else '-coins_number',
+    }
 
     return render(request, 'tasks/history.html', {
         'submanager': submanager,
         'history': actions,
-        'filters': {
-            'date_start': date_start,
-            'date_end': date_end,
-            'order_by': current_order,
-            'reverse_order_name': 'name' if current_order == '-name' else '-name',
-            'reverse_order_date': 'date' if current_order == '-date' else '-date',
-            'reverse_order_type': 'type' if current_order == '-type' else '-type',
-            'reverse_order_coins_number': 'coins_number' if current_order == '-coins_number' else '-coins_number'
-        },
-            'total_coins': total_coins
+        'filters': filters,
+        'total_coins': total_coins,
     })
 
 @login_required
