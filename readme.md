@@ -18,6 +18,7 @@ Vous pouvez donc créer un compte pour tester l'application.
 ## Instructions d'installation
 
 1. **Cloner le dépôt** :
+
    ```bash
    git clone <URL_du_dépôt>
    cd manager
@@ -25,16 +26,19 @@ Vous pouvez donc créer un compte pour tester l'application.
 
 2. **Installer les dépendances** :
    Assurez-vous que Python et pip sont installés, puis exécutez :
+
    ```bash
    pip install -r requirements.txt
    ```
 
 3. **Appliquer les migrations de la base de données** :
+
    ```bash
    python manage.py migrate
    ```
 
 4. **Démarrer le serveur** :
+
    ```bash
    python manage.py runserver
    ```
@@ -92,6 +96,7 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 - [x] Ajout du nombre total de pièce des lignes à la fin du tableau d'historique
 - [x] Ajout d'un système d'authentification
 - [x] Déployer l'application
+- [ ] Centrer les types de tâches
 - [ ] Ajouter l'utilisation de la méthode login après l'inscription et avant la redirection pour que l'utilisateur soit directement connecté après inscription, et / ou ajouter un message de confirmation
 - [ ] Améliorer l'authentification (oubli de mot de passe, etc)
 - [ ] Ajout d'un système de badge en fonction des objectifs réalisés ou non
@@ -100,4 +105,3 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 - [ ] Voir la possibilité d'un mode sombre ?
 - [ ] Mettre en place des tests d'intégrations et fonctionnels
 - [ ] (Archives idées) Avoir des pièces par sous types avec une possibilité d'avoir un nombre de pièce différente pour valider la journée (par exemple, il faut 10 pièces, dont 2 en sous type 1, 3 en sous type 2 et 2 en sous type 3) (demander à Antoine plus de précisions sur son idée)
-

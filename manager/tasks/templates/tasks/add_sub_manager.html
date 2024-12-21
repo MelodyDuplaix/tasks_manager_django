@@ -17,7 +17,9 @@
           </div>
       </form>
       <div class="text-center mt-5">
+        {% if inactive_submanagers %}
         <h1>Réactiver un sous manager</h1>
+        {% endif %}
         {% for submanager in inactive_submanagers %}
           <a href="{% url 'activate_submanager' submanager.id %}" class="btn btn-outline-secondary">{{ submanager.name }}</a>
         {% endfor %}
