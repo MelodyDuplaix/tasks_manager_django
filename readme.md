@@ -50,19 +50,6 @@ Vous pouvez donc créer un compte pour tester l'application.
    Ouvrez votre navigateur et allez sur [http://localhost:8000](http://localhost:8000) pour utiliser le Gestionnaire de
    Tâches.
 
-## Structure du Projet
-
-- **admin/** : Interface d'administration pour gérer le contenu.
-- **/** : Page principale du menu et gestion des sous-managers.
-- **update-sous-manager/** : Modifier un sous-manager existant.
-- **add-sous-manager/** : Ajouter un nouveau sous-manager.
-- **delete-sous-manager/** : Supprimer un sous-manager.
-- **sous-manager/** : Page pour gérer les tâches et récompenses et suivre les objectifs quotidiens.
-- **sous-manager/options/** : Options pour configurer les objectifs, les tâches et les récompenses.
-- **historique/** : Page pour voir l'historique des tâches.
-- **hebdomadaire/** : Suivi des objectifs hebdomadaires.
-- **mensuel/** : Suivi des objectifs mensuels.
-
 ## Modèles
 
 - **Tâche** : Nom, nombre de pièces, ponctuelle, type, sous-manager.
