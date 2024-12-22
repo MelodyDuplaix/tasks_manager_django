@@ -107,7 +107,7 @@ amélioration.
   directement connecté après inscription, et / ou ajouter un message de confirmation
 - [x] Ajout d'une app bar en haut de la page
 - [x] Pouvoir ajouter un type de tache en ajoutant une tache
-- [ ] Améliorer l'authentification (oubli de mot de passe, etc)
+- [x] Améliorer l'authentification (oubli de mot de passe, etc)
 - [ ] Refaire les tests unitaires
 - [ ] avoir la possibilité de timers pour mesurer le temps sur les taches (bouton finir la journée, et enregistrement
   des heures quand on clique sur un bouton)
