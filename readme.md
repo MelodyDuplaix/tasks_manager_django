@@ -97,9 +97,10 @@ Les contributions sont les bienvenues ! Veuillez soumettre un pull request ou ou
 - [x] Ajout d'un système d'authentification
 - [x] Déployer l'application
 - [x] Centrer les types de tâches
-- [ ] Ajouter l'utilisation de la méthode login après l'inscription et avant la redirection pour que l'utilisateur soit directement connecté après inscription, et / ou ajouter un message de confirmation
-- [ ] Améliorer l'authentification (oubli de mot de passe, etc)
+- [x] Ajouter l'utilisation de la méthode login après l'inscription et avant la redirection pour que l'utilisateur soit directement connecté après inscription, et / ou ajouter un message de confirmation
+- [ ] Ajout d'une app bar en haut de la page
 - [ ] Pouvoir ajouter un type de tache en ajoutant une tache
+- [ ] Améliorer l'authentification (oubli de mot de passe, etc)
 - [ ] Refaire les tests unitaires
 - [ ] avoir la possibilité de timers pour mesurer le temps sur les taches (bouton finir la journée, et enregistrement des heures quand on clique sur un bouton)
 - [ ] ajouter des stats sur les temps que l'on passe sur les taches
