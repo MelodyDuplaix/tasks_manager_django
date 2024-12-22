@@ -17,8 +17,8 @@ Including another URLconf
 from django.contrib import admin  # type: ignore
 from django.contrib.auth import views as auth_views
 from django.urls import path, include  # type: ignore
-from tasks import views
-from tasks.views import ResetPasswordView
+from tasks import views  # type: ignore
+from tasks.views import ResetPasswordView  # type: ignore
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
@@ -51,10 +51,8 @@ urlpatterns = [
     path('<int:submanager_id>/update-reward/<int:reward_id>/', views.update_reward, name='update_reward'),
     path('<int:submanager_id>/delete-task/<int:task_id>/', views.delete_task, name='delete_task'),
     path('<int:submanager_id>/delete-reward/<int:reward_id>/', views.delete_reward, name='delete_reward'),
-    path('<int:submanager_id>/confirm-delete-task/<int:task_id>/', views.confirm_delete_task,
-         name='confirm_delete_task'),
-    path('<int:submanager_id>/confirm-delete-reward/<int:reward_id>/', views.confirm_delete_reward,
-         name='confirm_delete_reward'),
+    path('<int:submanager_id>/confirm-delete-task/<int:task_id>/', views.confirm_delete_task, name='confirm_delete_task'),
+    path('<int:submanager_id>/confirm-delete-reward/<int:reward_id>/', views.confirm_delete_reward, name='confirm_delete_reward'),
     path('weekly/', views.weekly, name='weekly'),
     path('monthly/', views.monthly, name='monthly'),
     path('yearly/', views.yearly, name='yearly'),
