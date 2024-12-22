@@ -382,6 +382,7 @@ def add_task(request, submanager_id):
         return redirect('home')
     if request.method == 'POST':
         form = TaskForm(request.POST)
+        form.submanager_id = submanager_id
         form.fields['type'].queryset = TaskType.objects.filter(sub_manager=submanager)
 
         if form.is_valid():
@@ -390,6 +391,7 @@ def add_task(request, submanager_id):
             return redirect('sub_manager_options', submanager_id=submanager_id)
     else:
         form = TaskForm()
+        form.submanager_id = submanager_id
         form.fields['type'].queryset = TaskType.objects.filter(sub_manager=submanager)
 
     return render(request, 'tasks/add_task.html', {'form': form, 'submanager': submanager})

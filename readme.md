@@ -2,14 +2,17 @@
 
 ## Description
 
-Le Gestionnaire de Tâches est une application Django conçue pour aider à gérer les tâches, les récompenses et les objectifs. Il permet de suivre les progrès quotidiens, hebdomadaires et mensuels, et de motiver execution des tâches par l'obtention de récompenses.
+Le Gestionnaire de Tâches est une application Django conçue pour aider à gérer les tâches, les récompenses et les
+objectifs. Il permet de suivre les progrès quotidiens, hebdomadaires et mensuels, et de motiver execution des tâches par
+l'obtention de récompenses.
 
 L'application est visitable à cette adresse : https://melody37.pythonanywhere.com/ avec un système d'authentification.
 Vous pouvez donc créer un compte pour tester l'application.
 
 ## Fonctionnalités
 
-- **Voir et gérer les tâches et récompenses** : Afficher les tâches et les récompenses disponibles, cliquer pour exécuter une tâche et suivre l'objectif quotidien.
+- **Voir et gérer les tâches et récompenses** : Afficher les tâches et les récompenses disponibles, cliquer pour
+  exécuter une tâche et suivre l'objectif quotidien.
 - **Suivi des objectifs** : Suivi des objectifs quotidiens, hebdomadaires et mensuels.
 - **Gestion des sous-managers** : Ajouter, modifier et supprimer des sous-managers.
 - **Page d'historique des tâches** : Voir l'historique des tâches complétées.
@@ -44,7 +47,8 @@ Vous pouvez donc créer un compte pour tester l'application.
    ```
 
 5. **Accéder à l'application** :
-   Ouvrez votre navigateur et allez sur [http://localhost:8000](http://localhost:8000) pour utiliser le Gestionnaire de Tâches.
+   Ouvrez votre navigateur et allez sur [http://localhost:8000](http://localhost:8000) pour utiliser le Gestionnaire de
+   Tâches.
 
 ## Structure du Projet
 
@@ -68,7 +72,8 @@ Vous pouvez donc créer un compte pour tester l'application.
 
 ## Contribution
 
-Les contributions sont les bienvenues ! Veuillez soumettre un pull request ou ouvrir une issue pour toute suggestion ou amélioration.
+Les contributions sont les bienvenues ! Veuillez soumettre un pull request ou ouvrir une issue pour toute suggestion ou
+amélioration.
 
 ## Todo
 
@@ -83,7 +88,8 @@ Les contributions sont les bienvenues ! Veuillez soumettre un pull request ou ou
 - [x] Ajouter le suivi des objectifs hebdomadaires.
 - [x] Ajouter le suivi des objectifs mensuels.
 - [x] Ajouter des configurations de bases (objectifs de base) à l'ajout d'un sous-manager
-- [x] Ajouter un endroit pour ajouter des types de tâches par sous manager (donc dans la page d'option d'un sous manager)
+- [x] Ajouter un endroit pour ajouter des types de tâches par sous manager (donc dans la page d'option d'un sous
+  manager)
 - [x] À la création d'une tâche, n'avoir que les types du sous manager actuel
 - [x] Ajouter les fonctionnalités des tâches ponctuelles
 - [x] Ajouter des filtres sur l'historique (filtres par date et sous manager)
@@ -97,15 +103,19 @@ Les contributions sont les bienvenues ! Veuillez soumettre un pull request ou ou
 - [x] Ajout d'un système d'authentification
 - [x] Déployer l'application
 - [x] Centrer les types de tâches
-- [x] Ajouter l'utilisation de la méthode login après l'inscription et avant la redirection pour que l'utilisateur soit directement connecté après inscription, et / ou ajouter un message de confirmation
-- [ ] Ajout d'une app bar en haut de la page
+- [x] Ajouter l'utilisation de la méthode login après l'inscription et avant la redirection pour que l'utilisateur soit
+  directement connecté après inscription, et / ou ajouter un message de confirmation
+- [x] Ajout d'une app bar en haut de la page
 - [ ] Pouvoir ajouter un type de tache en ajoutant une tache
 - [ ] Améliorer l'authentification (oubli de mot de passe, etc)
 - [ ] Refaire les tests unitaires
-- [ ] avoir la possibilité de timers pour mesurer le temps sur les taches (bouton finir la journée, et enregistrement des heures quand on clique sur un bouton)
+- [ ] avoir la possibilité de timers pour mesurer le temps sur les taches (bouton finir la journée, et enregistrement
+  des heures quand on clique sur un bouton)
 - [ ] ajouter des stats sur les temps que l'on passe sur les taches
 - [ ] Ajout d'un système de badge en fonction des objectifs réalisés ou non
 - [ ] Voir la possibilité d'un mode sombre ?
 - [ ] Mettre en place des tests d'intégrations et fonctionnels
 
-- [ ] (Archives idées) Avoir des pièces par sous types avec une possibilité d'avoir un nombre de pièces différente pour valider la journée (par exemple, il faut 10 pièces, dont 2 en sous type 1, 3 en sous type 2 et 2 en sous type 3) (demander à Antoine plus de précisions sur son idée)
+- [ ] (Archives idées) Avoir des pièces par sous types avec une possibilité d'avoir un nombre de pièces différente pour
+  valider la journée (par exemple, il faut 10 pièces, dont 2 en sous type 1, 3 en sous type 2 et 2 en sous type 3) (
+  demander à Antoine plus de précisions sur son idée)
