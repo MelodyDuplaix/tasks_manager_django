@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, date
 
 from django.contrib import messages  # type: ignore
+from django.contrib.auth import login  # type: ignore
 from django.contrib.auth.decorators import login_required  # type: ignore
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -40,9 +41,10 @@ def signup(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Inscription reussie. Vous pouvez maintenant vous connecter')
-            return redirect('login')  # Redirige vers la page de connexion après l'inscription
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Inscription reussie')
+            return redirect('home')  # Redirige vers la page de connexion après l'inscription
     else:
         form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
