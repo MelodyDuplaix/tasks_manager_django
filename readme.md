@@ -96,12 +96,14 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request ou o
 - [x] Ajout du nombre total de pièce des lignes à la fin du tableau d'historique
 - [x] Ajout d'un système d'authentification
 - [x] Déployer l'application
-- [ ] Centrer les types de tâches
+- [x] Centrer les types de tâches
 - [ ] Ajouter l'utilisation de la méthode login après l'inscription et avant la redirection pour que l'utilisateur soit directement connecté après inscription, et / ou ajouter un message de confirmation
 - [ ] Améliorer l'authentification (oubli de mot de passe, etc)
-- [ ] Ajout d'un système de badge en fonction des objectifs réalisés ou non
+- [ ] Pouvoir ajouter un type de tache en ajoutant une tache
 - [ ] avoir la possibilité de timers pour mesurer le temps sur les taches (bouton finir la journée, et enregistrement des heures quand on clique sur un bouton)
 - [ ] ajouter des stats sur les temps que l'on passe sur les taches
+- [ ] Ajout d'un système de badge en fonction des objectifs réalisés ou non
 - [ ] Voir la possibilité d'un mode sombre ?
 - [ ] Mettre en place des tests d'intégrations et fonctionnels
+
 - [ ] (Archives idées) Avoir des pièces par sous types avec une possibilité d'avoir un nombre de pièce différente pour valider la journée (par exemple, il faut 10 pièces, dont 2 en sous type 1, 3 en sous type 2 et 2 en sous type 3) (demander à Antoine plus de précisions sur son idée)
