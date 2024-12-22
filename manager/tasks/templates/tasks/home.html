@@ -70,6 +70,7 @@
       {% csrf_token %}
       <button type="submit" class="btn btn-outline-danger px-3 py-1 mt-3">Déconnexion</button>
     </form>
+    <a href="{% url 'password_change' %}" class="btn btn-outline-secondary px-3 py-1 mt-3">Changer mot de passe</a>
   </div>
 </div>
 

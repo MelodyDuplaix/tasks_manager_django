@@ -14,14 +14,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin # type: ignore
-from django.urls import path, include # type: ignore
+from django.contrib import admin  # type: ignore
 from django.contrib.auth import views as auth_views
-from tasks.views import ResetPasswordView
+from django.urls import path, include  # type: ignore
 from tasks import views
+from tasks.views import ResetPasswordView
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
+    path('password_change/',
+         auth_views.PasswordChangeView.as_view(template_name='registration/password_change_form.html'),
+         name='password_change'),
+    path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
     path('accounts/signup/', views.signup, name='signup'),
     path('accounts/profile/', views.profile, name='profile'),
@@ -47,22 +51,29 @@ urlpatterns = [
     path('<int:submanager_id>/update-reward/<int:reward_id>/', views.update_reward, name='update_reward'),
     path('<int:submanager_id>/delete-task/<int:task_id>/', views.delete_task, name='delete_task'),
     path('<int:submanager_id>/delete-reward/<int:reward_id>/', views.delete_reward, name='delete_reward'),
-    path('<int:submanager_id>/confirm-delete-task/<int:task_id>/', views.confirm_delete_task, name='confirm_delete_task'),
-    path('<int:submanager_id>/confirm-delete-reward/<int:reward_id>/', views.confirm_delete_reward, name='confirm_delete_reward'),
+    path('<int:submanager_id>/confirm-delete-task/<int:task_id>/', views.confirm_delete_task,
+         name='confirm_delete_task'),
+    path('<int:submanager_id>/confirm-delete-reward/<int:reward_id>/', views.confirm_delete_reward,
+         name='confirm_delete_reward'),
     path('weekly/', views.weekly, name='weekly'),
     path('monthly/', views.monthly, name='monthly'),
     path('yearly/', views.yearly, name='yearly'),
     path('<int:submanager_id>/add-type/', views.add_type, name='add_type'),
     path('<int:submanager_id>/delete-type/<int:type_id>/', views.delete_type, name='delete_type'),
     path('<int:submanager_id>/update-type/<int:type_id>/', views.update_type, name='update_type'),
-    path('<int:submanager_id>/confirm-delete-type/<int:type_id>/', views.confirm_delete_type, name='confirm_delete_type'),
+    path('<int:submanager_id>/confirm-delete-type/<int:type_id>/', views.confirm_delete_type,
+         name='confirm_delete_type'),
     path('<int:submanager_id>/add-ponctual-task/', views.add_ponctual_task, name='add_ponctual_task'),
     path('ponctual-action/<int:task_id>/', views.ponctual_task_action, name='ponctual_task_action'),
-    path('<int:submanager_id>/update-ponctual-task/<int:task_id>/', views.update_ponctual_task, name='update_ponctual_task'),
-    path('<int:submanager_id>/confirm-delete-ponctual-task/<int:task_id>/', views.confirm_delete_ponctual_task, name='confirm_delete_ponctual_task'),
-    path('<int:submanager_id>/delete-ponctual-task/<int:task_id>/', views.delete_ponctual_task, name='delete_ponctual_task'),
+    path('<int:submanager_id>/update-ponctual-task/<int:task_id>/', views.update_ponctual_task,
+         name='update_ponctual_task'),
+    path('<int:submanager_id>/confirm-delete-ponctual-task/<int:task_id>/', views.confirm_delete_ponctual_task,
+         name='confirm_delete_ponctual_task'),
+    path('<int:submanager_id>/delete-ponctual-task/<int:task_id>/', views.delete_ponctual_task,
+         name='delete_ponctual_task'),
     path('activate_submanager/<int:submanager_id>/', views.activate_submanager, name='activate_submanager'),
     path('desactivate_submanager/<int:submanager_id>/', views.desactivate_submanager, name='desactivate_submanager'),
     path('<int:submanager_id>/delete-action/<int:action_id>/', views.delete_action, name='delete_action'),
-    path('<int:submanager_id>/confirm-delete-action/<int:action_id>/', views.confirm_delete_action, name='confirm_delete_action'),
+    path('<int:submanager_id>/confirm-delete-action/<int:action_id>/', views.confirm_delete_action,
+         name='confirm_delete_action'),
 ]
