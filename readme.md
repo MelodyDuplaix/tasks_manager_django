@@ -91,7 +91,7 @@ amélioration.
 - [X] Ajout d'une app bar en haut de la page
 - [X] Pouvoir ajouter un type de tache en ajoutant une tache
 - [X] Améliorer l'authentification (oubli de mot de passe, etc)
-- [ ] Refaire les tests unitaires
+- [X] Refaire les tests unitaires
 - [ ] avoir la possibilité de timers pour mesurer le temps sur les taches (bouton finir la journée, et enregistrement
   des heures quand on clique sur un bouton)
 - [ ] ajouter des stats sur les temps que l'on passe sur les taches
