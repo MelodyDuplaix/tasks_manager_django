@@ -186,6 +186,7 @@ def submanager_page(request, submanager_id):
     rewards = Reward.objects.filter(sub_manager=submanager)
     types = TaskType.objects.filter(sub_manager=submanager)
     historique_total = Action.objects.filter(sub_manager=submanager).values_list('coins_number', flat=True)
+    day_started = Action.objects.filter(sub_manager=submanager, date__date=timezone.now().date(), name="Début du jour").exists()
     ponctuals = PonctualTask.objects.filter(sub_manager=submanager)
 
     return render(request, 'tasks/submanager_page.html',
@@ -197,7 +198,8 @@ def submanager_page(request, submanager_id):
                    'rewards': rewards,
                    'types': types,
                    'total_coins': sum(historique_total),
-                   'ponctuals': ponctuals})
+                   'ponctuals': ponctuals,
+                   'day_started': day_started})
 
 
 @login_required
