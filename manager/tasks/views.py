@@ -1053,3 +1053,24 @@ def start_the_day(request, submanager_id):
     start = Action(name="Début du jour", type=None, date=timezone.now(), coins_number=0, sub_manager=submanager)
     start.save()
     return redirect('submanager_page', submanager_id=submanager_id)
+
+@login_required
+def delete_action(request, submanager_id, action_id):
+    """
+    Delete the action with the given ID from the database.
+
+    Args:
+        request: The HTTP request object.
+        submanager_id: The ID of the SubManager the action belongs to.
+        action_id: The ID of the Action to be deleted.
+
+    Returns:
+        HttpResponse: A redirect to the history page of the sub-manager.
+    """
+    try:
+        action = Action.objects.get(id=action_id)
+    except:
+        messages.error(request, 'Action non trouvée')
+        return redirect('history', submanager_id=submanager_id)
+    action.delete()
+    return redirect('history', submanager_id=submanager_id)
