@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-z#89a^j9^viwq-w+awnvc00@4uxiwprba39-r9+w7z27dn6#cq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["melody37.pythonanywhere.com"]
 
 # Application definition
 
@@ -135,3 +135,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TEMPLATE_DIRS = [
     os.path.join(BASE_DIR, 'tasks/templates'),
 ]
+
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
