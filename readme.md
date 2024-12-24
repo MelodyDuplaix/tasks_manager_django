@@ -26,22 +26,26 @@ Vous pouvez donc créer un compte pour tester l'application.
    git clone <URL_du_dépôt>
    cd manager
    ```
+
 2. **Installer les dépendances** :
    Assurez-vous que Python et pip sont installés, puis exécutez :
 
    ```bash
    pip install -r requirements.txt
    ```
+
 3. **Appliquer les migrations de la base de données** :
 
    ```bash
    python manage.py migrate
    ```
+
 4. **Démarrer le serveur** :
 
    ```bash
    python manage.py runserver
    ```
+
 5. **Accéder à l'application** :
    Ouvrez votre navigateur et allez sur [http://localhost:8000](http://localhost:8000) pour utiliser le Gestionnaire de
    Tâches.
