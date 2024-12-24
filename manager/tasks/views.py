@@ -326,7 +326,7 @@ def history(request, submanager_id):
         HttpResponse: The rendered history page with the list of actions.
     """
     submanager = get_object_or_404(SubManager, id=submanager_id)
-    actions = Action.objects.filter(sub_manager=submanager)
+    actions = Action.objects.filter(sub_manager=submanager).exclude(name="Début du jour", coins_number=0)
 
     date = request.GET.get('date')
     date_start = request.GET.get('date_start')
