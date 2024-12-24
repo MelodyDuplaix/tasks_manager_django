@@ -12,6 +12,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone  # type: ignore
 from django.utils.timezone import make_aware
 import plotly.express as px # type: ignore
+from plotly.graph_objs import Figure
 from collections import Counter
 from django.utils.safestring import mark_safe
 from tasks.forms import SubManagerForm, TaskForm, RewardForm, TypeForm, PonctualTaskForm, PasswordResetForm, \
@@ -1133,18 +1134,53 @@ def statistics(request, submanager_id):
 
     if actions.exists():
         stats = calculate_action_durations(actions)
-        stats['total_duration_by_day'] = mark_safe(stats['total_duration_by_day'].to_html(classes="table table-hover table-bordered", index=False))
-        stats['total_duration_by_week'] = mark_safe(stats['total_duration_by_week'].to_html(classes="table table-hover table-bordered", index=False))
-        stats['average_duration_by_action'] = mark_safe(stats['average_duration_by_action'].to_html(classes="table table-hover table-bordered", index=False))
-        stats['average_duration_by_weekday'] = mark_safe(stats['average_duration_by_weekday'].to_html(classes="table table-hover table-bordered", index=False))
-        stats['most_frequent_actions'] = mark_safe(stats['most_frequent_actions'].to_html(classes="table table-hover table-bordered", index=False))
-        stats['longest_actions'] = mark_safe(stats['longest_actions'].to_html(classes="table table-hover table-bordered", index=False))
+
+        total_duration_by_day = stats['total_duration_by_day']
+        total_duration_by_week = stats['total_duration_by_week']
+        total_duration_by_weekday = stats['average_duration_by_weekday']
+        stats['total_duration_by_day'] = mark_safe(total_duration_by_day.to_html(classes="table table-striped", index=False))
+
+        stats['total_duration_by_week'] = mark_safe(stats['total_duration_by_week'].to_html(classes="table table-striped", index=False))
+        stats['average_duration_by_action'] = mark_safe(stats['average_duration_by_action']
+                                                        .rename(columns={'name': 'Nom de l\'action','average_duration': 'Durée moyenne (min)'})
+                                                        .to_html(classes="table table-striped", index=False))
+        stats['average_duration_by_weekday'] = mark_safe(stats['average_duration_by_weekday'].to_html(classes="table table-striped", index=False))
+        stats['most_frequent_actions'] = mark_safe(stats['most_frequent_actions']
+                                                        .rename(columns={'name': 'Nom de l\'action','count': 'Nombre d\'actions'})
+                                                        .to_html(classes="table table-striped", index=False))
+        stats['longest_actions'] = mark_safe(stats['longest_actions']
+                                                        .rename(columns={'name': 'Nom de l\'action','total_duration': 'Durée Totale (min)'})
+                                                        .to_html(classes="table table-striped", index=False))
+
+        daily_durations = total_duration_by_day[['date', 'total_duration']]
+        fig_daily = px.line(daily_durations, x='date', y='total_duration', 
+                             labels={'date': 'date', 'total_duration': 'Durée Totale (min)'})
+        is_plural_days = len(daily_durations['date'].unique()) > 1
+        graph_html_by_days = mark_safe(fig_daily.to_html(full_html=False, include_plotlyjs='cdn'))
+        
+        weekly_durations = total_duration_by_week[['date premier jour de la semaine', 'total_duration']]
+        fig_weekly = px.line(weekly_durations, x='date premier jour de la semaine', y='total_duration', 
+                             labels={'date premier jour de la semaine': 'date premier jour de la semaine', 'total_duration': 'Durée Totale (min)'})
+        is_plural_weeks = len(weekly_durations['date premier jour de la semaine'].unique()) > 1
+        graph_html_by_weeks = mark_safe(fig_weekly.to_html(full_html=False, include_plotlyjs='cdn'))
+        
+        weekday_bar_graph = px.bar(total_duration_by_weekday, x='date', y='average_duration', 
+                         labels={'date': 'Jour de la semaine', 'average_duration': 'Durée Moyenne (min)'})
+        graph_html_bar = mark_safe(weekday_bar_graph.to_html(full_html=False, include_plotlyjs='cdn'))
+        
+
     else:
         stats = {}
+        graph_html = None
 
     return render(request, 'tasks/statistics.html', {
         'submanager': submanager,
-        'stats': stats
+        'stats': stats,
+        'graph_by_days': graph_html_by_days,
+        'is_plural_days': is_plural_days,
+        'graph_by_weeks': graph_html_by_weeks,
+        'is_plural_weeks': is_plural_weeks,
+        'graph_html_bar': graph_html_bar
     })
 
 

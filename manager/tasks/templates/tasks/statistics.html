@@ -18,19 +18,29 @@
             {{ stats.average_duration_by_action|safe }}
         </div>
 
-        <div class="mt-5">
-            <h2>Durée Totale des Actions par Jour</h2>
-            {{ stats.total_duration_by_day|safe }}
+        {% if is_plural_days %}
+        <div class="mt-4">
+            <h3>Évolution de la durée de travail par jour</h3>
+            <div>
+                {{ graph_by_days|safe }}
+            </div>
         </div>
+        {% endif %}
 
-        <div class="mt-5">
-            <h2>Durée Totale des Actions par Semaine</h2>
-            {{ stats.total_duration_by_week|safe }}
+        {% if is_plural_weeks %}
+        <div class="mt-4">
+            <h3>Évolution de la durée de travail par semaines</h3>
+            <div>
+                {{ graph_by_weeks|safe }}
+            </div>
         </div>
+        {% endif %}
 
-        <div class="mt-5">
-            <h2>Durée Moyenne par Jours de la Semaine</h2>
-            {{ stats.average_duration_by_weekday|safe }}
+        <div class="mt-4">
+            <h3>Durée Moyenne par Jours de la Semaine</h3>
+            <div>
+                {{ graph_html_bar|safe }}
+            </div>
         </div>
 
         <div class="mt-5">
