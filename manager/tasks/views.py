@@ -1104,19 +1104,22 @@ def calculate_action_durations(actions):
 
         total_duration_by_day = df.groupby(df['date'].dt.date)['duration'].sum().reset_index(name='total_duration')
         total_duration_by_week = df.groupby(pd.Grouper(key='date', freq='W'))['duration'].sum().reset_index(name='total_duration')
+        total_duration_by_week['week_start'] = total_duration_by_week['date'] - pd.to_timedelta(total_duration_by_week['date'].dt.weekday, unit='D')
+        total_duration_by_week['date premier jour de la semaine'] = total_duration_by_week['week_start'].dt.date
         average_duration_by_action = df.groupby('name')['duration'].mean().reset_index(name='average_duration')
-        average_duration_by_weekday = df.groupby(df['date'].dt.weekday)['duration'].mean().reset_index(name='average_duration')
+        day_names_fr = {'Monday': 'Lundi', 'Tuesday': 'Mardi', 'Wednesday': 'Mercredi', 'Thursday': 'Jeudi', 'Friday': 'Vendredi', 'Saturday': 'Samedi', 'Sunday': 'Dimanche'}
+        average_duration_by_weekday = df.groupby(df['date'].dt.strftime('%A').map(day_names_fr))['duration'].mean().reset_index(name='average_duration')
         most_frequent_actions = pd.DataFrame(Counter(df['name']).most_common(3), columns=['name', 'count'])
         longest_actions = df.groupby('name')['duration'].sum().reset_index(name='total_duration')
         longest_actions = longest_actions.nlargest(5, 'total_duration')[['name', 'total_duration']]
 
         stats = {
-            'total_duration_by_day': total_duration_by_day,
-            'total_duration_by_week': total_duration_by_week,
-            'average_duration_by_action': average_duration_by_action,
-            'average_duration_by_weekday': average_duration_by_weekday,
-            'most_frequent_actions': most_frequent_actions,
-            'longest_actions': longest_actions
+            'total_duration_by_day': total_duration_by_day.round(2),
+            'total_duration_by_week': total_duration_by_week[["date premier jour de la semaine", "total_duration"]].round(2),
+            'average_duration_by_action': average_duration_by_action.round(2),
+            'average_duration_by_weekday': average_duration_by_weekday.round(2),
+            'most_frequent_actions': most_frequent_actions.round(2),
+            'longest_actions': longest_actions.round(2),
         }
         return stats
     else:
