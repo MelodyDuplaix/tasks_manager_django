@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, date
-
+import pandas as pd
 from django.contrib import messages  # type: ignore
 from django.contrib.auth import login  # type: ignore
 from django.contrib.auth.decorators import login_required  # type: ignore
@@ -10,7 +10,10 @@ from django.db.models import Sum
 from django.shortcuts import render, get_object_or_404, redirect  # type: ignore
 from django.urls import reverse_lazy
 from django.utils import timezone  # type: ignore
-from django.utils.timezone import make_aware  # type: ignore
+from django.utils.timezone import make_aware
+import plotly.express as px # type: ignore
+from collections import Counter
+from django.utils.safestring import mark_safe
 from tasks.forms import SubManagerForm, TaskForm, RewardForm, TypeForm, PonctualTaskForm, PasswordResetForm, \
     CustomUserCreationForm  # type: ignore
 from tasks.models import SubManager, Reward, Action, TaskType, Task, PonctualTask  # type: ignore
@@ -1071,9 +1074,73 @@ def delete_action(request, submanager_id, action_id):
     action.delete()
     return redirect('history', submanager_id=submanager_id)
 
-
+@login_required
 def start_the_day(request, submanager_id):
     submanager = SubManager.objects.get(id=submanager_id)
     start = Action(name="Début du jour", type=None, date=timezone.now(), coins_number=0, sub_manager=submanager)
     start.save()
     return redirect('submanager_page', submanager_id=submanager_id)
+
+def calculate_action_durations(actions):
+    data = [
+        {
+            'name': action.name,
+            'date': action.date,
+            'coins_number': action.coins_number,
+        }
+        for action in actions
+    ]
+    df = pd.DataFrame(data)
+
+    if not df.empty and 'date' in df.columns:
+        df['date'] = pd.to_datetime(df['date'])
+        df = df.sort_values('date')
+        df['day_start'] = df['name'] == 'Début du jour'
+        df['day'] = df['day_start'].cumsum()
+        df['previous_date'] = df.groupby('day')['date'].shift(1)
+        df['duration'] = (df['date'] - df['previous_date']).dt.total_seconds() / 60
+        df.loc[df['day_start'], 'duration'] = None
+        df = df.loc[df['day_start'] == False]
+
+        total_duration_by_day = df.groupby(df['date'].dt.date)['duration'].sum().reset_index(name='total_duration')
+        total_duration_by_week = df.groupby(pd.Grouper(key='date', freq='W'))['duration'].sum().reset_index(name='total_duration')
+        average_duration_by_action = df.groupby('name')['duration'].mean().reset_index(name='average_duration')
+        average_duration_by_weekday = df.groupby(df['date'].dt.weekday)['duration'].mean().reset_index(name='average_duration')
+        most_frequent_actions = pd.DataFrame(Counter(df['name']).most_common(3), columns=['name', 'count'])
+        longest_actions = df.groupby('name')['duration'].sum().reset_index(name='total_duration')
+        longest_actions = longest_actions.nlargest(5, 'total_duration')[['name', 'total_duration']]
+
+        stats = {
+            'total_duration_by_day': total_duration_by_day,
+            'total_duration_by_week': total_duration_by_week,
+            'average_duration_by_action': average_duration_by_action,
+            'average_duration_by_weekday': average_duration_by_weekday,
+            'most_frequent_actions': most_frequent_actions,
+            'longest_actions': longest_actions
+        }
+        return stats
+    else:
+        return {}
+
+
+@login_required
+def statistics(request, submanager_id):
+    submanager = SubManager.objects.get(id=submanager_id)
+    actions = Action.objects.filter(sub_manager__id=submanager_id).order_by('date')
+
+    if actions.exists():
+        stats = calculate_action_durations(actions)
+        stats['total_duration_by_day'] = mark_safe(stats['total_duration_by_day'].to_html(classes="table table-striped"))
+        stats['total_duration_by_week'] = mark_safe(stats['total_duration_by_week'].to_html(classes="table table-striped"))
+        stats['average_duration_by_action'] = mark_safe(stats['average_duration_by_action'].to_html(classes="table table-striped"))
+        stats['average_duration_by_weekday'] = mark_safe(stats['average_duration_by_weekday'].to_html(classes="table table-striped"))
+        stats['most_frequent_actions'] = mark_safe(stats['most_frequent_actions'].to_html(classes="table table-striped"))
+        stats['longest_actions'] = mark_safe(stats['longest_actions'].to_html(classes="table table-striped"))
+    else:
+        stats = {}
+
+    return render(request, 'tasks/statistics.html', {
+        'submanager': submanager,
+        'stats': stats
+    })
+
