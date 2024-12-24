@@ -1048,3 +1048,8 @@ def confirm_delete_action(request, submanager_id, action_id):
         return redirect('home')
     return render(request, 'tasks/confirm_delete_action.html', {'submanager': submanager, 'action': action})
 
+def start_the_day(request, submanager_id):
+    submanager = SubManager.objects.get(id=submanager_id)
+    start = Action(name="Début du jour", type=None, date=timezone.now(), coins_number=0, sub_manager=submanager)
+    start.save()
+    return redirect('submanager_page', submanager_id=submanager_id)
