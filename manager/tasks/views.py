@@ -1133,12 +1133,12 @@ def statistics(request, submanager_id):
 
     if actions.exists():
         stats = calculate_action_durations(actions)
-        stats['total_duration_by_day'] = mark_safe(stats['total_duration_by_day'].to_html(classes="table table-striped", index=False))
-        stats['total_duration_by_week'] = mark_safe(stats['total_duration_by_week'].to_html(classes="table table-striped", index=False))
-        stats['average_duration_by_action'] = mark_safe(stats['average_duration_by_action'].to_html(classes="table table-striped", index=False))
-        stats['average_duration_by_weekday'] = mark_safe(stats['average_duration_by_weekday'].to_html(classes="table table-striped", index=False))
-        stats['most_frequent_actions'] = mark_safe(stats['most_frequent_actions'].to_html(classes="table table-striped", index=False))
-        stats['longest_actions'] = mark_safe(stats['longest_actions'].to_html(classes="table table-striped", index=False))
+        stats['total_duration_by_day'] = mark_safe(stats['total_duration_by_day'].to_html(classes="table table-hover table-bordered", index=False))
+        stats['total_duration_by_week'] = mark_safe(stats['total_duration_by_week'].to_html(classes="table table-hover table-bordered", index=False))
+        stats['average_duration_by_action'] = mark_safe(stats['average_duration_by_action'].to_html(classes="table table-hover table-bordered", index=False))
+        stats['average_duration_by_weekday'] = mark_safe(stats['average_duration_by_weekday'].to_html(classes="table table-hover table-bordered", index=False))
+        stats['most_frequent_actions'] = mark_safe(stats['most_frequent_actions'].to_html(classes="table table-hover table-bordered", index=False))
+        stats['longest_actions'] = mark_safe(stats['longest_actions'].to_html(classes="table table-hover table-bordered", index=False))
     else:
         stats = {}
 
