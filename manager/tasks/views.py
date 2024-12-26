@@ -1022,7 +1022,7 @@ def delete_action(request, submanager_id, action_id):
         action_id: The ID of the Action to be deleted.
 
     Returns:
-        HttpResponse: A redirect to the sub-manager options page.
+        HttpResponseRedirect: A redirect to the sub-manager options page.
     """
     try:
         action = Action.objects.get(id=action_id)
@@ -1053,27 +1053,6 @@ def confirm_delete_action(request, submanager_id, action_id):
         messages.error(request, 'Sous manager ou action non trouvée')
         return redirect('home')
     return render(request, 'tasks/confirm_delete_action.html', {'submanager': submanager, 'action': action})
-
-@login_required
-def delete_action(request, submanager_id, action_id):
-    """
-    Delete the action with the given ID from the database.
-
-    Args:
-        request: The HTTP request object.
-        submanager_id: The ID of the SubManager the action belongs to.
-        action_id: The ID of the Action to be deleted.
-
-    Returns:
-        HttpResponse: A redirect to the history page of the sub-manager.
-    """
-    try:
-        action = Action.objects.get(id=action_id)
-    except:
-        messages.error(request, 'Action non trouvée')
-        return redirect('history', submanager_id=submanager_id)
-    action.delete()
-    return redirect('history', submanager_id=submanager_id)
 
 @login_required
 def start_the_day(request, submanager_id):
