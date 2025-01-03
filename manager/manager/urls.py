@@ -74,4 +74,6 @@ urlpatterns = [
     path('<int:submanager_id>/delete-action/<int:action_id>/', views.delete_action, name='delete_action'),
     path('<int:submanager_id>/confirm-delete-action/<int:action_id>/', views.confirm_delete_action,
          name='confirm_delete_action'),
+    path('<int:submanager_id>/start-the-day/', views.start_the_day, name='start_the_day'),
+    path('<int:submanager_id>/statistics/', views.statistics, name='statistics'),
 ]

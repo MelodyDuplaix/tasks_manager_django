@@ -1,0 +1,67 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}
+  Task Manager - Statistics
+{% endblock %}
+
+{% block content %}
+<div class="mt-3 d-flex justify-content-center vh-100">
+    <div class="container" style="max-width: 1000px; margin-left: auto; margin-right: auto;">
+        <p class="text-center">
+            <a href="{% url 'submanager_page' submanager.id %}" class="btn btn-outline-secondary">Retour</a>
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary">Home</a>
+        </p>
+        <h1 class="text-center mt-5">Statistiques du sous manager {{ submanager.name }}</h1>
+
+        <div class="mt-5">
+            <h2>Durée Moyenne des Actions</h2>
+            {{ stats.average_duration_by_action|safe }}
+        </div>
+
+        {% if is_plural_days %}
+        <div class="mt-4">
+            <h3>Évolution de la durée de travail par jour</h3>
+            <div>
+                {{ graph_by_days|safe }}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if is_plural_weeks %}
+        <div class="mt-4">
+            <h3>Évolution de la durée de travail par semaines</h3>
+            <div>
+                {{ graph_by_weeks|safe }}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="mt-4">
+            <h3>Durée Moyenne par Jours de la Semaine</h3>
+            <div>
+                {{ graph_html_bar|safe }}
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <h2>Top 3 des Actions les Plus Fréquentes</h2>
+            {{ stats.most_frequent_actions|safe }}
+        </div>
+
+        <div class="mt-5">
+            <h2>Actions les Plus Longues</h2>
+            {{ stats.longest_actions|safe }}
+        </div>
+    </div>
+</div>
+<style>
+    tr {
+        text-align: left !important;
+    }
+    .table {
+        table-layout: fixed;
+        width: 100%;  /* Optionnel, si vous souhaitez que la table prenne toute la largeur disponible */
+    }
+    
+</style>
+{% endblock %}

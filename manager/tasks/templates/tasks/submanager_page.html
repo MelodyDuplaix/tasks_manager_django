@@ -72,6 +72,12 @@
       </p>
     </div>
 
+    {% if not day_started %}
+    <div class="d-grid gap-2 col-3 mx-auto">
+      <a href="{% url 'start_the_day' submanager.id %}" class="btn btn-outline-primary mt-5">Commencer la journée</a>
+    </div>
+    {% endif %}
+
     <h2 class="text-center mt-5">Tâches ponctuelles</h2>
     <div class="row">
       <div class="col">
@@ -139,6 +145,7 @@
     <div class="d-flex justify-content-center mt-5 mb-5 align-items-center">
       <a href="{% url 'sub_manager_options' submanager.id %}" class="btn btn-secondary align-self-center me-2">Options du manager</a>
       <a href="{% url 'history' submanager.id %}" class="btn btn-secondary align-self-center ms-2">Historique du manager</a>
+      <a href="{% url 'statistics' submanager.id %}" class="btn btn-secondary align-self-center ms-2">Statistiques des tâches</a>
     </div>
   </div>
 </div>
