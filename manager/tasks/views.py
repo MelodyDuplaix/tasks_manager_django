@@ -108,8 +108,10 @@ def options(request):
 
     # Filtrer les actions pour l'utilisateur connecté
     history = Action.objects.filter(coins_number__gt=0, date__date=date.today(), sub_manager__user=request.user)
+    total_history = Action.objects.filter(coins_number__gt=0, sub_manager__user=request.user)
 
     # Calculer le total des coins et objectifs
+    total_total_coins = sum(action.coins_number for action in total_history if action.sub_manager.active)
     total_coins = sum(action.coins_number for action in history if action.sub_manager.active)
     daily_objectif = sum(submanager.daily_objectif for submanager in submanagers if submanager.active)
     percentage = (total_coins / daily_objectif * 100) if daily_objectif else 0
@@ -119,7 +121,8 @@ def options(request):
                    'total_coins': total_coins,
                    'daily_objectif': daily_objectif,
                    'percentage': percentage,
-                   'user': request.user})
+                   'user': request.user,
+                   'total_total_coins': total_total_coins})
 
 
 @login_required
