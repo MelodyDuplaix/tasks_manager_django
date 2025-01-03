@@ -6,7 +6,7 @@ Le Gestionnaire de Tâches est une application Django conçue pour aider à gér
 objectifs. Il permet de suivre les progrès quotidiens, hebdomadaires et mensuels, et de motiver execution des tâches par
 l'obtention de récompenses.
 
-L'application est visitable à cette adresse : https://melody37.pythonanywhere.com/ avec un système d'authentification.
+L'application est visitable à cette adresse : <https://melody37.pythonanywhere.com/> avec un système d'authentification.
 Vous pouvez donc créer un compte pour tester l'application.
 
 ## Fonctionnalités
@@ -97,7 +97,7 @@ amélioration.
 - [X] Améliorer l'authentification (oubli de mot de passe, etc)
 - [X] Refaire les tests unitaires
 - [x] ajouter nombre pièce total sur page home
-- [ ] ajout d'une barre latéral de navigation a gauche du manager pour naviguer entre les sous manager
+- [x] ajout d'une barre latéral de navigation a gauche du manager pour naviguer entre les sous manager
 - [ ] Améliorer le responsive / interface mobile
 - [ ] avoir la possibilité de timers pour mesurer le temps sur les taches (bouton finir la journée, et enregistrement des heures quand on clique sur un bouton)
 - [ ] ajouter des stats sur les temps que l'on passe sur les taches
