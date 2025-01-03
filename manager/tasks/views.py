@@ -190,6 +190,7 @@ def submanager_page(request, submanager_id):
     types = TaskType.objects.filter(sub_manager=submanager)
     historique_total = Action.objects.filter(sub_manager=submanager).values_list('coins_number', flat=True)
     ponctuals = PonctualTask.objects.filter(sub_manager=submanager)
+    all_submanager = SubManager.objects.filter(user=request.user)
 
     return render(request, 'tasks/submanager_page.html',
                   {'submanager': submanager,
@@ -200,7 +201,8 @@ def submanager_page(request, submanager_id):
                    'rewards': rewards,
                    'types': types,
                    'total_coins': sum(historique_total),
-                   'ponctuals': ponctuals})
+                   'ponctuals': ponctuals,
+                   'all_submanager': all_submanager})
 
 
 @login_required
