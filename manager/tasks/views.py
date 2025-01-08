@@ -1058,8 +1058,6 @@ def confirm_delete_action(request, submanager_id, action_id):
         messages.error(request, 'Sous manager ou action non trouvée')
         return redirect('home')
     return render(request, 'tasks/confirm_delete_action.html', {'submanager': submanager, 'action': action})
-<<<<<<< HEAD
-=======
 
 @login_required
 def start_the_day(request, submanager_id):
@@ -1170,4 +1168,3 @@ def statistics(request, submanager_id):
     })
 
 
->>>>>>> tasks-timers
