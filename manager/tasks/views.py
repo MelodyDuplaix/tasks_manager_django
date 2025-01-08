@@ -207,7 +207,7 @@ def submanager_page(request, submanager_id):
                    'types': types,
                    'total_coins': sum(historique_total),
                    'ponctuals': ponctuals,
-                   'all_submanager': all_submanager})
+                   'all_submanager': all_submanager
                    'day_started': day_started})
 
 
