@@ -186,7 +186,7 @@ def submanager_page(request, submanager_id):
         return redirect('home')
 
     daily_objectif = submanager.daily_objectif
-    historique = Action.objects.filter(sub_manager=submanager, date__date=timezone.now().date()).values_list(
+    historique = Action.objects.filter(sub_manager=submanager, date__date=timezone.now().date(), coins_number__gt=0).values_list(
         'coins_number', flat=True)
     daily_objectif_percentage = (sum(historique) / daily_objectif) * 100 if daily_objectif else 0
     tasks = Task.objects.filter(type__sub_manager=submanager)
@@ -276,9 +276,16 @@ def reward_action(request, reward_id):
     except:
         messages.error(request, 'Récompense non trouvée')
         return redirect('home')
-    action = Action(name=reward.name, type=None, date=timezone.now(), coins_number=-reward.coins_number,
-                    sub_manager=reward.sub_manager)
-    action.save()
+    submanager = reward.sub_manager
+    actions = Action.objects.filter(sub_manager=submanager)
+    total_coins = actions.aggregate(total=Sum('coins_number'))['total'] or 0
+    print(total_coins, reward.coins_number)
+    if total_coins >= reward.coins_number:
+        action = Action(name=reward.name, type=None, date=timezone.now(), coins_number=-reward.coins_number,
+                        sub_manager=reward.sub_manager)
+        action.save()
+    else:
+        messages.error(request, 'Nombre de pièce insuffisant')
     return redirect('submanager_page', submanager_id=reward.sub_manager.id)
 
 
