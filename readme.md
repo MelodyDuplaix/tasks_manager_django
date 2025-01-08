@@ -98,9 +98,9 @@ amélioration.
 - [X] Refaire les tests unitaires
 - [x] ajouter nombre pièce total sur page home
 - [x] ajout d'une barre latéral de navigation a gauche du manager pour naviguer entre les sous manager
+- [x] avoir la possibilité de timers pour mesurer le temps sur les taches (bouton finir la journée, et enregistrement des heures quand on clique sur un bouton)
+- [x] ajouter des stats sur les temps que l'on passe sur les taches
 - [ ] Améliorer le responsive / interface mobile
-- [ ] avoir la possibilité de timers pour mesurer le temps sur les taches (bouton finir la journée, et enregistrement des heures quand on clique sur un bouton)
-- [ ] ajouter des stats sur les temps que l'on passe sur les taches
 - [ ] Ajout d'un système de badge en fonction des objectifs réalisés ou non
 - [ ] Voir la possibilité d'un mode sombre ?
 - [ ] Mettre en place des tests d'intégrations et fonctionnels
