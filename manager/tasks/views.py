@@ -193,7 +193,6 @@ def submanager_page(request, submanager_id):
     rewards = Reward.objects.filter(sub_manager=submanager)
     types = TaskType.objects.filter(sub_manager=submanager)
     historique_total = Action.objects.filter(sub_manager=submanager).values_list('coins_number', flat=True)
-    day_started = Action.objects.filter(sub_manager=submanager, date__date=timezone.now().date(), name="Début du jour").exists()
     ponctuals = PonctualTask.objects.filter(sub_manager=submanager)
     all_submanager = SubManager.objects.filter(user=request.user)
 
@@ -207,8 +206,7 @@ def submanager_page(request, submanager_id):
                    'types': types,
                    'total_coins': sum(historique_total),
                    'ponctuals': ponctuals,
-                   'all_submanager': all_submanager,
-                   'day_started': day_started})
+                   'all_submanager': all_submanager})
 
 
 @login_required
@@ -1066,57 +1064,6 @@ def confirm_delete_action(request, submanager_id, action_id):
         return redirect('home')
     return render(request, 'tasks/confirm_delete_action.html', {'submanager': submanager, 'action': action})
 
-@login_required
-def start_the_day(request, submanager_id):
-    submanager = SubManager.objects.get(id=submanager_id)
-    start = Action(name="Début du jour", type=None, date=timezone.now(), coins_number=0, sub_manager=submanager)
-    start.save()
-    return redirect('submanager_page', submanager_id=submanager_id)
-
-def calculate_action_durations(actions):
-    data = [
-        {
-            'name': action.name,
-            'date': action.date,
-            'coins_number': action.coins_number,
-        }
-        for action in actions
-    ]
-    df = pd.DataFrame(data)
-
-    if not df.empty and 'date' in df.columns:
-        df['date'] = pd.to_datetime(df['date'])
-        df = df.sort_values('date')
-        df['day_start'] = df['name'] == 'Début du jour'
-        df['day'] = df['day_start'].cumsum()
-        df['previous_date'] = df.groupby('day')['date'].shift(1)
-        df['duration'] = (df['date'] - df['previous_date']).dt.total_seconds() / 60
-        df.loc[df['day_start'], 'duration'] = None
-        df = df.loc[df['day_start'] == False]
-
-        total_duration_by_day = df.groupby(df['date'].dt.date)['duration'].sum().reset_index(name='total_duration')
-        total_duration_by_week = df.groupby(pd.Grouper(key='date', freq='W'))['duration'].sum().reset_index(name='total_duration')
-        total_duration_by_week['week_start'] = total_duration_by_week['date'] - pd.to_timedelta(total_duration_by_week['date'].dt.weekday, unit='D')
-        total_duration_by_week['date premier jour de la semaine'] = total_duration_by_week['week_start'].dt.date
-        average_duration_by_action = df.groupby('name')['duration'].mean().reset_index(name='average_duration')
-        day_names_fr = {'Monday': 'Lundi', 'Tuesday': 'Mardi', 'Wednesday': 'Mercredi', 'Thursday': 'Jeudi', 'Friday': 'Vendredi', 'Saturday': 'Samedi', 'Sunday': 'Dimanche'}
-        average_duration_by_weekday = df.groupby(df['date'].dt.strftime('%A').map(day_names_fr))['duration'].mean().reset_index(name='average_duration')
-        most_frequent_actions = pd.DataFrame(Counter(df['name']).most_common(3), columns=['name', 'count'])
-        longest_actions = df.groupby('name')['duration'].sum().reset_index(name='total_duration')
-        longest_actions = longest_actions.nlargest(5, 'total_duration')[['name', 'total_duration']]
-
-        stats = {
-            'total_duration_by_day': total_duration_by_day.round(2),
-            'total_duration_by_week': total_duration_by_week[["date premier jour de la semaine", "total_duration"]].round(2),
-            'average_duration_by_action': average_duration_by_action.round(2),
-            'average_duration_by_weekday': average_duration_by_weekday.round(2),
-            'most_frequent_actions': most_frequent_actions.round(2),
-            'longest_actions': longest_actions.round(2),
-        }
-        return stats
-    else:
-        return {}
-
 
 @login_required
 def statistics(request, submanager_id):
@@ -1124,54 +1071,20 @@ def statistics(request, submanager_id):
     actions = Action.objects.filter(sub_manager__id=submanager_id).order_by('date')
 
     if actions.exists():
-        stats = calculate_action_durations(actions)
-
-        total_duration_by_day = stats['total_duration_by_day']
-        total_duration_by_week = stats['total_duration_by_week']
-        total_duration_by_weekday = stats['average_duration_by_weekday']
-        stats['total_duration_by_day'] = mark_safe(total_duration_by_day.to_html(classes="table table-striped", index=False))
-
-        stats['total_duration_by_week'] = mark_safe(stats['total_duration_by_week'].to_html(classes="table table-striped", index=False))
-        stats['average_duration_by_action'] = mark_safe(stats['average_duration_by_action']
-                                                        .rename(columns={'name': 'Nom de l\'action','average_duration': 'Durée moyenne (min)'})
-                                                        .to_html(classes="table table-striped", index=False))
-        stats['average_duration_by_weekday'] = mark_safe(stats['average_duration_by_weekday'].to_html(classes="table table-striped", index=False))
-        stats['most_frequent_actions'] = mark_safe(stats['most_frequent_actions']
-                                                        .rename(columns={'name': 'Nom de l\'action','count': 'Nombre d\'actions'})
-                                                        .to_html(classes="table table-striped", index=False))
-        stats['longest_actions'] = mark_safe(stats['longest_actions']
-                                                        .rename(columns={'name': 'Nom de l\'action','total_duration': 'Durée Totale (min)'})
-                                                        .to_html(classes="table table-striped", index=False))
-
-        daily_durations = total_duration_by_day[['date', 'total_duration']]
-        fig_daily = px.line(daily_durations, x='date', y='total_duration',
-                             labels={'date': 'date', 'total_duration': 'Durée Totale (min)'})
-        is_plural_days = len(daily_durations['date'].unique()) > 1
-        graph_html_by_days = mark_safe(fig_daily.to_html(full_html=False, include_plotlyjs='cdn'))
-
-        weekly_durations = total_duration_by_week[['date premier jour de la semaine', 'total_duration']]
-        fig_weekly = px.line(weekly_durations, x='date premier jour de la semaine', y='total_duration',
-                             labels={'date premier jour de la semaine': 'date premier jour de la semaine', 'total_duration': 'Durée Totale (min)'})
-        is_plural_weeks = len(weekly_durations['date premier jour de la semaine'].unique()) > 1
-        graph_html_by_weeks = mark_safe(fig_weekly.to_html(full_html=False, include_plotlyjs='cdn'))
-
-        weekday_bar_graph = px.bar(total_duration_by_weekday, x='date', y='average_duration',
-                         labels={'date': 'Jour de la semaine', 'average_duration': 'Durée Moyenne (min)'})
-        graph_html_bar = mark_safe(weekday_bar_graph.to_html(full_html=False, include_plotlyjs='cdn'))
-
-
+        df = pd.DataFrame(list(actions.values('name')))
+        stats = {}
+        stats['most_frequent_actions'] = mark_safe(df.groupby('name').size().reset_index(name='count')\
+            .sort_values('count', ascending=False)\
+            .head(10)
+            .rename(columns={'name': 'Nom de l\'action','count': 'Nombre d\'actions'})
+            .to_html(classes="table table-striped", index=False))
     else:
         stats = {}
         graph_html = None
 
     return render(request, 'tasks/statistics.html', {
         'submanager': submanager,
-        'stats': stats,
-        'graph_by_days': graph_html_by_days,
-        'is_plural_days': is_plural_days,
-        'graph_by_weeks': graph_html_by_weeks,
-        'is_plural_weeks': is_plural_weeks,
-        'graph_html_bar': graph_html_bar
+        'stats': stats
     })
 
 
