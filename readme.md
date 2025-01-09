@@ -100,9 +100,11 @@ amélioration.
 - [x] ajout d'une barre latéral de navigation a gauche du manager pour naviguer entre les sous manager
 - [x] avoir la possibilité de timers pour mesurer le temps sur les taches (bouton finir la journée, et enregistrement des heures quand on clique sur un bouton)
 - [x] ajouter des stats sur les temps que l'on passe sur les taches
-- [ ] Corriger erreur barres de progressions si nombre de pièce négatif / empécher de prendre une récompense si nombre de pièce insuffisant
+- [x] Corriger erreur barres de progressions si nombre de pièce négatif / empécher de prendre une récompense si nombre de pièce insuffisant
+- [ ] enlever statistiques sur les durées des tâches et bouton commencer la journée, mettre plus de statistiques sur le nombre des tâches
 - [ ] Améliorer le responsive / interface mobile
 - [ ] Ajout d'un système de badge en fonction des objectifs réalisés ou non
+- [ ] Voir la possibilité de pouvoir connecter 2 utilisateurs / sous manager pour voir l'avancement de l'autre sur le sous manager
 - [ ] Voir la possibilité d'un mode sombre ?
 - [ ] Mettre en place des tests d'intégrations et fonctionnels
 
