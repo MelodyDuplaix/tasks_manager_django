@@ -1071,13 +1071,27 @@ def statistics(request, submanager_id):
     actions = Action.objects.filter(sub_manager__id=submanager_id).order_by('date')
 
     if actions.exists():
-        df = pd.DataFrame(list(actions.values('name')))
+        df = pd.DataFrame(list(actions.values('name', 'date')))
         stats = {}
         stats['most_frequent_actions'] = mark_safe(df.groupby('name').size().reset_index(name='count')\
             .sort_values('count', ascending=False)\
             .head(10)
             .rename(columns={'name': 'Nom de l\'action','count': 'Nombre d\'actions'})
             .to_html(classes="table table-striped", index=False))
+            
+        daily_tasks = df.groupby(df['date'].dt.date).size().reset_index(name='count')
+        print(daily_tasks)
+        fig = px.line(daily_tasks, x='date', y='count', 
+                     labels={'date': 'Date', 'count': 'Nombre de tâches'})
+        graph_html = fig.to_html(full_html=False)
+        stats['daily_tasks_graph'] = mark_safe(graph_html)
+        
+        stats['daily_tasks_frequency'] = mark_safe(df.groupby('name')['date'].count().div(len(df['date'].dt.date.unique())).reset_index()
+                                                   .rename(columns={'name': 'Nom de la tâche', 'date': 'Fréquence moyenne par jour'})
+                                                   .sort_values('Fréquence moyenne par jour', ascending=False)
+                                                   .to_html(classes="table table-striped", index=False))
+        
+        
     else:
         stats = {}
         graph_html = None
@@ -1086,5 +1100,4 @@ def statistics(request, submanager_id):
         'submanager': submanager,
         'stats': stats
     })
-
 
