@@ -370,12 +370,16 @@ def history(request, submanager_id):
         'reverse_order_type': 'type' if current_order == '-type' else '-type',
         'reverse_order_coins_number': 'coins_number' if current_order == '-coins_number' else '-coins_number',
     }
+    
+    
+    all_submanager = SubManager.objects.filter(user=request.user)
 
     return render(request, 'tasks/history.html', {
         'submanager': submanager,
         'history': actions,
         'filters': filters,
         'total_coins': total_coins,
+        'all_submanager': all_submanager
     })
 
 
@@ -1091,13 +1095,15 @@ def statistics(request, submanager_id):
                                                    .sort_values('Fréquence moyenne par jour', ascending=False)
                                                    .to_html(classes="table table-striped", index=False))
         
-        
     else:
         stats = {}
         graph_html = None
 
+    all_submanager = SubManager.objects.filter(user=request.user)
+    
     return render(request, 'tasks/statistics.html', {
         'submanager': submanager,
-        'stats': stats
+        'stats': stats,
+        'all_submanager': all_submanager
     })
 
