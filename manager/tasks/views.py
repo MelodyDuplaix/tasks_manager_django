@@ -111,8 +111,9 @@ def options(request):
     submanagers = SubManager.objects.filter(user=request.user)
 
     # Filtrer les actions pour l'utilisateur connecté
-    history = Action.objects.filter(date__date=date.today(), sub_manager__user=request.user)
+    history = Action.objects.filter(coins_number__gt=0, date__date=date.today(), sub_manager__user=request.user)
     total_history = Action.objects.filter(sub_manager__user=request.user)
+    # filtrer les actions total
 
     # Calculer le total des coins et objectifs
     total_total_coins = sum(action.coins_number for action in total_history if action.sub_manager.active)
