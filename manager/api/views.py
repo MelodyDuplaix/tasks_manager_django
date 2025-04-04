@@ -16,7 +16,21 @@ from .serializers import (
     LoginSerializer,
     PasswordResetSerializer,
     PasswordChangeSerializer,
+    SubManagerSerializer,
 )
+from tasks.models import SubManager
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_id(request):
+    return Response({'username': request.user.username})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_submanagers(request):
+    submanagers = SubManager.objects.filter(user=request.user)
+    serializer = SubManagerSerializer(submanagers, many=True)
+    return Response(serializer.data)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from tasks.models import SubManager
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,3 +23,8 @@ class PasswordChangeSerializer(serializers.Serializer):
         if data['new_password1'] != data['new_password2']:
             raise serializers.ValidationError("The two password fields didn't match.")
         return data
+
+class SubManagerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubManager
+        fields = ['id', 'name', 'daily_objectif', 'yearly_objectif', 'active']

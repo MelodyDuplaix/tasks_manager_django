@@ -13,33 +13,41 @@ const LoginScreen = () => {
  const handleLogin = async () => {
     try {
       setErrorMessage('');
-      console.log('handleLogin called', username, password);
+      if (!username) {
+        setErrorMessage('Veuillez fournir un nom d\'utilisateur');
+        return;
+      }
+      if (!password) {
+        setErrorMessage('Veuillez fournir un mot de passe');
+        return;
+      }
+
       const response = await axios.post('http://127.0.0.1:8000/api/login/', {
         username: username,
-        password: password,
+        password: password
       });
 
       if (response.status === 200) {
         const { access, refresh } = response.data;
-        await AsyncStorage.setItem('authToken', access);
-        await AsyncStorage.setItem('refreshToken', refresh);
+        await AsyncStorage.setItem('accessToken', JSON.stringify(access));
+        await AsyncStorage.setItem('refreshToken', JSON.stringify(refresh));
         router.replace('/');
       } else if (response.status === 401) {
         setErrorMessage('Mauvais identifiants');
         Alert.alert('Mauvais identifiants', 'Veuillez vérifier votre nom d\'utilisateur et votre mot de passe.');
       } else {
-        console.log(response.status)
+        console.log(response.status);
         setErrorMessage('Erreur de connexion');
         Alert.alert('Erreur de connexion', 'Une erreur s\'est produite lors de la connexion.');
       }
     } catch (error: any) {
-      if (error.response && error.response.status === 401) {
+      if (error.response?.status === 401) {
         setErrorMessage('Mauvais identifiants');
         Alert.alert('Mauvais identifiants', 'Veuillez vérifier votre nom d\'utilisateur et votre mot de passe.');
-        return;
+      } else {
+        setErrorMessage('Erreur de connexion');
+        Alert.alert('Erreur de connexion', error.message);
       }
-      setErrorMessage('Erreur de connexion');
-      Alert.alert('Erreur de connexion', error.message);
     }
   };
 
