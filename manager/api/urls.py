@@ -12,4 +12,4 @@ urlpatterns = [
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('password/reset/', password_reset_request, name='password_reset_request'),
     path('password/change/', password_change, name='password_change'),
-]
+] 

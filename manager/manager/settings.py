@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-z#89a^j9^viwq-w+awnvc00@4uxiwprba39-r9+w7z27dn6#cq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["melody37.pythonanywhere.com", "127.0.0.1"]
+ALLOWED_HOSTS = ["melody37.pythonanywhere.com", "127.0.0.1", "localhost"]
 
 # Application definition
 
@@ -45,9 +45,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'api',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -161,3 +163,5 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
 }
+
+CORS_ALLOW_ALL_ORIGINS = True
