@@ -61,3 +61,4 @@ Vous pouvez donc créer un compte pour tester l'application.
 
 Les contributions sont les bienvenues ! Veuillez soumettre un pull request ou ouvrir une issue pour toute suggestion ou
 amélioration.
+
