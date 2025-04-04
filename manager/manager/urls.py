@@ -27,4 +27,5 @@ urlpatterns = [
     path('rewards/', include('tasks.urls.rewards'), name='rewards'),
     path('statistics/', include('tasks.urls.statistics'), name='statistics'),
     path('types/', include('tasks.urls.type'), name='types'),
+    path('api/', include('api.urls')),
 ]
