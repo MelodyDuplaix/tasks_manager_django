@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
-import { NavigationProp, ParamListBase, useNavigation } from "@react-navigation/native";
+import { NavigationProp, ParamListBase, useNavigation, Link } from "@react-navigation/native";
 import { useEffect } from "react";
 
 const { width } = Dimensions.get('window');
@@ -27,14 +27,13 @@ const styles = StyleSheet.create({
 });
 
 export default function MenuItem({ name, link }: { name: string; link: string }) {
-    const navigation = useNavigation<NavigationProp<ParamListBase>>();
-
     return (
+        <Link href={link} asChild>
         <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate(link)}
         >
             <Text style={styles.text}>{name}</Text>
         </TouchableOpacity>
+        </Link>
     );
 }

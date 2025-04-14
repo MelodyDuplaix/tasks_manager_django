@@ -21,12 +21,59 @@ from .serializers import (
     PasswordChangeSerializer,
     SubManagerSerializer,
 )
-from tasks.models import SubManager
+from tasks.models import SubManager, Task, PonctualTask, Reward
+from .serializers import (
+    UserSerializer,
+    LoginSerializer,
+    PasswordResetSerializer,
+    PasswordChangeSerializer,
+    SubManagerSerializer,
+    TaskSerializer,
+    PonctualTaskSerializer,
+    RewardSerializer,
+)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_id(request):
     return Response({'username': request.user.username})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_submanager_data(request, submanager_id):
+    try:
+        submanager = SubManager.objects.get(id=submanager_id, user=request.user)
+    except SubManager.DoesNotExist:
+        return Response({'error': 'SubManager not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    tasks = Task.objects.filter(type__sub_manager=submanager)
+    task_serializer = TaskSerializer(tasks, many=True)
+    
+    submanager_serializer = SubManagerSerializer(submanager)
+
+    ponctual_tasks = PonctualTask.objects.filter(sub_manager=submanager)
+    ponctual_task_serializer = PonctualTaskSerializer(ponctual_tasks, many=True)
+
+    rewards = Reward.objects.filter(sub_manager=submanager)
+    reward_serializer = RewardSerializer(rewards, many=True)
+
+    total_coins_today = 0
+    historique = Action.objects.filter(sub_manager=submanager, date__date=timezone.now().date(), coins_number__gt=0).values_list(
+        'coins_number', flat=True)
+    total_coins_today += sum(historique)
+
+    daily_objective = submanager.daily_objectif
+
+    data = {
+        'submanager': submanager_serializer.data,
+        'tasks': task_serializer.data,
+        'ponctual_tasks': ponctual_task_serializer.data,
+        'rewards': reward_serializer.data,
+        'daily_coins': total_coins_today,
+        'daily_objective': daily_objective,
+    }
+
+    return Response(data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -76,7 +123,7 @@ def get_daily_total_points(request):
 @permission_classes([IsAuthenticated])
 def get_total_points(request):
     history = Action.objects.filter(coins_number__gt=0, sub_manager__user=request.user)
-    total_coins = sum(action.coins_number for action in history if action.sub_manager.active)
+    total_coins = sum(action.coins_number for action in history if action.sub_manager and action.sub_manager.active)
     return Response({'total_coins': total_coins})
 
 @api_view(['POST'])

@@ -26,6 +26,7 @@ export default function Index() {
   const [totalCoins, setTotalCoins] = useState<number>(0);
 
   useEffect(() => {
+    console.log("Index useEffect called");
     const fetchSubmanagers = async () => {
       const token = await getToken();
       if (token) {
@@ -104,7 +105,7 @@ export default function Index() {
       <FlatList
         data={submanagers}
         renderItem={({ item }) => (
-          <MenuItem name={item.name} link={`/submanager/${item.id}`} />
+          <MenuItem name={item.name} link={`/submanager/${item.id}`}/>
         )}
         keyExtractor={item => item.id.toString()}
         ListHeaderComponent={() => 

@@ -1,41 +1,68 @@
-import { Stack, useRouter } from "expo-router";
+import { Stack, useRouter, usePathname } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { getToken, verifyToken, refreshToken, fetchUserId } from "@/services/authentification";
+import { PaperProvider } from 'react-native-paper';
 
 export default function RootLayout() {
   const router = useRouter();
+  const pathname = usePathname();
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const checkToken = async () => {
       try {
-        const token = await AsyncStorage.getItem('authToken');
-        if (token && typeof token === 'string') {
+        const token = await getToken();
+        if (token) {
           try {
-            JSON.parse(token);
-            router.replace('/');
-          } catch (parseError: any) {
-            console.error('Error parsing token:', parseError);
-            console.log('Token value:', token);
-            router.replace('/login');
+            let parsedToken = token;
+            const verificationResponse = await verifyToken(parsedToken);
+
+            if (verificationResponse && verificationResponse.detail === 'Invalid token.') {
+              const newAccessToken = await refreshToken();
+              if (newAccessToken) {
+                parsedToken = newAccessToken;
+              } else {
+                if (pathname !== '/login') {
+                  router.replace('/login');
+                }
+                return;
+              }
+            }
+
+            const username = await fetchUserId(parsedToken);
+            setUserId(username);
+          } catch (error) {
+            console.error('Error checking token:', error);
+            if (pathname !== '/login') {
+              router.replace('/login');
+            }
           }
         } else {
-          console.log('Token is not a string or is null/undefined:', token);
-          router.replace('/login');
+          if (pathname !== '/login') {
+            router.replace('/login');
+          }
         }
       } catch (error: any) {
         console.error('Error checking token:', error);
-        console.log('Error details:', error.message, error.stack);
-        router.replace('/login');
+        if (pathname !== '/login') {
+          router.replace('/login');
+        }
       }
     };
 
-    checkToken();
-  }, []);
+    if (!userId) {
+      checkToken();
+    }
+  }, [pathname, userId]);
 
   return (
-    <Stack>
-      <Stack.Screen name="login" options={{ headerShown: false }} />
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-    </Stack>
+    <PaperProvider>
+      <Stack>
+        <Stack.Screen name="login" options={{ headerShown: false }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="submanager/[id]" options={{ headerShown: false }} />
+      </Stack>
+    </PaperProvider>
   );
 }

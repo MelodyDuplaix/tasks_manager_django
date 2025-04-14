@@ -10,7 +10,7 @@ const handleLogout = async () => {
     router.replace('/login');
   };
 
-const NavigationBar = ({coins}: {coins: number}) => {
+const NavigationBar = ({ coins }: { coins: number }) => {
   const [menuVisible, setMenuVisible] = useState(false);
 
   const openMenu = () => setMenuVisible(true);
@@ -38,12 +38,12 @@ const NavigationBar = ({coins}: {coins: number}) => {
           contentStyle={styles.menuContent}
         >
           <Menu.Item
-            onPress={() => console.log('Action 1')}
+            onPress={() => console.log("Action 1")}
             title="Action 1"
             titleStyle={styles.menuItem}
           />
           <Menu.Item
-            onPress={() => console.log('Action 2')}
+            onPress={() => console.log("Action 2")}
             title="Action 2"
             titleStyle={styles.menuItem}
           />
