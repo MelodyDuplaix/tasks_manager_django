@@ -40,7 +40,7 @@ def reward_action(request, reward_id):
         action.save()
     else:
         messages.error(request, 'Nombre de pièce insuffisant')
-    return redirect('submanager_page', submanager_id=reward.sub_manager.id)
+    return redirect('submanager_page', submanager_id=reward.sub_manager.id) # type: ignore
 
 
 @login_required

@@ -1,3 +1,4 @@
+from datetime import date
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
@@ -11,6 +12,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.utils import timezone
+from tasks.models import SubManager, Action
 from .serializers import (
     UserSerializer,
     LoginSerializer,
@@ -55,6 +58,26 @@ def login_view(request):
         else:
             return Response({'error': 'Invalid data'}, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_daily_total_points(request):
+    total_coins_today = 0
+    total_daily_objectif = 0
+    submanagers = SubManager.objects.filter(user=request.user)
+    for submanager in submanagers:
+        historique = Action.objects.filter(sub_manager=submanager, date__date=timezone.now().date(), coins_number__gt=0).values_list(
+            'coins_number', flat=True)
+        total_coins_today += sum(historique)
+        total_daily_objectif += submanager.daily_objectif
+    return Response({'total_coins_today': total_coins_today, 'total_daily_objectif': total_daily_objectif})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_total_points(request):
+    history = Action.objects.filter(coins_number__gt=0, sub_manager__user=request.user)
+    total_coins = sum(action.coins_number for action in history if action.sub_manager.active)
+    return Response({'total_coins': total_coins})
 
 @api_view(['POST'])
 @permission_classes([AllowAny])

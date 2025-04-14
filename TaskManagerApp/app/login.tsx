@@ -1,53 +1,31 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { fetchToken } from '@/services/authentification';
 
 const LoginScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const router = useRouter();
 
  const handleLogin = async () => {
     try {
       setErrorMessage('');
       if (!username) {
-        setErrorMessage('Veuillez fournir un nom d\'utilisateur');
+        setErrorMessage("Veuillez fournir un nom d'utilisateur");
         return;
       }
       if (!password) {
-        setErrorMessage('Veuillez fournir un mot de passe');
+        setErrorMessage("Veuillez fournir un mot de passe");
         return;
       }
-
-      const response = await axios.post('http://127.0.0.1:8000/api/login/', {
-        username: username,
-        password: password
-      });
-
-      if (response.status === 200) {
-        const { access, refresh } = response.data;
-        await AsyncStorage.setItem('accessToken', JSON.stringify(access));
-        await AsyncStorage.setItem('refreshToken', JSON.stringify(refresh));
-        router.replace('/');
-      } else if (response.status === 401) {
-        setErrorMessage('Mauvais identifiants');
-        Alert.alert('Mauvais identifiants', 'Veuillez vérifier votre nom d\'utilisateur et votre mot de passe.');
-      } else {
-        console.log(response.status);
-        setErrorMessage('Erreur de connexion');
-        Alert.alert('Erreur de connexion', 'Une erreur s\'est produite lors de la connexion.');
+      const error = await fetchToken(username, password);
+      if (error) {
+        setErrorMessage(error);
+        return;
       }
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        setErrorMessage('Mauvais identifiants');
-        Alert.alert('Mauvais identifiants', 'Veuillez vérifier votre nom d\'utilisateur et votre mot de passe.');
-      } else {
-        setErrorMessage('Erreur de connexion');
-        Alert.alert('Erreur de connexion', error.message);
-      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setErrorMessage('Une erreur est survenue lors de la connexion');
     }
   };
 
