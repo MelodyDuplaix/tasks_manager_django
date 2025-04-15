@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
 )
-from .views import get_daily_total_points, get_total_points, password_reset_request, password_change, get_user_submanagers, get_user_id, get_submanager_data
+from .views import get_daily_total_points, get_total_points, mark_task_done, password_reset_request, password_change, get_user_submanagers, get_user_id, get_submanager_data
 
 urlpatterns = [
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -17,4 +17,5 @@ urlpatterns = [
     path('user/daily_coins/', get_daily_total_points, name='get_daily_total_points'),
     path('user/total_coins/', get_total_points, name='get_total_points'),
     path('submanager/<int:submanager_id>/data/', get_submanager_data, name='get_submanager_data'),
+    path('task/done/<int:task_id>/', mark_task_done, name='mark_task_done'),
 ]

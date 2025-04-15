@@ -32,6 +32,53 @@ from .serializers import (
     PonctualTaskSerializer,
     RewardSerializer,
 )
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
+@swagger_auto_schema(
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'is_ponctual': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='Is the task a ponctual task?'),
+        },
+        required=['is_ponctual']
+    ),
+    responses={200: 'Success message'},
+    method='POST'
+)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def mark_task_done(request, task_id):
+    is_ponctual = request.data.get('is_ponctual', False)
+    if is_ponctual:
+        try:
+            ponctual_task = PonctualTask.objects.get(id=task_id)
+            submanager = ponctual_task.sub_manager
+            Action.objects.create(
+                name=f"Done: {ponctual_task.name}",
+                coins_number=ponctual_task.coins_number,
+                sub_manager=submanager
+            )
+            ponctual_task.delete()
+            return Response({'message': 'Ponctual Task marked as done, action created and task deleted.'}, status=status.HTTP_200_OK)
+        except PonctualTask.DoesNotExist:
+            return Response({'error': 'PonctualTask not found'}, status=status.HTTP_404_NOT_FOUND)
+    else:
+        try:
+            task = Task.objects.get(id=task_id)
+            if task.type is not None:
+                submanager = task.type.sub_manager
+                Action.objects.create(
+                    name=f"Done: {task.name}",
+                    type=task.type,
+                    coins_number=task.coins_number,
+                    sub_manager=submanager
+                )
+                return Response({'message': 'Task marked as done and action created.'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'Task type is None'}, status=status.HTTP_400_BAD_REQUEST)
+        except Task.DoesNotExist:
+            return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
