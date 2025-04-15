@@ -13,11 +13,13 @@ interface TaskItemProps {
     name: string;
   };
   date?: string;
-  isPonctual: boolean;
+  isPonctual?: boolean;
+  done_today_count?: number;
   onTaskDone: (id: number, isPonctual: boolean) => void;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ id, name, coins_number, type, date, isPonctual, onTaskDone }) => {
+const TaskItem: React.FC<TaskItemProps> = (props) => {
+  const { id, name, coins_number, type, date, isPonctual, onTaskDone } = props;
   const [visible, setVisible] = React.useState(false);
   const [showCheck, setShowCheck] = React.useState(false);
 
@@ -26,8 +28,8 @@ const TaskItem: React.FC<TaskItemProps> = ({ id, name, coins_number, type, date,
 
   const handleCheckboxPress = () => {
     setShowCheck(true);
-    markTaskDone(id, isPonctual, () => {
-      onTaskDone(id, isPonctual);
+    markTaskDone(id, isPonctual || false, () => {
+      onTaskDone(id, isPonctual || false);
       setTimeout(() => setShowCheck(false), 500);
     });
   };
@@ -49,6 +51,14 @@ const TaskItem: React.FC<TaskItemProps> = ({ id, name, coins_number, type, date,
         <Text style={styles.dateText}>{date ? date.replace("T", " ").replace("Z", " ") : ""}</Text>
       </View>
       <View style={styles.coins}>
+        {(props.done_today_count || 0) > 0 &&  (
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 15, gap: 5 }}>
+          <Text style={{ color: 'green', fontSize: 14 }}>
+            {(props.done_today_count || 0).toString()}
+          </Text>
+          <FontAwesome6 name="check" size={16} color="green" />
+          </View>
+        )}
         <Text style={styles.coinsText}>{coins_number}</Text>
         <FontAwesome6 name="coins" size={16} color="orange" />
       </View>

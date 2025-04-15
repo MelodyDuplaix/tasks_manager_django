@@ -59,15 +59,16 @@ export default function SubmanagerPage() {
     loadTotalCoins();
   };
 
-  const renderItem = ({ item }: { item: any }) => (
+  const renderPonctualTaskItem = ({ item }: { item: any }) => (
     <TaskItem
       id={item.id}
       name={item.name}
       coins_number={item.coins_number}
       type={item.type}
       date={item.date}
-      isPonctual={item.hasOwnProperty('date')}
+      isPonctual={true}
       onTaskDone={handleTaskDone}
+      done_today_count={0}
     />
   );
 
@@ -110,7 +111,7 @@ export default function SubmanagerPage() {
             {ponctualTasks.length > 0 ? (
               <FlatList
                 data={ponctualTasks}
-                renderItem={renderItem}
+                renderItem={({ item }) => renderPonctualTaskItem({ item })}
                 keyExtractor={(item) => item.id.toString()}
                 style={styles.listContainer}
                 ListFooterComponent={() => renderFooter("une tâche ponctuelle")}
@@ -124,9 +125,20 @@ export default function SubmanagerPage() {
 
             <Text style={styles.heading}>Tâches</Text>
             {tasks.length > 0 ? (
-              <FlatList
+      <FlatList
                 data={tasks}
-                renderItem={renderItem}
+                renderItem={({ item }) => (
+                  <TaskItem
+                    id={item.id}
+                    name={item.name}
+                    coins_number={item.coins_number}
+                    type={item.type}
+                    date={item.date}
+                    isPonctual={false}
+                    onTaskDone={handleTaskDone}
+                    done_today_count={item.done_today_count}
+                  />
+                )}
                 keyExtractor={(item) => item.id.toString()}
                 style={styles.tasksContainer}
                 ListFooterComponent={() => renderFooter("une tâche")}
@@ -144,7 +156,17 @@ export default function SubmanagerPage() {
             {rewards.length > 0 ? (
               <FlatList
                 data={rewards}
-                renderItem={renderItem}
+                renderItem={({ item }) => (
+                  <TaskItem
+                    id={item.id}
+                    name={item.name}
+                    coins_number={item.coins_number}
+                    type={item.type}
+                    date={item.date}
+                    onTaskDone={() => {}}
+                    done_today_count={0}
+                  />
+                )}
                 keyExtractor={(item) => item.id.toString()}
                 style={styles.listContainer}
                 ListFooterComponent={() => renderFooter("une récompense")}

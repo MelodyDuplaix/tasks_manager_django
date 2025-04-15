@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from tasks.models import SubManager, Task, PonctualTask, Reward, TaskType
+from tasks.models import SubManager, Task, PonctualTask, Reward, TaskType, Action
+from django.utils import timezone
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,9 +37,18 @@ class TaskTypeSerializer(serializers.ModelSerializer):
 
 class TaskSerializer(serializers.ModelSerializer):
     type = TaskTypeSerializer()
+    done_today_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Task
-        fields = ['id', 'name', 'coins_number', 'type']
+        fields = ['id', 'name', 'coins_number', 'type', 'done_today_count']
+
+    def get_done_today_count(self, obj):
+        return Action.objects.filter(
+            type=obj.type,
+            sub_manager=obj.type.sub_manager,
+            date__date=timezone.now().date()
+        ).count()
 
 class PonctualTaskSerializer(serializers.ModelSerializer):
     class Meta:
