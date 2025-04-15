@@ -43,7 +43,7 @@ class TaskSerializer(serializers.ModelSerializer):
 class PonctualTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = PonctualTask
-        fields = ['id', 'name', 'coins_number']
+        fields = ['id', 'name', 'coins_number', 'date']
 
 class RewardSerializer(serializers.ModelSerializer):
     class Meta:

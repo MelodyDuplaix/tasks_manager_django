@@ -52,7 +52,7 @@ class RewardForm(forms.ModelForm):
 class PonctualTaskForm(forms.ModelForm):
     class Meta:
         model = PonctualTask
-        fields = ['name', 'coins_number']
+        fields = ['name', 'coins_number', 'date']
 
 
 class PasswordResetForm(forms.Form):

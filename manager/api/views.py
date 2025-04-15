@@ -83,7 +83,6 @@ def get_user_submanagers(request):
     return Response(serializer.data)
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
 def login_view(request):
     serializer = LoginSerializer(data=request.data)
     if serializer.is_valid():

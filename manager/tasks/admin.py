@@ -17,7 +17,7 @@ class SubManagerAdmin(admin.ModelAdmin):
   list_display = ("name", "daily_objectif", "weekly_objectif", "monthly_objectif", "active",)
 
 class PonctualTaskAdmin(admin.ModelAdmin):
-  list_display = ("name", "coins_number", "sub_manager",)
+  list_display = ("name", "coins_number", "sub_manager","date",)
 
 admin.site.register(SubManager, SubManagerAdmin)
 admin.site.register(TaskType, TaskTypeAdmin)
