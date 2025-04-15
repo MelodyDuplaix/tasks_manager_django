@@ -1,28 +1,41 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import { Menu, IconButton, MD3Colors } from 'react-native-paper';
+import { markTaskDone } from '../services/taskService';
 
 interface TaskItemProps {
+  id: number;
   name: string;
   coins_number: number;
   type?: {
     id: number;
     name: string;
   };
-  date: string;
+  date?: string;
+  isPonctual: boolean;
+  onTaskDone: (id: number, isPonctual: boolean) => void;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ name, coins_number, type, date }) => {
-  const [visible, setVisible] = useState(false);
+const TaskItem: React.FC<TaskItemProps> = ({ id, name, coins_number, type, date, isPonctual, onTaskDone }) => {
+  const [visible, setVisible] = React.useState(false);
+  const [showCheck, setShowCheck] = React.useState(false);
 
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
 
+  const handleCheckboxPress = () => {
+    setShowCheck(true);
+    markTaskDone(id, isPonctual, () => {
+      onTaskDone(id, isPonctual);
+      setTimeout(() => setShowCheck(false), 500);
+    });
+  };
+
   return (
     <View style={styles.item}>
-      <TouchableOpacity style={styles.checkbox}>
-        <View style={styles.innerCheckbox} />
+      <TouchableOpacity style={styles.checkbox} onPress={handleCheckboxPress}>
+        {showCheck && <View style={styles.innerCheckbox} />}
       </TouchableOpacity>
       <View style={{flex: 1}}>
         <Text style={styles.text}>{name}</Text>
@@ -33,7 +46,6 @@ const TaskItem: React.FC<TaskItemProps> = ({ name, coins_number, type, date }) =
         )}
       </View>
       <View>
-
         <Text style={styles.dateText}>{date ? date.replace("T", " ").replace("Z", " ") : ""}</Text>
       </View>
       <View style={styles.coins}>
@@ -81,7 +93,7 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#fff',
+    backgroundColor: 'green',
   },
   text: {
     flex: 1,

@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet, ScrollView, FlatList, TouchableOpacity } from "react-native";
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import NavigationBar from "@/components/NavigationBar";
 import ProgressBar from "@/components/ProgressBar";
 import MenuItem from "@/components/MenuItem";
@@ -21,38 +21,54 @@ export default function SubmanagerPage() {
   const [showTasks, setShowTasks] = useState(true);
   const [totalCoins, setTotalCoins] = useState<number>(100);
 
+  const loadData = useCallback(async () => {
+    const data = await fetchSubmanagerData(submanagerId);
+    if (data) {
+      setTasks(data.tasks);
+      setPonctualTasks(data.ponctual_tasks);
+      setRewards(data.rewards);
+      setDailyObjective(data.daily_objective);
+      setTotalCoinsToday(data.daily_coins);
+      setSubmanagerName(data.submanager.name);
+    }
+  }, [submanagerId]);
+
+  const loadTotalCoins = useCallback(async () => {
+    try {
+      const coins = await fetchTotalCoins();
+      if (coins) {
+        setTotalCoins(coins);
+      }
+    } catch (error) {
+      console.error("Failed to fetch total coins:", error);
+    }
+  }, []);
+
   useEffect(() => {
-    const loadData = async () => {
-      const data = await fetchSubmanagerData(submanagerId);
-      if (data) {
-        setTasks(data.tasks);
-        setPonctualTasks(data.ponctual_tasks);
-        setRewards(data.rewards);
-        setDailyObjective(data.daily_objective);
-        setTotalCoinsToday(data.daily_coins);
-        setSubmanagerName(data.submanager.name);
-      }
-    };
-
-    const loadTotalCoins = async () => {
-      try {
-        const coins = await fetchTotalCoins();
-        if (coins) {
-          setTotalCoins(coins);
-        }
-      } catch (error) {
-        console.error("Failed to fetch total coins:", error);
-      }
-    };
-
     loadData();
     loadTotalCoins();
-  }, [submanagerId]);
+  }, [loadData, loadTotalCoins]);
 
   const dailyObjectivePercentage = (totalCoinsToday / dailyObjective) * 100;
 
+  const handleTaskDone = (taskId: number, isPonctual: boolean) => {
+    if (isPonctual) {
+      setPonctualTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+    }
+    loadData();
+    loadTotalCoins();
+  };
+
   const renderItem = ({ item }: { item: any }) => (
-    <TaskItem name={item.name} coins_number={item.coins_number} type={item.type} date={item.date} />
+    <TaskItem
+      id={item.id}
+      name={item.name}
+      coins_number={item.coins_number}
+      type={item.type}
+      date={item.date}
+      isPonctual={item.hasOwnProperty('date')}
+      onTaskDone={handleTaskDone}
+    />
   );
 
   const renderFooter = (type: string) => {
@@ -141,9 +157,6 @@ export default function SubmanagerPage() {
             )}
           </>
         )}
-
-        <MenuItem name="Historique du manager" link={`/submanager/${submanagerId}/history`} />
-        <MenuItem name="Statistiques des tâches" link={`/submanager/${submanagerId}/statistics`} />
       </ScrollView>
     </View>
   );

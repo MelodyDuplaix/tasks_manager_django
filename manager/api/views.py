@@ -55,7 +55,7 @@ def mark_task_done(request, task_id):
             ponctual_task = PonctualTask.objects.get(id=task_id)
             submanager = ponctual_task.sub_manager
             Action.objects.create(
-                name=f"Done: {ponctual_task.name}",
+                name=f"{ponctual_task.name}",
                 coins_number=ponctual_task.coins_number,
                 sub_manager=submanager
             )
@@ -69,7 +69,7 @@ def mark_task_done(request, task_id):
             if task.type is not None:
                 submanager = task.type.sub_manager
                 Action.objects.create(
-                    name=f"Done: {task.name}",
+                    name=f"{task.name}",
                     type=task.type,
                     coins_number=task.coins_number,
                     sub_manager=submanager
