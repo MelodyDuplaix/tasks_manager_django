@@ -26,7 +26,6 @@ export default function Index() {
   const [totalCoins, setTotalCoins] = useState<number>(0);
 
   useEffect(() => {
-    console.log("Index useEffect called");
     const fetchSubmanagers = async () => {
       const token = await getToken();
       if (token) {

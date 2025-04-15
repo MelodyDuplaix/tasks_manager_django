@@ -10,9 +10,10 @@ interface TaskItemProps {
     id: number;
     name: string;
   };
+  date: string;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ name, coins_number, type }) => {
+const TaskItem: React.FC<TaskItemProps> = ({ name, coins_number, type, date }) => {
   const [visible, setVisible] = useState(false);
 
   const openMenu = () => setVisible(true);
@@ -30,6 +31,10 @@ const TaskItem: React.FC<TaskItemProps> = ({ name, coins_number, type }) => {
             ({type.name})
           </Text>
         )}
+      </View>
+      <View>
+
+        <Text style={styles.dateText}>{date ? date.replace("T", " ").replace("Z", " ") : ""}</Text>
       </View>
       <View style={styles.coins}>
         <Text style={styles.coinsText}>{coins_number}</Text>
@@ -95,6 +100,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginRight: 5,
   },
+  dateText: {
+    fontSize: 12,
+    color: 'gray',
+    marginRight: 10,
+  }
 });
 
 export default TaskItem;

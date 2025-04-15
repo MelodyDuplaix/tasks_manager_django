@@ -9,7 +9,6 @@ import TaskItem from "@/components/TaskItem";
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
 export default function SubmanagerPage() {
-  console.log("SubmanagerPage rendered");
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const submanagerId = Number(id);
@@ -53,7 +52,7 @@ export default function SubmanagerPage() {
   const dailyObjectivePercentage = (totalCoinsToday / dailyObjective) * 100;
 
   const renderItem = ({ item }: { item: any }) => (
-    <TaskItem name={item.name} coins_number={item.coins_number} type={item.type} />
+    <TaskItem name={item.name} coins_number={item.coins_number} type={item.type} date={item.date} />
   );
 
   const renderFooter = (type: string) => {
