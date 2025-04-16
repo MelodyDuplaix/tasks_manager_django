@@ -1,5 +1,8 @@
 from django.urls import path
-from .views import get_total_points_submanager, validate_reward, get_daily_total_points, get_total_points, mark_task_done, password_reset_request, password_change, get_user_submanagers, get_user_id, get_submanager_data
+from .views.views import validate_reward, mark_task_done
+from .views.auth_views import login_view, password_reset_request, password_change, get_user_id, get_user_submanagers, get_daily_total_points, get_total_points, get_total_points_submanager, get_submanager_data
+from .views.task_views import add_task
+from .views.reward_views import add_reward
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -20,4 +23,6 @@ urlpatterns = [
     path('submanager/<int:submanager_id>/data/', get_submanager_data, name='get_submanager_data'),
     path('task/done/<int:task_id>/', mark_task_done, name='mark_task_done'),
     path('reward/validate/<int:reward_id>/', validate_reward, name='validate_reward'),
+    path('task/add/', add_task, name='add_task'),
+    path('reward/add/', add_reward, name='add_reward'),
 ]

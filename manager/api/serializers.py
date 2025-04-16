@@ -56,6 +56,8 @@ class PonctualTaskSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'coins_number', 'date']
 
 class RewardSerializer(serializers.ModelSerializer):
+    sub_manager_id = serializers.IntegerField(write_only=True)
+
     class Meta:
         model = Reward
-        fields = ['id', 'name', 'coins_number']
+        fields = ['id', 'name', 'coins_number', 'sub_manager_id']

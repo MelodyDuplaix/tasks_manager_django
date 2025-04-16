@@ -29,8 +29,14 @@ export const fetchQuery = async (
     try {
         const response = await fetch(`${API_CONFIG.BASE_URL}/${query}/`, fetchOptions);
         if (response.ok) {
-          const data = await response.json();
-          return data;
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            const data = await response.json();
+            return data;
+          } else {
+            const data = await response.text();
+            return data;
+          }
         } else if (response.status === 401) {
             console.error('Token is invalid:', response.status);
         } else {
@@ -48,7 +54,8 @@ export const fetchQuery = async (
 
 export const getToken = async () => {
   const token = await AsyncStorage.getItem('accessToken');
-  return token ? JSON.parse(token as string) : null;
+  if (!token) return null;
+  return token;
 };
 
 export const verifyToken = async (parsedToken: string) => {
@@ -62,7 +69,8 @@ export const refreshToken = async () => {
       const refreshResponse = await fetchQuery(refreshTokenValue, 'login/refresh', false, 'POST', { refresh: refreshTokenValue });
       if (refreshResponse.access) {
         const newAccessToken = refreshResponse.access;
-        await AsyncStorage.setItem('accessToken', JSON.stringify(newAccessToken));
+        console.log("newAccessToken", newAccessToken)
+        await AsyncStorage.setItem('accessToken', newAccessToken);
         return newAccessToken
       } else {
         console.error("Token refresh failed");
@@ -99,8 +107,9 @@ export const fetchToken = async (username: string, password: string) => {
   try {
     if (response.status === 200) {
       const { access, refresh } = response.data;
-      await AsyncStorage.setItem('accessToken', JSON.stringify(access as string));
-      await AsyncStorage.setItem('refreshToken', JSON.stringify(refresh as string));
+      console.log(access, refresh);
+      await AsyncStorage.setItem('accessToken', access);
+      await AsyncStorage.setItem('refreshToken', refresh);
       router.replace('/');
       return null;
     } else if (response.status === 401) {
