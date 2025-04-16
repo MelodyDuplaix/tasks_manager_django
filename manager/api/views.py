@@ -1,4 +1,5 @@
 from datetime import date
+from django.db.models import Sum
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
@@ -34,6 +35,33 @@ from .serializers import (
 )
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def validate_reward(request, reward_id):
+    """
+    Validates a reward if the user has enough coins.
+    """
+    try:
+        reward = Reward.objects.get(id=reward_id)
+    except Reward.DoesNotExist:
+        return Response({'error': 'Reward not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    submanager = reward.sub_manager
+    actions = Action.objects.filter(sub_manager=submanager)
+    total_coins = actions.aggregate(total=Sum('coins_number'))['total'] or 0
+
+    if total_coins >= reward.coins_number:
+        Action.objects.create(
+            name=reward.name,
+            type=None,
+            date=timezone.now(),
+            coins_number=-reward.coins_number,
+            sub_manager=submanager
+        )
+        return Response({'message': 'Reward validated successfully.'}, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'Not enough coins to claim this reward.'}, status=status.HTTP_400_BAD_REQUEST)
 
 @swagger_auto_schema(
     request_body=openapi.Schema(
@@ -170,6 +198,14 @@ def get_daily_total_points(request):
 def get_total_points(request):
     history = Action.objects.filter(coins_number__gt=0, sub_manager__user=request.user)
     total_coins = sum(action.coins_number for action in history if action.sub_manager and action.sub_manager.active)
+    return Response({'total_coins': total_coins})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_total_points_submanager(request, submanager_id):
+    submanager = SubManager.objects.select_related('user').get(id=submanager_id)
+    historique_total = Action.objects.filter(sub_manager=submanager).values_list('coins_number', flat=True)
+    total_coins = sum(historique_total)
     return Response({'total_coins': total_coins})
 
 @api_view(['POST'])

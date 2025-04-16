@@ -17,13 +17,12 @@ export const fetchCoinsNumber = async (): Promise<[number, number] | undefined> 
     }
 }
 
-export const fetchTotalCoins = async (): Promise<number | undefined> => {
-    const token = await getToken();
+export const fetchTotalCoins = async (submanager_id?: number | null): Promise<number | undefined> => {    const token = await getToken();
     if (!token) {
         router.replace('/login');
         return;
     }
-    const response = await fetchQuery(token, 'user/total_coins', true);
+    const response = await fetchQuery(token, `user/total_coins${submanager_id ? `/${submanager_id}`: ""}`, true);
     if (response) {
         return response.total_coins;
     } else {

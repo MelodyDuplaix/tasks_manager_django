@@ -5,6 +5,8 @@ import NavigationBar from "@/components/NavigationBar";
 import ProgressBar from "@/components/ProgressBar";
 import MenuItem from "@/components/MenuItem";
 import { fetchSubmanagerData, fetchTotalCoins } from "@/services/fetchApiInfos";
+import { validateReward } from "@/services/rewardService";
+import { markTaskDone } from "@/services/taskService";
 import TaskItem from "@/components/TaskItem";
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 
@@ -35,7 +37,7 @@ export default function SubmanagerPage() {
 
   const loadTotalCoins = useCallback(async () => {
     try {
-      const coins = await fetchTotalCoins();
+      const coins = await fetchTotalCoins(submanagerId);
       if (coins) {
         setTotalCoins(coins);
       }
@@ -49,14 +51,23 @@ export default function SubmanagerPage() {
     loadTotalCoins();
   }, [loadData, loadTotalCoins]);
 
-  const dailyObjectivePercentage = (totalCoinsToday / dailyObjective) * 100;
 
   const handleTaskDone = (taskId: number, isPonctual: boolean) => {
-    if (isPonctual) {
-      setPonctualTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
-    }
+    markTaskDone(taskId, isPonctual, () => {
+      if (isPonctual) {
+        setPonctualTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+      }
+    });
     loadData();
     loadTotalCoins();
+  };
+
+  const handleRewardValidated = (rewardId: number) => {
+    const reward = rewards.find(reward => reward.id === rewardId);
+    if (reward) {
+      loadData();
+      loadTotalCoins();
+    }
   };
 
   const renderPonctualTaskItem = ({ item }: { item: any }) => (
@@ -137,6 +148,7 @@ export default function SubmanagerPage() {
                     isPonctual={false}
                     onTaskDone={handleTaskDone}
                     done_today_count={item.done_today_count}
+                    isReward={false}
                   />
                 )}
                 keyExtractor={(item) => item.id.toString()}
@@ -163,8 +175,9 @@ export default function SubmanagerPage() {
                     coins_number={item.coins_number}
                     type={item.type}
                     date={item.date}
-                    onTaskDone={() => {}}
+                    onTaskDone={() => validateReward(item.id, handleRewardValidated)}
                     done_today_count={0}
+                    isReward={true}
                   />
                 )}
                 keyExtractor={(item) => item.id.toString()}

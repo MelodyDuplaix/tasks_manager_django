@@ -16,10 +16,11 @@ interface TaskItemProps {
   isPonctual?: boolean;
   done_today_count?: number;
   onTaskDone: (id: number, isPonctual: boolean) => void;
+  isReward?: boolean;
 }
 
 const TaskItem: React.FC<TaskItemProps> = (props) => {
-  const { id, name, coins_number, type, date, isPonctual, onTaskDone } = props;
+  const { id, name, coins_number, type, date, isPonctual, onTaskDone, isReward } = props;
   const [visible, setVisible] = React.useState(false);
   const [showCheck, setShowCheck] = React.useState(false);
 
@@ -28,10 +29,8 @@ const TaskItem: React.FC<TaskItemProps> = (props) => {
 
   const handleCheckboxPress = () => {
     setShowCheck(true);
-    markTaskDone(id, isPonctual || false, () => {
-      onTaskDone(id, isPonctual || false);
-      setTimeout(() => setShowCheck(false), 500);
-    });
+    props.onTaskDone(id, isPonctual || false);
+    setTimeout(() => setShowCheck(false), 500);
   };
 
   return (
