@@ -15,6 +15,7 @@ export default function ProgressBar({ current, total }: { current: number, total
                 <View 
                     style={{
                         width: `${percentage}%`,
+                        maxWidth: '100%',
                         height: '100%',
                         backgroundColor: '#4CAF50',
                         borderRadius: 5
