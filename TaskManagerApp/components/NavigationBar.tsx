@@ -38,6 +38,11 @@ const NavigationBar = ({ coins }: { coins: number }) => {
           contentStyle={styles.menuContent}
         >
           <Menu.Item
+            onPress={() => router.push('/')}
+            title="Home"
+            titleStyle={styles.menuItem}
+          />
+          <Menu.Item
             onPress={() => console.log("History")}
             title="Historique"
             titleStyle={styles.menuItem}
