@@ -196,8 +196,8 @@ def get_daily_total_points(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_total_points(request):
-    history = Action.objects.filter(coins_number__gt=0, sub_manager__user=request.user)
-    total_coins = sum(action.coins_number for action in history if action.sub_manager and action.sub_manager.active)
+    total_history = Action.objects.filter(sub_manager__user=request.user)
+    total_coins = sum(action.coins_number for action in total_history if action.sub_manager.active)
     return Response({'total_coins': total_coins})
 
 @api_view(['GET'])

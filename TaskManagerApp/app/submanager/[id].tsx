@@ -42,6 +42,8 @@ export default function SubmanagerPage() {
       const coins = await fetchTotalCoins(submanagerId);
       if (coins) {
         setTotalCoins(coins);
+      } else if (coins === 0) {
+        setTotalCoins(0);
       }
     } catch (error) {
       console.error("Failed to fetch total coins:", error);
