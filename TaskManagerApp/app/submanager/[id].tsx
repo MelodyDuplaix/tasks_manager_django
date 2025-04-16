@@ -4,11 +4,12 @@ import { useState, useEffect, useCallback } from 'react';
 import NavigationBar from "@/components/NavigationBar";
 import ProgressBar from "@/components/ProgressBar";
 import MenuItem from "@/components/MenuItem";
-import { fetchSubmanagerData, fetchTotalCoins } from "@/services/fetchApiInfos";
+import { fetchSubmanagerData, fetchTotalCoins, fetchSubmanagers } from "@/services/fetchApiInfos";
 import { validateReward } from "@/services/rewardService";
 import { markTaskDone } from "@/services/taskService";
 import TaskItem from "@/components/TaskItem";
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import SubmanagerNavigation from "@/components/SubmanagerNavigation";
 
 export default function SubmanagerPage() {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function SubmanagerPage() {
   const [rewards, setRewards] = useState<any[]>([]);
   const [showTasks, setShowTasks] = useState(true);
   const [totalCoins, setTotalCoins] = useState<number>(100);
+  const [submanagers, setSubmanagers] = useState<any[]>([]);
 
   const loadData = useCallback(async () => {
     const data = await fetchSubmanagerData(submanagerId);
@@ -46,10 +48,42 @@ export default function SubmanagerPage() {
     }
   }, []);
 
+  const loadSubmanagers = useCallback(async () => {
+    try {
+      const submanagersData = await fetchSubmanagers();
+      if (submanagersData) {
+        setSubmanagers(submanagersData);
+      }
+    } catch (error) {
+      console.error("Failed to fetch submanagers:", error);
+    }
+  }, []);
+
   useEffect(() => {
     loadData();
     loadTotalCoins();
-  }, [loadData, loadTotalCoins]);
+    loadSubmanagers();
+  }, [loadData, loadTotalCoins, loadSubmanagers]);
+
+  const getPreviousSubmanager = () => {
+    const currentIndex = submanagers.findIndex(sm => sm.id === submanagerId);
+    if (currentIndex > 0) {
+      return submanagers[currentIndex - 1];
+    } else if (submanagers.length > 1) {
+      return submanagers[submanagers.length - 1];
+    }
+    return null;
+  };
+
+  const getNextSubmanager = () => {
+    const currentIndex = submanagers.findIndex(sm => sm.id === submanagerId);
+    if (currentIndex < submanagers.length - 1) {
+      return submanagers[currentIndex + 1];
+    } else if (submanagers.length > 1) {
+      return submanagers[0];
+    }
+    return null;
+  };
 
 
   const handleTaskDone = (taskId: number, isPonctual: boolean) => {
@@ -97,7 +131,11 @@ export default function SubmanagerPage() {
         <NavigationBar coins={totalCoins} />
       </View>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>{submanagerName}</Text>
+        <SubmanagerNavigation
+          submanagers={submanagers}
+          submanagerId={submanagerId}
+          submanagerName={submanagerName}
+        />
 
         <Text style={styles.heading}>Objectif quotidien</Text>
         <ProgressBar current={totalCoinsToday} total={dailyObjective} />
@@ -268,5 +306,22 @@ const styles = StyleSheet.create({
   emptyListContainer: {
     marginTop: 10,
     padding: 10,
-  }
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  navButton: {
+    backgroundColor: '#ddd',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  navButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
 });
