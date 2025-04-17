@@ -1,0 +1,72 @@
+import { useState } from 'react';
+import { Text, View, StyleSheet, TextInput, Button, ScrollView } from 'react-native';
+import { useRouter } from 'expo-router';
+import { fetchQuery, getToken } from '../services/authentification';
+
+const CreateReward = () => {
+  const router = useRouter();
+  const [name, setName] = useState('');
+  const [coinsNumber, setCoinsNumber] = useState('');
+  const [submanagerId, setSubmanagerId] = useState('');
+
+  const handleSubmit = async () => {
+    const token = await getToken();
+    if (token) {
+      const data = {
+        name,
+        coins_number: parseInt(coinsNumber, 10),
+        sub_manager_id: parseInt(submanagerId, 10),
+      };
+      const response = await fetchQuery(token, 'reward/add/', true, 'POST', data);
+      if (response) {
+        router.back();
+      }
+    }
+  };
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.label}>Nom de la récompense:</Text>
+      <TextInput
+        style={styles.input}
+        value={name}
+        onChangeText={setName}
+      />
+      <Text style={styles.label}>Nombre de pièces:</Text>
+      <TextInput
+        style={styles.input}
+        value={coinsNumber}
+        onChangeText={setCoinsNumber}
+        keyboardType="number-pad"
+      />
+      <Text style={styles.label}>ID du sous-manager:</Text>
+      <TextInput
+        style={styles.input}
+        value={submanagerId}
+        onChangeText={setSubmanagerId}
+        keyboardType="number-pad"
+      />
+      <Button title="Créer la récompense" onPress={handleSubmit} />
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    flexGrow: 1,
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+});
+
+export default CreateReward;

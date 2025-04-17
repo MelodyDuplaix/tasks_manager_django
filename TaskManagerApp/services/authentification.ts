@@ -53,9 +53,11 @@ export const fetchQuery = async (
 
 
 export const getToken = async () => {
-  const token = await AsyncStorage.getItem('accessToken');
-  if (!token) return null;
-  return token;
+  if (typeof window !== 'undefined') {
+    const token = await AsyncStorage.getItem('accessToken');
+    return token;
+  }
+  return null;
 };
 
 export const verifyToken = async (parsedToken: string) => {
@@ -69,7 +71,6 @@ export const refreshToken = async () => {
       const refreshResponse = await fetchQuery(refreshTokenValue, 'login/refresh', false, 'POST', { refresh: refreshTokenValue });
       if (refreshResponse.access) {
         const newAccessToken = refreshResponse.access;
-        console.log("newAccessToken", newAccessToken)
         await AsyncStorage.setItem('accessToken', newAccessToken);
         return newAccessToken
       } else {
@@ -96,7 +97,7 @@ export const fetchUserId = async (parsedToken: string) => {
 };
 
 export const fetchSubmanagersData = async (parsedToken: string) => {
-  return await fetchQuery(parsedToken, 'submanagers');
+  return await fetchQuery(parsedToken, 'submanager');
 };
 
 export const fetchToken = async (username: string, password: string) => {
@@ -107,7 +108,6 @@ export const fetchToken = async (username: string, password: string) => {
   try {
     if (response.status === 200) {
       const { access, refresh } = response.data;
-      console.log(access, refresh);
       await AsyncStorage.setItem('accessToken', access);
       await AsyncStorage.setItem('refreshToken', refresh);
       router.replace('/');
@@ -115,7 +115,6 @@ export const fetchToken = async (username: string, password: string) => {
     } else if (response.status === 401) {
       return 'Mauvais identifiants';
     } else {
-      console.log(response.status);
       return 'Erreur de connexion';
     }
   } catch (error: any) {

@@ -5,7 +5,7 @@ from .views.views import validate_reward, mark_task_done
 from .views.auth_views import login_view, password_reset_request, password_change, get_user_id, get_user_submanagers, get_daily_total_points, get_total_points, get_total_points_submanager, get_submanager_data
 from .views.reward_views import add_reward
 from .views.task_views import create_task
-from .views.task_type_views import create_task_type
+from .views.task_type_views import create_task_type, get_task_types
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -28,5 +28,6 @@ urlpatterns = [
     path('reward/validate/<int:reward_id>/', validate_reward, name='validate_reward'),
     path('reward/add/', add_reward, name='add_reward'),
     path('task/add/', create_task, name='create_task'),
+    path('tasktype/<int:sub_manager_id>/', get_task_types, name='get_task_types'),
     path('tasktype/add/', create_task_type, name='create_task_type'),
 ]
