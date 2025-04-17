@@ -88,21 +88,21 @@ export default function SubmanagerPage() {
   };
 
 
-  const handleTaskDone = (taskId: number, isPonctual: boolean) => {
-    markTaskDone(taskId, isPonctual, () => {
+  const handleTaskDone = async (taskId: number, isPonctual: boolean) => {
+    await markTaskDone(taskId, isPonctual, () => {
       if (isPonctual) {
         setPonctualTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
       }
     });
-    loadData();
-    loadTotalCoins();
+    await loadData();
+    await loadTotalCoins();
   };
 
-  const handleRewardValidated = (rewardId: number) => {
+  const handleRewardValidated = async (rewardId: number) => {
     const reward = rewards.find(reward => reward.id === rewardId);
     if (reward) {
-      loadData();
-      loadTotalCoins();
+      await loadData();
+      await loadTotalCoins();
     }
   };
 
