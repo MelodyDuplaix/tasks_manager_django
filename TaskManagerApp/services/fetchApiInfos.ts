@@ -46,6 +46,6 @@ export const fetchSubmanagers = async (): Promise<any[] | undefined> => {
         router.replace('/login');
         return;
     }
-    const response = await fetchQuery(token, 'submanagers', true);
+    const response = await fetchQuery(token, 'submanager', true);
     return response;
 };

@@ -49,7 +49,7 @@ class TaskSerializer(serializers.ModelSerializer):
             sub_manager=obj.type.sub_manager,
             date__date=timezone.now().date()
         ).count()
-
+        
 class PonctualTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = PonctualTask
