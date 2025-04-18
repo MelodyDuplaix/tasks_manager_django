@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, ScrollView, FlatList, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, ScrollView, FlatList, TouchableOpacity, Alert } from "react-native";
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect, useCallback } from 'react';
 import NavigationBar from "@/components/NavigationBar";
@@ -6,10 +6,11 @@ import ProgressBar from "@/components/ProgressBar";
 import MenuItem from "@/components/MenuItem";
 import { fetchSubmanagerData, fetchTotalCoins, fetchSubmanagers } from "@/services/fetchApiInfos";
 import { validateReward } from "@/services/rewardService";
-import { markTaskDone } from "@/services/taskService";
+import { deleteTask, markTaskDone } from "@/services/taskService";
 import TaskItem from "@/components/TaskItem";
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import SubmanagerNavigation from "@/components/SubmanagerNavigation";
+import { Dialog, Portal, Button } from 'react-native-paper';
 
 export default function SubmanagerPage() {
   const router = useRouter();
@@ -24,6 +25,8 @@ export default function SubmanagerPage() {
   const [showTasks, setShowTasks] = useState(true);
   const [totalCoins, setTotalCoins] = useState<number>(100);
   const [submanagers, setSubmanagers] = useState<any[]>([]);
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<{id: number, isPonctual: boolean} | null>(null);
 
   const loadData = useCallback(async () => {
     const data = await fetchSubmanagerData(submanagerId);
@@ -67,26 +70,25 @@ export default function SubmanagerPage() {
     loadSubmanagers();
   }, [loadData, loadTotalCoins, loadSubmanagers]);
 
-  const getPreviousSubmanager = () => {
-    const currentIndex = submanagers.findIndex(sm => sm.id === submanagerId);
-    if (currentIndex > 0) {
-      return submanagers[currentIndex - 1];
-    } else if (submanagers.length > 1) {
-      return submanagers[submanagers.length - 1];
-    }
-    return null;
+  const handleDeleteTask = async (taskId: number, isPonctual: boolean) => {
+    setTaskToDelete({id: taskId, isPonctual});
+    setDeleteDialogVisible(true);
   };
-
-  const getNextSubmanager = () => {
-    const currentIndex = submanagers.findIndex(sm => sm.id === submanagerId);
-    if (currentIndex < submanagers.length - 1) {
-      return submanagers[currentIndex + 1];
-    } else if (submanagers.length > 1) {
-      return submanagers[0];
+  
+  const confirmDeleteTask = () => {
+    if (taskToDelete) {
+      deleteTask(taskToDelete.id, (deletedId) => {
+        if (taskToDelete.isPonctual) {
+          setPonctualTasks(prevTasks => prevTasks.filter(task => task.id !== deletedId));
+        } else {
+          setTasks(prevTasks => prevTasks.filter(task => task.id !== deletedId));
+        }
+        loadData();
+      });
     }
-    return null;
+    setDeleteDialogVisible(false);
   };
-
+  
 
   const handleTaskDone = async (taskId: number, isPonctual: boolean) => {
     await markTaskDone(taskId, isPonctual, () => {
@@ -115,6 +117,7 @@ export default function SubmanagerPage() {
       date={item.date}
       isPonctual={true}
       onTaskDone={handleTaskDone}
+      onDeleteTask={handleDeleteTask}
       done_today_count={0}
     />
   );
@@ -133,6 +136,18 @@ export default function SubmanagerPage() {
       <View style={{ zIndex: 10 }}>
         <NavigationBar coins={totalCoins} />
       </View>
+      <Portal>
+        <Dialog visible={deleteDialogVisible} onDismiss={() => setDeleteDialogVisible(false)}>
+          <Dialog.Title>Confirmation</Dialog.Title>
+          <Dialog.Content>
+            <Text>Êtes-vous sûr de vouloir supprimer cette tâche ?</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setDeleteDialogVisible(false)}>Annuler</Button>
+            <Button onPress={confirmDeleteTask}>Supprimer</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       <ScrollView contentContainerStyle={styles.container}>
         <SubmanagerNavigation
           submanagers={submanagers}
@@ -178,24 +193,25 @@ export default function SubmanagerPage() {
             <Text style={styles.heading}>Tâches</Text>
             {tasks.length > 0 ? (
               <FlatList
-                data={tasks}
-                renderItem={({ item }) => (
-                  <TaskItem
-                    id={item.id}
-                    name={item.name}
-                    coins_number={item.coins_number}
-                    type={item.type}
-                    date={item.date}
-                    isPonctual={false}
-                    onTaskDone={handleTaskDone}
-                    done_today_count={item.done_today_count}
-                    isReward={false}
-                  />
-                )}
-                keyExtractor={(item) => item.id.toString()}
-                style={styles.tasksContainer}
-                ListFooterComponent={() => renderFooter("une tâche")}
-              />
+              data={tasks}
+              renderItem={({ item }) => (
+                <TaskItem
+                  id={item.id}
+                  name={item.name}
+                  coins_number={item.coins_number}
+                  type={item.type}
+                  date={item.date}
+                  isPonctual={false}
+                  onTaskDone={handleTaskDone}
+                  onDeleteTask={handleDeleteTask}
+                  done_today_count={item.done_today_count}
+                  isReward={false}
+                />
+              )}
+              keyExtractor={(item) => item.id.toString()}
+              style={styles.tasksContainer}
+              ListFooterComponent={() => renderFooter("une tâche")}
+            />
             ) : (
               <View style={styles.emptyListContainer}>
                 <Text>Pas de tâches</Text>

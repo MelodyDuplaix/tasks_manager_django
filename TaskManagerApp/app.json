@@ -36,6 +36,40 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "routes": [
+      {
+        "name": "index",
+        "path": "/"
+      },
+      {
+        "name": "login",
+        "path": "/login"
+      },
+      {
+        "name": "submanager",
+        "path": "/submanager/[id]"
+      },
+      {
+        "name": "createTask",
+        "path": "/createTask"
+      },
+      {
+        "name": "createPonctualTask",
+        "path": "/createPonctualTask"
+      },
+      {
+        "name": "createReward",
+        "path": "/createReward"
+      },
+      {
+        "name": "editTask",
+        "path": "/editTask"
+      },
+      {
+        "name": "deleteTask",
+        "path": "/deleteTask"
+      }
+    ]
   }
 }

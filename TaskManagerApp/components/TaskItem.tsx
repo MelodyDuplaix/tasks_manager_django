@@ -2,25 +2,24 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import { Menu, IconButton, MD3Colors } from 'react-native-paper';
-import { markTaskDone } from '../services/taskService';
+import { useRouter } from 'expo-router';
 
 interface TaskItemProps {
   id: number;
   name: string;
   coins_number: number;
-  type?: {
-    id: number;
-    name: string;
-  };
+  type?: any;
   date?: string;
   isPonctual?: boolean;
-  done_today_count?: number;
   onTaskDone: (id: number, isPonctual: boolean) => void;
+  onDeleteTask?: (id: number, isPonctual: boolean) => void; // Nouvelle prop
+  done_today_count: number;
   isReward?: boolean;
 }
 
 const TaskItem: React.FC<TaskItemProps> = (props) => {
-  const { id, name, coins_number, type, date, isPonctual, onTaskDone, isReward } = props;
+  const { id, name, coins_number, type, date, isPonctual, onTaskDone, onDeleteTask, isReward } = props;
+  const router = useRouter();
   const [visible, setVisible] = React.useState(false);
   const [showCheck, setShowCheck] = React.useState(false);
 
@@ -72,9 +71,14 @@ const TaskItem: React.FC<TaskItemProps> = (props) => {
           />
         }
       >
-        <Menu.Item onPress={() => { closeMenu(); console.log('Edit')}} title="Modifier" />
-        <Menu.Item onPress={() => { closeMenu(); console.log('Delete')}} title="Supprimer" />
-      </Menu>
+        <Menu.Item onPress={() => { closeMenu(); router.push({ pathname: `/editTask`, params: { id: id } }) }} title="Modifier" />
+        <Menu.Item onPress={() => {
+          closeMenu();
+          if (onDeleteTask) {
+            onDeleteTask(id, isPonctual || false);
+          }
+        }} title="Supprimer" />
+        </Menu>
     </View>
   );
 };

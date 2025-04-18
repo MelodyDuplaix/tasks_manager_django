@@ -122,55 +122,44 @@ def create_task(request):
 def update_task(request, task_id):
     try:
         data = request.data
-        
-        # Check if it's a punctual task
         try:
             task = PonctualTask.objects.get(pk=task_id)
-            is_ponctual = True
-        except PonctualTask.DoesNotExist:
-            try:
-                task = Task.objects.get(pk=task_id)
-                is_ponctual = False
-            except Task.DoesNotExist:
-                return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
-        
-        # Update fields
-        if 'name' in data:
-            task.name = data['name']
-        
-        if 'coins_number' in data:
-            task.coins_number = data['coins_number']
-        
-        if is_ponctual:
+            if 'name' in data:
+                task.name = data['name']
+            if 'coins_number' in data:
+                task.coins_number = data['coins_number']
             if 'date' in data:
                 try:
                     date = timezone.datetime.strptime(data['date'], '%Y-%m-%d %H:%M:%S')
                     task.date = date
                 except ValueError:
                     return Response({'error': 'Invalid date format. Please use YYYY-MM-DD HH:mm:ss'}, status=status.HTTP_400_BAD_REQUEST)
-            
             if 'sub_manager_id' in data:
                 try:
                     sub_manager = SubManager.objects.get(pk=data['sub_manager_id'])
                     task.sub_manager = sub_manager
                 except SubManager.DoesNotExist:
                     return Response({'error': 'Sub manager not found'}, status=status.HTTP_404_NOT_FOUND)
-            
             task.save()
             serializer = PonctualTaskSerializer(task)
-        else:
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except PonctualTask.DoesNotExist:
+            task = Task.objects.get(pk=task_id)
+            if 'name' in data:
+                task.name = data['name']
+            if 'coins_number' in data:
+                task.coins_number = data['coins_number']
             if 'type_id' in data:
                 try:
                     task_type = TaskType.objects.get(pk=data['type_id'])
                     task.type = task_type
                 except TaskType.DoesNotExist:
                     return Response({'error': 'Task type not found'}, status=status.HTTP_404_NOT_FOUND)
-            
             task.save()
             serializer = TaskSerializer(task)
-        
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    except Task.DoesNotExist:
+        return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -201,5 +190,40 @@ def delete_task(request, task_id):
             except Task.DoesNotExist:
                 return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
     
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@swagger_auto_schema(
+    method='get',
+    operation_summary='Get task details',
+    operation_description='Retrieves details for a specific task.',
+    responses={
+        200: openapi.Response(description='Task details retrieved successfully', schema=openapi.Schema(type=openapi.TYPE_OBJECT, properties={
+            'id': openapi.Schema(type=openapi.TYPE_INTEGER),
+            'name': openapi.Schema(type=openapi.TYPE_STRING),
+            'coins_number': openapi.Schema(type=openapi.TYPE_INTEGER),
+            'type': openapi.Schema(type=openapi.TYPE_OBJECT, properties={
+                'id': openapi.Schema(type=openapi.TYPE_INTEGER),
+                'name': openapi.Schema(type=openapi.TYPE_STRING)
+            }),
+            'done_today_count': openapi.Schema(type=openapi.TYPE_INTEGER)
+        })),
+        404: openapi.Response(description='Task not found')
+    }
+)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_task(request, task_id):
+    try:
+        try:
+            task = PonctualTask.objects.get(pk=task_id)
+            serializer = PonctualTaskSerializer(task)
+            return Response(serializer.data)
+        except PonctualTask.DoesNotExist:
+            task = Task.objects.get(pk=task_id)
+            serializer = TaskSerializer(task)
+            return Response(serializer.data)
+    except Task.DoesNotExist:
+        return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
