@@ -41,3 +41,71 @@ def add_reward(request):
         else:
             return Response({'error': 'Invalid sub_manager_id', "submanager_id": serializer.validated_data}, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@swagger_auto_schema(
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'name': openapi.Schema(type=openapi.TYPE_STRING, description='Name of the reward'),
+            'coins_number': openapi.Schema(type=openapi.TYPE_INTEGER, description='Number of coins for the reward'),
+            'sub_manager_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID of the sub manager')
+        }
+    ),
+    responses={200: 'Reward updated successfully', 400: 'Bad Request', 404: 'Reward not found'},
+    method='PUT'
+)
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_reward(request, reward_id):
+    try:
+        reward = Reward.objects.get(pk=reward_id)
+        
+        # Check if user has permission to update this reward
+        if reward.sub_manager.user != request.user:
+            return Response({'error': 'Not authorized to update this reward'}, status=status.HTTP_403_FORBIDDEN)
+        
+        data = request.data.copy()
+        
+        # Handle sub_manager_id separately
+        sub_manager_id = data.pop('sub_manager_id', None)
+        if sub_manager_id:
+            try:
+                sub_manager = SubManager.objects.get(id=sub_manager_id, user=request.user)
+                reward.sub_manager = sub_manager
+            except SubManager.DoesNotExist:
+                return Response({'error': 'SubManager not found or not authorized'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Update other fields
+        serializer = RewardSerializer(reward, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Reward updated successfully', 'reward': serializer.data}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    except Reward.DoesNotExist:
+        return Response({'error': 'Reward not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@swagger_auto_schema(
+    responses={204: 'Reward deleted successfully', 404: 'Reward not found'},
+    method='DELETE'
+)
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_reward(request, reward_id):
+    try:
+        reward = Reward.objects.get(pk=reward_id)
+        
+        # Check if user has permission to delete this reward
+        if reward.sub_manager.user != request.user:
+            return Response({'error': 'Not authorized to delete this reward'}, status=status.HTTP_403_FORBIDDEN)
+        
+        reward.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    except Reward.DoesNotExist:
+        return Response({'error': 'Reward not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

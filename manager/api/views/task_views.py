@@ -96,3 +96,110 @@ def create_task(request):
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@swagger_auto_schema(
+    method='put',
+    operation_summary='Update an existing task',
+    operation_description='Updates an existing task. Can be a recurring task or a punctual task. The API automatically detects the task type and updates the appropriate fields.',
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'name': openapi.Schema(type=openapi.TYPE_STRING, description='Name of the task'),
+            'coins_number': openapi.Schema(type=openapi.TYPE_INTEGER, description='Number of coins for the task'),
+            'type_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID of the task type (for regular tasks)'),
+            'sub_manager_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID of the sub manager (for punctual tasks)'),
+            'date': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_DATETIME, description='Date of the punctual task (YYYY-MM-DD HH:mm:ss) (for punctual tasks)', example='2024-04-17 16:30:00')
+        }
+    ),
+    responses={
+        200: openapi.Response(description='Task updated successfully'),
+        400: openapi.Response(description='Bad Request'),
+        404: openapi.Response(description='Task not found')
+    }
+)
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_task(request, task_id):
+    try:
+        data = request.data
+        
+        # Check if it's a punctual task
+        try:
+            task = PonctualTask.objects.get(pk=task_id)
+            is_ponctual = True
+        except PonctualTask.DoesNotExist:
+            try:
+                task = Task.objects.get(pk=task_id)
+                is_ponctual = False
+            except Task.DoesNotExist:
+                return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Update fields
+        if 'name' in data:
+            task.name = data['name']
+        
+        if 'coins_number' in data:
+            task.coins_number = data['coins_number']
+        
+        if is_ponctual:
+            if 'date' in data:
+                try:
+                    date = timezone.datetime.strptime(data['date'], '%Y-%m-%d %H:%M:%S')
+                    task.date = date
+                except ValueError:
+                    return Response({'error': 'Invalid date format. Please use YYYY-MM-DD HH:mm:ss'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if 'sub_manager_id' in data:
+                try:
+                    sub_manager = SubManager.objects.get(pk=data['sub_manager_id'])
+                    task.sub_manager = sub_manager
+                except SubManager.DoesNotExist:
+                    return Response({'error': 'Sub manager not found'}, status=status.HTTP_404_NOT_FOUND)
+            
+            task.save()
+            serializer = PonctualTaskSerializer(task)
+        else:
+            if 'type_id' in data:
+                try:
+                    task_type = TaskType.objects.get(pk=data['type_id'])
+                    task.type = task_type
+                except TaskType.DoesNotExist:
+                    return Response({'error': 'Task type not found'}, status=status.HTTP_404_NOT_FOUND)
+            
+            task.save()
+            serializer = TaskSerializer(task)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@swagger_auto_schema(
+    method='delete',
+    operation_summary='Delete a task',
+    operation_description='Deletes a task (recurring or punctual).',
+    responses={
+        204: openapi.Response(description='Task deleted successfully'),
+        404: openapi.Response(description='Task not found')
+    }
+)
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_task(request, task_id):
+    try:
+        # Try to find and delete punctual task first
+        try:
+            task = PonctualTask.objects.get(pk=task_id)
+            task.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except PonctualTask.DoesNotExist:
+            # If not a punctual task, try regular task
+            try:
+                task = Task.objects.get(pk=task_id)
+                task.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            except Task.DoesNotExist:
+                return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
