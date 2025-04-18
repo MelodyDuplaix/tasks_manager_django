@@ -1,12 +1,11 @@
 env
-db.sqlite3
 .env
 qodana.yaml
 .idea
-manager/db.sqlite3
-manager/manager/__pycache__*
 manager/db.sqlite3
 manager/.env
 *__pycache__*
 *.pyc
 *.env
+current-work.md
+ manager/tasks/__pycache__

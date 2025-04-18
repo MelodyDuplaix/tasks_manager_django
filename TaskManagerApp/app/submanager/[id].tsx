@@ -120,7 +120,7 @@ export default function SubmanagerPage() {
   );
 
   const renderFooter = (type: string) => {
-    const route = type === 'une tâche ponctuelle' ? `/createPonctualTask?submanagerId=${submanagerId}` : type === 'une tâche' ? `/createTask?submanagerId=${submanagerId}` : '/createReward';
+    const route = type === 'une tâche ponctuelle' ? `/createPonctualTask?submanagerId=${submanagerId}` : type === 'une tâche' ? `/createTask?submanagerId=${submanagerId}` : `/createReward?id=${submanagerId}`;
     return (
       <TouchableOpacity style={styles.addButton} onPress={() => router.push(route as any)}>
         <Text style={styles.addButtonText}>Ajouter {type}</Text>

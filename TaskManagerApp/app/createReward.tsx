@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Text, View, StyleSheet, TextInput, Button, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { fetchQuery, getToken } from '../services/authentification';
 
 const CreateReward = () => {
+  const params = useLocalSearchParams();
+  const submanagerId = Array.isArray(params.id) ? params.id[0] : params.id;
   const router = useRouter();
   const [name, setName] = useState('');
   const [coinsNumber, setCoinsNumber] = useState('');
-  const [submanagerId, setSubmanagerId] = useState('');
 
   const handleSubmit = async () => {
     const token = await getToken();
@@ -15,9 +16,9 @@ const CreateReward = () => {
       const data = {
         name,
         coins_number: parseInt(coinsNumber, 10),
-        sub_manager_id: parseInt(submanagerId, 10),
+        sub_manager_id: parseInt(submanagerId?.toString() || '', 10),
       };
-      const response = await fetchQuery(token, 'reward/add/', true, 'POST', data);
+      const response = await fetchQuery(token, 'reward/add', true, 'POST', data);
       if (response) {
         router.back();
       }
@@ -37,13 +38,6 @@ const CreateReward = () => {
         style={styles.input}
         value={coinsNumber}
         onChangeText={setCoinsNumber}
-        keyboardType="number-pad"
-      />
-      <Text style={styles.label}>ID du sous-manager:</Text>
-      <TextInput
-        style={styles.input}
-        value={submanagerId}
-        onChangeText={setSubmanagerId}
         keyboardType="number-pad"
       />
       <Button title="Créer la récompense" onPress={handleSubmit} />
