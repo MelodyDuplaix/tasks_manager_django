@@ -57,6 +57,73 @@ Vous pouvez donc créer un compte pour tester l'application.
 - **Action** : Nom, date, type, nombre de pièces, sous-manager.
 - **Sous-Manager** : Nom, objectif quotidien, mensuel, hebdomadaire, clé étrangère dans d'autres modèles.
 
+```mermaid
+erDiagram
+    User {
+        int id
+        string username
+        string email
+        string password
+    }
+
+    SubManager {
+        int id
+        string name
+        int daily_objectif
+        int weekly_objectif
+        int monthly_objectif
+        int yearly_objectif
+        bool active
+        int user_id
+    }
+    SubManager }o--|| User : "appartient"
+
+    TaskType {
+        int id
+        string name
+        int sub_manager_id
+    }
+    TaskType }o--|| SubManager : "contient"
+
+    Task {
+        int id
+        string name
+        int coins_number
+        int type_id
+    }
+    Task }o--|| TaskType : "appartient"
+
+    PonctualTask {
+        int id
+        string name
+        int coins_number
+        datetime date
+        int sub_manager_id
+    }
+    PonctualTask }o--|| SubManager : "contient"
+
+    Reward {
+        int id
+        string name
+        int coins_number
+        int sub_manager_id
+    }
+    Reward }o--|| SubManager : "contient"
+
+    Action {
+        int id
+        string name
+        datetime date
+        int coins_number
+        int type_id
+        int sub_manager_id
+    }
+    Action }o--|| Task : "enregistre"
+    Action }o--|| PonctualTask: "enregistre"
+    Action }o--|| Reward: "enregistre"
+    Action }o--|| SubManager : "contient"
+```
+
 ## Contribution
 
 Les contributions sont les bienvenues ! Veuillez soumettre un pull request ou ouvrir une issue pour toute suggestion ou
