@@ -8,4 +8,5 @@ manager/.env
 *.pyc
 *.env
 current-work.md
- manager/tasks/__pycache__
+manager/tasks/__pycache__
+manager/.env
