@@ -59,6 +59,8 @@
     <div class="balance-info">
       <p>Solde : {{ total_coins }} pièces</p>
     </div>
+    <a href="{% url 'create_objective' submanager.id %}"><button class="btn btn-primary mt-3">Décomposer un objectif</button></a>
+
     <h1 class="text-center mt-5">{{ submanager.name }}</h1>
 
     <h2 class="text-center mt-5">Objectif quotidien</h2>
@@ -188,5 +190,3 @@
         crossorigin="anonymous"></script>
 </body>
 </html>
-
-

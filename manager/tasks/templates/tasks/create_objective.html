@@ -1,0 +1,58 @@
+{% extends "tasks/base.html" %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Décomposer un objectif</h1>
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="objectif" class="form-label">Objectif:</label>
+                <textarea class="form-control" id="objectif" name="objectif" rows="4" required></textarea>
+                <div class="invalid-feedback">Veuillez saisir un objectif.</div>
+            </div>
+            <div class="mb-3">
+                <label for="nb_tasks" class="form-label">Nombre de tâches:</label>
+                <input type="number" class="form-control" id="nb_tasks" name="nb_tasks" min="2" max="30" value="7" required>
+                <div class="invalid-feedback">Veuillez saisir un nombre de tâches.</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Décomposer</button>
+        </form>
+    </div>
+
+    {% if taches %}
+        <div class="container mt-5">
+            <h2 class="text-center mb-4">Tâches générées:</h2>
+            <form method="post" action="{% url 'save_tasks' submanager_id %}" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <input type="hidden" name="objectif" value="{{ objectif }}">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tâche</th>
+                            <th>Date</th>
+                            <th>Pièces</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tache in taches %}
+                            <tr>
+                                <td>
+                                    <input type="text" class="form-control" name="tache_name_{{ forloop.counter0 }}" value="{{ tache.name }}">
+                                </td>
+                                <td>
+                                    <input type="date" class="form-control" name="tache_date_{{ forloop.counter0 }}" value="{{ tache.date|date:'Y-m-d' }}" required>
+                                    <div class="invalid-feedback">Veuillez saisir une date.</div>
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control" name="coins_number_{{ forloop.counter0 }}" min="0" required>
+                                    <div class="invalid-feedback">Veuillez saisir un nombre de pièces.</div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-success">Enregistrer les tâches</button>
+            </form>
+        </div>
+    {% endif %}
+{% endblock %}

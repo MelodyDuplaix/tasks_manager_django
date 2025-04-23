@@ -32,6 +32,7 @@ urlpatterns = [
     path('statistics/', include('tasks.urls.statistics'), name='statistics'),
     path('types/', include('tasks.urls.type'), name='types'),
     path('api/', include('api.urls')),
+    path('ia/', include('tasks.urls.ia')),
 ]
 
 schema_view = get_schema_view(

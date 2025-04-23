@@ -7,4 +7,5 @@ urlpatterns = [
     path('<int:submanager_id>/', submanager_page, name='submanager_page'),
     path('activate_submanager/<int:submanager_id>/', activate_submanager, name='activate_submanager'),
     path('desactivate_submanager/<int:submanager_id>/', desactivate_submanager, name='desactivate_submanager'),
+    path('<int:submanager_id>/detail/', submanager_page, name='submanager_detail'),
 ]
