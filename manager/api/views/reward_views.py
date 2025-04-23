@@ -22,7 +22,32 @@ from ..serializers import RewardSerializer
         },
         required=['name', 'coins_number', 'sub_manager_id']
     ),
-    responses={201: 'Reward created successfully', 400: 'Bad Request'},
+    responses={
+        201: openapi.Response(
+            description='Reward created successfully',
+            examples={
+                'application/json': {
+                    'message': 'Reward created successfully',
+                    'reward': {
+                        'id': 1,
+                        'name': 'Example Reward',
+                        'coins_number': 100,
+                        'sub_manager_id': 1
+                    }
+                }
+            }
+        ),
+        400: openapi.Response(
+            description='Bad Request: Invalid data or SubManager not found',
+            examples={
+                'application/json': {
+                    'error': 'Invalid sub_manager_id'
+                }
+            }
+        )
+    },
+    operation_summary='Create a new reward',
+    operation_description='Creates a new reward associated with a specific sub manager. Requires authentication.',
     method='POST'
 )
 @api_view(['POST'])
@@ -51,7 +76,48 @@ def add_reward(request):
             'sub_manager_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID of the sub manager')
         }
     ),
-    responses={200: 'Reward updated successfully', 400: 'Bad Request', 404: 'Reward not found'},
+    responses={
+        200: openapi.Response(
+            description='Reward updated successfully',
+            examples={
+                'application/json': {
+                    'message': 'Reward updated successfully',
+                    'reward': {
+                        'id': 1,
+                        'name': 'Updated Reward Name',
+                        'coins_number': 150,
+                        'sub_manager_id': 1
+                    }
+                }
+            }
+        ),
+        400: openapi.Response(
+            description='Bad Request: Invalid data or SubManager not found',
+            examples={
+                'application/json': {
+                    'error': 'Invalid sub_manager_id'
+                }
+            }
+        ),
+        404: openapi.Response(
+            description='Reward not found',
+            examples={
+                'application/json': {
+                    'error': 'Reward not found'
+                }
+            }
+        ),
+        403: openapi.Response(
+            description='Forbidden: Not authorized to update this reward',
+            examples={
+                'application/json': {
+                    'error': 'Not authorized to update this reward'
+                }
+            }
+        )
+    },
+    operation_summary='Update an existing reward',
+    operation_description='Updates an existing reward. Requires authentication and authorization.',
     method='PUT'
 )
 @api_view(['PUT'])
@@ -61,8 +127,9 @@ def update_reward(request, reward_id):
         reward = Reward.objects.get(pk=reward_id)
         
         # Check if user has permission to update this reward
-        if reward.sub_manager.user != request.user:
-            return Response({'error': 'Not authorized to update this reward'}, status=status.HTTP_403_FORBIDDEN)
+        if request.user and reward and reward.sub_manager and reward.sub_manager.user:
+            if reward.sub_manager.user != request.user:
+                return Response({'error': 'Not authorized to update this reward'}, status=status.HTTP_403_FORBIDDEN)
         
         data = request.data.copy()
         
@@ -89,7 +156,27 @@ def update_reward(request, reward_id):
 
 
 @swagger_auto_schema(
-    responses={204: 'Reward deleted successfully', 404: 'Reward not found'},
+    responses={
+        204: openapi.Response(description='Reward deleted successfully'),
+        404: openapi.Response(
+            description='Reward not found',
+            examples={
+                'application/json': {
+                    'error': 'Reward not found'
+                }
+            }
+        ),
+        403: openapi.Response(
+            description='Forbidden: Not authorized to delete this reward',
+            examples={
+                'application/json': {
+                    'error': 'Not authorized to delete this reward'
+                }
+            }
+        )
+    },
+    operation_summary='Delete a reward',
+    operation_description='Deletes a reward. Requires authentication and authorization.',
     method='DELETE'
 )
 @api_view(['DELETE'])
@@ -99,8 +186,9 @@ def delete_reward(request, reward_id):
         reward = Reward.objects.get(pk=reward_id)
         
         # Check if user has permission to delete this reward
-        if reward.sub_manager.user != request.user:
-            return Response({'error': 'Not authorized to delete this reward'}, status=status.HTTP_403_FORBIDDEN)
+        if request.user and reward and reward.sub_manager and reward.sub_manager.user:
+            if reward.sub_manager.user != request.user:
+                return Response({'error': 'Not authorized to delete this reward'}, status=status.HTTP_403_FORBIDDEN)
         
         reward.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

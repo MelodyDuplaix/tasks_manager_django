@@ -9,6 +9,8 @@ l'obtention de récompenses.
 L'application est visitable à cette adresse : <https://melody37.pythonanywhere.com/> avec un système d'authentification.
 Vous pouvez donc créer un compte pour tester l'application.
 
+Il existe aussi une application mobile android liée via api à l'application django.
+
 ## Fonctionnalités
 
 - **Voir et gérer les tâches et récompenses** : Afficher les tâches et les récompenses disponibles, cliquer pour
@@ -17,6 +19,7 @@ Vous pouvez donc créer un compte pour tester l'application.
 - **Gestion des sous-managers** : Ajouter, modifier et supprimer des sous-managers.
 - **Page d'historique des tâches** : Voir l'historique des tâches complétées.
 - **Options de gestion** : Configurer les objectifs, gérer les tâches et les récompenses.
+- **Décomposition d'objectifs en tâches**: Via implémentation de Mistral, possibilité de rentrer un objectif et se voir proposer des tâches à effectuer pour l'atteindre
 
 ## Instructions d'installation
 
@@ -49,6 +52,16 @@ Vous pouvez donc créer un compte pour tester l'application.
 5. **Accéder à l'application** :
    Ouvrez votre navigateur et allez sur [http://localhost:8000](http://localhost:8000) pour utiliser le Gestionnaire de
    Tâches.
+
+## Architecture de l'application
+
+```mermaid
+graph TD
+    A[Frontend React Native] -->|API Calls: envoi objectifs, taches, authentification, etc| B[Backend Django]
+    F[Frontend template Django] -->|envoi objectifs, taches, authentification, etc| B
+    B -->|ORM Queries: Stockage des données des utilisateurs, tâches, et récompenses| C[Base de données SQLite]
+    B -->|API Requests: Envoi des prompts et réception des réponses| D[Service IA Mistral]
+```
 
 ## Modèles
 
@@ -122,6 +135,23 @@ erDiagram
     Action }o--|| PonctualTask: "enregistre"
     Action }o--|| Reward: "enregistre"
     Action }o--|| SubManager : "contient"
+```
+
+## Parcours utilisateur
+
+```mermaid
+sequenceDiagram
+    participant Utilisateur
+    participant Frontend
+    participant Backend
+    participant BaseDeDonnées
+
+    Utilisateur->>Frontend: Saisie de l'objectif et des tâches
+    Frontend->>Backend: Envoi des données via POST
+    Backend->>BaseDeDonnées: Création de l'objectif et des tâches
+    BaseDeDonnées-->>Backend: Confirmation de la création
+    Backend-->>Frontend: Réponse avec succès
+    Frontend-->>Utilisateur: Affichage de la confirmation
 ```
 
 ## Contribution

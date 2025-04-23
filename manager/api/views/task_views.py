@@ -17,23 +17,55 @@ from rest_framework import serializers
 @swagger_auto_schema(
     method='post',
     operation_summary='Create a new task',
-    operation_description='Creates a new task.  Can be a recurring task or a punctual task.',
+    operation_description='Creates a new task.  Can be a recurring task or a punctual task. Requires authentication.',
     request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
             'name': openapi.Schema(type=openapi.TYPE_STRING, description='Name of the task'),
             'coins_number': openapi.Schema(type=openapi.TYPE_INTEGER, description='Number of coins for the task'),
-            'type_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID of the task type'),
-            'sub_manager_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID of the sub manager'),
+            'type_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID of the task type (for recurring tasks)'),
+            'sub_manager_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID of the sub manager (for punctual tasks)'),
             'is_ponctual': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='True if the task is punctual, False otherwise'),
             'date': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_DATETIME, description='Date of the punctual task (YYYY-MM-DD HH:mm:ss)', example='2024-04-17 16:30:00')
         },
         required=['name', 'coins_number', 'is_ponctual']
     ),
     responses={
-        201: openapi.Response(description='Task created successfully', schema=openapi.Schema(type=openapi.TYPE_OBJECT, properties={'id': openapi.Schema(type=openapi.TYPE_INTEGER)})),
-        400: openapi.Response(description='Bad Request'),
-        404: openapi.Response(description='Task type not found')
+        201: openapi.Response(
+            description='Task created successfully',
+            examples={
+                'application/json': {
+                    'id': 1,
+                    'name': 'New Task',
+                    'coins_number': 10,
+                    'type': {'id': 1, 'name': 'Task Type 1'}
+                }
+            }
+        ),
+        400: openapi.Response(
+            description='Bad Request: Missing required fields or invalid data',
+            examples={
+                'application/json': {
+                    'error': 'Missing required fields'
+                }
+            }
+        ),
+        404: openapi.Response(
+            description='Task type or SubManager not found',
+            examples={
+                'application/json': {
+                    'error': 'Task type not found'
+                }
+            }
+        ),
+        500: openapi.Response(
+            description='Internal Server Error: An unexpected error occurred',
+            examples={
+                'application/json': {
+                    'error': 'An unexpected error occurred'
+                }
+            }
+        )
     }
 )
 @api_view(['POST'])
@@ -100,7 +132,7 @@ def create_task(request):
 @swagger_auto_schema(
     method='put',
     operation_summary='Update an existing task',
-    operation_description='Updates an existing task. Can be a recurring task or a punctual task. The API automatically detects the task type and updates the appropriate fields.',
+    operation_description='Updates an existing task. Can be a recurring task or a punctual task. The API automatically detects the task type and updates the appropriate fields. Requires authentication.',
     request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
@@ -112,9 +144,41 @@ def create_task(request):
         }
     ),
     responses={
-        200: openapi.Response(description='Task updated successfully'),
-        400: openapi.Response(description='Bad Request'),
-        404: openapi.Response(description='Task not found')
+        200: openapi.Response(
+            description='Task updated successfully',
+            examples={
+                'application/json': {
+                    'id': 1,
+                    'name': 'Updated Task Name',
+                    'coins_number': 15,
+                    'type': {'id': 1, 'name': 'Task Type 1'}
+                }
+            }
+        ),
+        400: openapi.Response(
+            description='Bad Request: Invalid data or Task type not found',
+            examples={
+                'application/json': {
+                    'error': 'Invalid date format'
+                }
+            }
+        ),
+        404: openapi.Response(
+            description='Task not found',
+            examples={
+                'application/json': {
+                    'error': 'Task not found'
+                }
+            }
+        ),
+        500: openapi.Response(
+            description='Internal Server Error: An unexpected error occurred',
+            examples={
+                'application/json': {
+                    'error': 'An unexpected error occurred'
+                }
+            }
+        )
     }
 )
 @api_view(['PUT'])
@@ -166,10 +230,25 @@ def update_task(request, task_id):
 @swagger_auto_schema(
     method='delete',
     operation_summary='Delete a task',
-    operation_description='Deletes a task (recurring or punctual).',
+    operation_description='Deletes a task (recurring or punctual). Requires authentication.',
     responses={
         204: openapi.Response(description='Task deleted successfully'),
-        404: openapi.Response(description='Task not found')
+        404: openapi.Response(
+            description='Task not found',
+            examples={
+                'application/json': {
+                    'error': 'Task not found'
+                }
+            }
+        ),
+        500: openapi.Response(
+            description='Internal Server Error: An unexpected error occurred',
+            examples={
+                'application/json': {
+                    'error': 'An unexpected error occurred'
+                }
+            }
+        )
     }
 )
 @api_view(['DELETE'])
@@ -196,19 +275,46 @@ def delete_task(request, task_id):
 @swagger_auto_schema(
     method='get',
     operation_summary='Get task details',
-    operation_description='Retrieves details for a specific task.',
+    operation_description='Retrieves details for a specific task. Requires authentication.',
     responses={
-        200: openapi.Response(description='Task details retrieved successfully', schema=openapi.Schema(type=openapi.TYPE_OBJECT, properties={
-            'id': openapi.Schema(type=openapi.TYPE_INTEGER),
-            'name': openapi.Schema(type=openapi.TYPE_STRING),
-            'coins_number': openapi.Schema(type=openapi.TYPE_INTEGER),
-            'type': openapi.Schema(type=openapi.TYPE_OBJECT, properties={
+        200: openapi.Response(
+            description='Task details retrieved successfully',
+            examples={
+                'application/json': {
+                    'id': 1,
+                    'name': 'Example Task',
+                    'coins_number': 10,
+                    'type': {'id': 1, 'name': 'Task Type 1'},
+                    'done_today_count': 0
+                }
+            },
+            schema=openapi.Schema(type=openapi.TYPE_OBJECT, properties={
                 'id': openapi.Schema(type=openapi.TYPE_INTEGER),
-                'name': openapi.Schema(type=openapi.TYPE_STRING)
-            }),
-            'done_today_count': openapi.Schema(type=openapi.TYPE_INTEGER)
-        })),
-        404: openapi.Response(description='Task not found')
+                'name': openapi.Schema(type=openapi.TYPE_STRING),
+                'coins_number': openapi.Schema(type=openapi.TYPE_INTEGER),
+                'type': openapi.Schema(type=openapi.TYPE_OBJECT, properties={
+                    'id': openapi.Schema(type=openapi.TYPE_INTEGER),
+                    'name': openapi.Schema(type=openapi.TYPE_STRING)
+                }),
+                'done_today_count': openapi.Schema(type=openapi.TYPE_INTEGER)
+            })
+        ),
+        404: openapi.Response(
+            description='Task not found',
+            examples={
+                'application/json': {
+                    'error': 'Task not found'
+                }
+            }
+        ),
+        500: openapi.Response(
+            description='Internal Server Error: An unexpected error occurred',
+            examples={
+                'application/json': {
+                    'error': 'An unexpected error occurred'
+                }
+            }
+        )
     }
 )
 @api_view(['GET'])

@@ -184,4 +184,12 @@ SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'JSON_EDITOR': True,
     'SHOW_REQUEST_HEADERS': True,
+    'DOC_EXPANSION': 'list',
+    'APIS_SORTER': 'alpha',
+    'OPERATIONS_SORTER': 'alpha',
+    'INFO': {
+        'description': "This API provides endpoints for managing tasks and rewards within a task management system.  It allows users to create, update, and delete tasks and rewards, as well as track their progress and validate rewards. The API uses JWT authentication for secure access.",
+        'title': 'Task Manager API',
+        'version': '1.0.0',
+    },
 }

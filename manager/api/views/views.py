@@ -10,7 +10,40 @@ from ..serializers import RewardSerializer, TaskSerializer, PonctualTaskSerializ
 from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.db.models import Sum
+from tasks.models import Action
 
+@swagger_auto_schema(
+    method='post',
+    operation_summary='Validate a reward',
+    operation_description='Validates a reward if the user has enough coins. Requires authentication.',
+    responses={
+        200: openapi.Response(
+            description='Reward validated successfully',
+            examples={
+                'application/json': {
+                    'message': 'Reward validated successfully.'
+                }
+            }
+        ),
+        400: openapi.Response(
+            description='Not enough coins to claim this reward',
+            examples={
+                'application/json': {
+                    'error': 'Not enough coins to claim this reward.'
+                }
+            }
+        ),
+        404: openapi.Response(
+            description='Reward not found',
+            examples={
+                'application/json': {
+                    'error': 'Reward not found'
+                }
+            }
+        )
+    }
+)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def validate_reward(request, reward_id):
@@ -39,15 +72,42 @@ def validate_reward(request, reward_id):
         return Response({'error': 'Not enough coins to claim this reward.'}, status=status.HTTP_400_BAD_REQUEST)
 
 @swagger_auto_schema(
+    method='post',
+    operation_summary='Mark a task as done',
+    operation_description='Marks a task as done and creates an action. Requires authentication.',
     request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
-            'is_ponctual': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='Is the task a ponctual task?'),
+            'is_ponctual': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='Is the task a ponctual task?')
         },
         required=['is_ponctual']
     ),
-    responses={200: 'Success message'},
-    method='POST'
+    responses={
+        200: openapi.Response(
+            description='Task marked as done and action created',
+            examples={
+                'application/json': {
+                    'message': 'Task marked as done and action created.'
+                }
+            }
+        ),
+        400: openapi.Response(
+            description='Bad Request: Task type is None',
+            examples={
+                'application/json': {
+                    'error': 'Task type is None'
+                }
+            }
+        ),
+        404: openapi.Response(
+            description='Task not found',
+            examples={
+                'application/json': {
+                    'error': 'Task not found'
+                }
+            }
+        )
+    }
 )
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -82,5 +142,3 @@ def mark_task_done(request, task_id):
                 return Response({'error': 'Task type is None'}, status=status.HTTP_400_BAD_REQUEST)
         except Task.DoesNotExist:
             return Response({'error': 'Task not found'}, status=status.HTTP_404_NOT_FOUND)
-from django.db.models import Sum
-from tasks.models import Action

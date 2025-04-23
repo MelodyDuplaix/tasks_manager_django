@@ -12,18 +12,51 @@ from django.http import Http404
 @swagger_auto_schema(
     method='post',
     operation_summary='Create a new task type',
-    operation_description='Creates a new task type for a specific submanager.',
+    operation_description='Creates a new task type for a specific submanager. Requires authentication.',
     request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
             'name': openapi.Schema(type=openapi.TYPE_STRING, description='Name of the task type'),
             'sub_manager_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID of the submanager')
         },
+        required=['name', 'sub_manager_id']
     ),
     responses={
-        201: openapi.Response(description='Task type created successfully', schema=TaskTypeSerializer),
-        400: openapi.Response(description='Bad Request'),
-        404: openapi.Response(description='Submanager not found')
+        201: openapi.Response(
+            description='Task type created successfully',
+            examples={
+                'application/json': {
+                    'id': 1,
+                    'name': 'New Task Type',
+                    'sub_manager': 1
+                }
+            },
+            schema=TaskTypeSerializer
+        ),
+        400: openapi.Response(
+            description='Bad Request: Missing required fields or invalid data',
+            examples={
+                'application/json': {
+                    'error': 'Missing required fields'
+                }
+            }
+        ),
+        404: openapi.Response(
+            description='Submanager not found',
+            examples={
+                'application/json': {
+                    'error': 'Submanager not found'
+                }
+            }
+        ),
+        500: openapi.Response(
+            description='Internal Server Error: An unexpected error occurred',
+            examples={
+                'application/json': {
+                    'error': 'An unexpected error occurred'
+                }
+            }
+        )
     }
 )
 @api_view(['POST'])
@@ -53,7 +86,7 @@ def create_task_type(request):
 @swagger_auto_schema(
     method='get',
     operation_summary='Get task types for a specific submanager',
-    operation_description='Returns a list of task types for the given submanager ID.',
+    operation_description='Returns a list of task types for the given submanager ID. Requires authentication.',
     manual_parameters=[
         openapi.Parameter(
             'sub_manager_id',
@@ -64,8 +97,24 @@ def create_task_type(request):
         )
     ],
     responses={
-        200: openapi.Response(description='List of task types', schema=openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_OBJECT, properties={'id': openapi.Schema(type=openapi.TYPE_INTEGER), 'name': openapi.Schema(type=openapi.TYPE_STRING)}))),
-        404: openapi.Response(description='Submanager not found')
+        200: openapi.Response(
+            description='List of task types',
+            examples={
+                'application/json': [
+                    {'id': 1, 'name': 'Task Type 1'},
+                    {'id': 2, 'name': 'Task Type 2'}
+                ]
+            },
+            schema=openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_OBJECT, properties={'id': openapi.Schema(type=openapi.TYPE_INTEGER), 'name': openapi.Schema(type=openapi.TYPE_STRING)}))
+        ),
+        404: openapi.Response(
+            description='Submanager not found',
+            examples={
+                'application/json': {
+                    'error': 'Submanager not found'
+                }
+            }
+        )
     }
 )
 @api_view(['GET'])

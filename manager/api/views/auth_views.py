@@ -26,6 +26,46 @@ from ..serializers import (
 
 @api_view(['POST'])
 def login_view(request):
+    """
+    Log in a user.
+
+    Args:
+        request: The request object containing username and password.
+
+    Returns:
+        Response: 
+            - 200 OK: Contains refresh and access tokens, and user data.
+            - 400 BAD REQUEST: If the request data is invalid.
+            - 401 UNAUTHORIZED: If the credentials are invalid.
+
+    Example Request:
+    ```json
+    {
+        "username": "testuser",
+        "password": "password"
+    }
+    ```
+
+    Example Response (Success):
+    ```json
+    {
+        "refresh": "your_refresh_token",
+        "access": "your_access_token",
+        "user": {
+            "id": 1,
+            "username": "testuser",
+            "email": "testuser@example.com"
+        }
+    }
+    ```
+
+    Example Response (Error):
+    ```json
+    {
+        "error": "Invalid credentials"
+    }
+    ```
+    """
     serializer = LoginSerializer(data=request.data)
     if serializer.is_valid():
         validated_data = serializer.validated_data
@@ -51,6 +91,39 @@ def login_view(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def password_reset_request(request):
+    """
+    Initiate a password reset request.
+
+    Args:
+        request: The request object containing the user's email.
+
+    Returns:
+        Response:
+            - 200 OK: If the email was sent successfully.
+            - 400 BAD REQUEST: If the request data is invalid.
+            - 500 INTERNAL SERVER ERROR: If BASE_URL is not set in settings.
+
+    Example Request:
+    ```json
+    {
+        "email": "testuser@example.com"
+    }
+    ```
+
+    Example Response (Success):
+    ```json
+    {
+        "message": "Password reset email sent."
+    }
+    ```
+
+    Example Response (Error):
+    ```json
+    {
+        "error": "Invalid data"
+    }
+    ```
+    """
     serializer = PasswordResetSerializer(data=request.data)
     if serializer.is_valid():
         validated_data = serializer.validated_data
@@ -91,6 +164,40 @@ def password_reset_request(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def password_change(request):
+    """
+    Change the user's password.
+
+    Args:
+        request: The request object containing old and new passwords.
+
+    Returns:
+        Response:
+            - 200 OK: If the password was changed successfully.
+            - 400 BAD REQUEST: If the request data is invalid or old password is incorrect.
+
+    Example Request:
+    ```json
+    {
+        "old_password": "oldpassword",
+        "new_password1": "newpassword",
+        "new_password2": "newpassword"
+    }
+    ```
+
+    Example Response (Success):
+    ```json
+    {
+        "message": "Password changed successfully."
+    }
+    ```
+
+    Example Response (Error):
+    ```json
+    {
+        "error": "Invalid old password"
+    }
+    ```
+    """
     serializer = PasswordChangeSerializer(data=request.data)
     if serializer.is_valid():
         validated_data = serializer.validated_data
@@ -110,11 +217,29 @@ def password_change(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_id(request):
+    """
+    Retrieve the ID of the currently authenticated user.
+
+    Args:
+        request: The request object.
+
+    Returns:
+        Response: Contains the user's ID.  Example: `{"id": 1}`
+    """
     return Response({'username': request.user.username})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_submanagers(request):
+    """
+    Retrieve a list of SubManagers associated with the currently authenticated user.
+
+    Args:
+        request: The request object.
+
+    Returns:
+        Response: A list of SubManager objects.
+    """
     from tasks.models import SubManager
     from ..serializers import SubManagerSerializer
     submanagers = SubManager.objects.filter(user=request.user)
@@ -124,6 +249,15 @@ def get_user_submanagers(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_daily_total_points(request):
+    """
+    Retrieve the total points earned today by all submanagers associated with the user.
+
+    Args:
+        request: The request object.
+
+    Returns:
+        Response: An object containing the total points earned today and the total daily objective.
+    """
     from tasks.models import SubManager, Action
     total_coins_today = 0
     total_daily_objectif = 0
@@ -138,6 +272,15 @@ def get_daily_total_points(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_total_points(request):
+    """
+    Retrieve the total points earned by all active submanagers associated with the user.
+
+    Args:
+        request: The request object.
+
+    Returns:
+        Response: An object containing the total points earned.
+    """
     from tasks.models import Action
     total_history = Action.objects.filter(sub_manager__user=request.user)
     total_coins = sum(action.coins_number for action in total_history if getattr(action.sub_manager, 'active', False))
@@ -147,6 +290,16 @@ def get_total_points(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_total_points_submanager(request, submanager_id):
+    """
+    Retrieve the total points earned by a specific submanager.
+
+    Args:
+        request: The request object.
+        submanager_id: The ID of the submanager.
+
+    Returns:
+        Response: An object containing the total points earned by the submanager.
+    """
     from tasks.models import SubManager, Action
     submanager = SubManager.objects.select_related('user').get(id=submanager_id)
     historique_total = Action.objects.filter(sub_manager=submanager).values_list('coins_number', flat=True)
@@ -156,6 +309,16 @@ def get_total_points_submanager(request, submanager_id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_submanager_data(request, submanager_id):
+    """
+    Retrieve data for a specific submanager, including tasks, punctual tasks, rewards, and daily coins.
+
+    Args:
+        request: The request object.
+        submanager_id: The ID of the submanager.
+
+    Returns:
+        Response: An object containing submanager data, tasks, punctual tasks, rewards, daily coins, and daily objective.
+    """
     from tasks.models import SubManager, Task, PonctualTask, Reward, Action
     from ..serializers import SubManagerSerializer, TaskSerializer, PonctualTaskSerializer, RewardSerializer
     try:

@@ -37,12 +37,19 @@ urlpatterns = [
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Manager API",
+      title="Task Manager API",
       default_version='v1',
-      description="API for the Manager project",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@snippets.local"),
-      license=openapi.License(name="BSD License"),
+      description="""This API provides a comprehensive set of endpoints for managing tasks and rewards within a task management system. Key features include:
+
+* **Authentication:** Secure access using JSON Web Tokens (JWT).
+* **Task Management:** Create, read, update, and delete both recurring and punctual tasks. Tasks are associated with specific sub-managers and task types.
+* **Reward Management:** Create, read, update, and delete rewards. Rewards are associated with sub-managers and have a defined coin value.
+* **Reward Validation:** Validate rewards, deducting the reward's coin value from the sub-manager's total earned coins.
+* **Action Tracking:** Tracks actions performed by sub-managers, including completing tasks and claiming rewards. Actions record the task type, coin value, and associated sub-manager.
+* **Statistics:** Retrieve daily and total coin counts for individual sub-managers and the entire system.
+
+The API is designed for efficient management of tasks and rewards, providing a clear and structured way to track progress and incentivize performance.  All endpoints require JWT authentication.""",
+      contact=openapi.Contact(email="melo.surseine@gmail.com"),
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),
