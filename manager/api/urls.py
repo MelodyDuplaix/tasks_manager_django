@@ -4,6 +4,7 @@ from .views.auth_views import login_view, password_reset_request, password_chang
 from .views.reward_views import add_reward, delete_reward, update_reward
 from .views.task_views import create_task, delete_task, update_task, get_task
 from .views.task_type_views import create_task_type, get_task_types
+from .views import objectif_api_views as views
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -33,4 +34,6 @@ urlpatterns = [
     path('reward/update/<int:reward_id>/', update_reward, name='update_reward'),
     path('reward/delete/<int:reward_id>/', delete_reward, name='delete_reward'),
     path('task/<int:task_id>/', get_task, name='get_task'),
+    path('objectif/decompose/', views.decompose_objective_api, name='decompose_objective_api'),
+    path('submanager/<int:submanager_id>/add_tasks/', views.add_tasks_to_submanager, name='add_tasks_to_submanager'),
 ]
