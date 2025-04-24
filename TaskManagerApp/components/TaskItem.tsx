@@ -132,4 +132,5 @@ const styles = StyleSheet.create({
   }
 });
 
+export { TaskItemProps };
 export default TaskItem;

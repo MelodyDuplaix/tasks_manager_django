@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, ScrollView, FlatList, TouchableOpacity, Alert } from "react-native";
+import { Text, View, StyleSheet, ScrollView, FlatList, TouchableOpacity, Alert, Platform, SectionList } from "react-native";
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect, useCallback } from 'react';
 import NavigationBar from "@/components/NavigationBar";
@@ -7,10 +7,74 @@ import MenuItem from "@/components/MenuItem";
 import { fetchSubmanagerData, fetchTotalCoins, fetchSubmanagers } from "@/services/fetchApiInfos";
 import { validateReward } from "@/services/rewardService";
 import { deleteTask, markTaskDone } from "@/services/taskService";
-import TaskItem from "@/components/TaskItem";
+import TaskItem, { TaskItemProps } from "@/components/TaskItem";
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import SubmanagerNavigation from "@/components/SubmanagerNavigation";
 import { Dialog, Portal, Button } from 'react-native-paper';
+
+// New component for tabbed punctual tasks
+const PonctualTasksTabs = ({ tasks, onTaskDone, onDeleteTask, renderFooter }: { tasks: { [key: string]: TaskItemProps[] }; onTaskDone: (id: number, isPonctual: boolean) => void; onDeleteTask: (id: number, isPonctual: boolean) => void; renderFooter: (type: string) => JSX.Element }) => {
+  const [selectedTab, setSelectedTab] = useState('pastToday');
+
+  return (
+    <>
+      <View style={styles.tabContainer}>
+        <TouchableOpacity
+          style={[styles.tabButton, selectedTab === 'pastToday' ? styles.activeTabButton : {}]}
+          onPress={() => setSelectedTab('pastToday')}
+        >
+          <Text style={styles.tabButtonText}>Passées et Aujourd'hui</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tabButton, selectedTab === 'tomorrow' ? styles.activeTabButton : {}]}
+          onPress={() => setSelectedTab('tomorrow')}
+        >
+          <Text style={styles.tabButtonText}>Demain</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tabButton, selectedTab === 'dayAfterTomorrow' ? styles.activeTabButton : {}]}
+          onPress={() => setSelectedTab('dayAfterTomorrow')}
+        >
+          <Text style={styles.tabButtonText}>Après-demain</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tabButton, selectedTab === 'future' ? styles.activeTabButton : {}]}
+          onPress={() => setSelectedTab('future')}
+        >
+          <Text style={styles.tabButtonText}>Futures</Text>
+        </TouchableOpacity>
+      </View>
+      {tasks && tasks[selectedTab] && Array.isArray(tasks[selectedTab]) ? (
+        tasks[selectedTab].length > 0 ? (
+          <FlatList
+            data={tasks[selectedTab]}
+            renderItem={({ item }) => (
+              <TaskItem
+                {...item}
+                isPonctual={true}
+                onTaskDone={onTaskDone}
+                onDeleteTask={onDeleteTask}
+                done_today_count={0}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+            style={styles.listContainer}
+            ListFooterComponent={renderFooter}
+          />
+        ) : (
+          <View style={styles.emptyListContainer}>
+            <Text>Pas de tâches ponctuelles</Text>
+          </View>
+        )
+      ) : (
+        <View style={styles.emptyListContainer}>
+          <Text>Erreur de chargement des tâches</Text>
+        </View>
+      )}
+    </>
+  );
+};
+
 
 export default function SubmanagerPage() {
   const router = useRouter();
@@ -20,7 +84,7 @@ export default function SubmanagerPage() {
   const [dailyObjective, setDailyObjective] = useState<number>(50);
   const [totalCoinsToday, setTotalCoinsToday] = useState<number>(25);
   const [tasks, setTasks] = useState<any[]>([]);
-  const [ponctualTasks, setPonctualTasks] = useState<any[]>([]);
+  const [ponctualTasks, setPonctualTasks] = useState<TaskItemProps[]>([]);
   const [rewards, setRewards] = useState<any[]>([]);
   const [showTasks, setShowTasks] = useState(true);
   const [totalCoins, setTotalCoins] = useState<number>(100);
@@ -30,6 +94,7 @@ export default function SubmanagerPage() {
 
   const loadData = useCallback(async () => {
     const data = await fetchSubmanagerData(submanagerId);
+    console.log("Data fetched:", data); 
     if (data) {
       setTasks(data.tasks);
       setPonctualTasks(data.ponctual_tasks);
@@ -108,19 +173,26 @@ export default function SubmanagerPage() {
     }
   };
 
-  const renderPonctualTaskItem = ({ item }: { item: any }) => (
-    <TaskItem
-      id={item.id}
-      name={item.name}
-      coins_number={item.coins_number}
-      type={item.type}
-      date={item.date}
-      isPonctual={true}
-      onTaskDone={handleTaskDone}
-      onDeleteTask={handleDeleteTask}
-      done_today_count={0}
-    />
-  );
+  const categorizeTasksByDate = (tasks: TaskItemProps[]): { [key: string]: TaskItemProps[] } => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const dayAfterTomorrow = new Date(tomorrow);
+    dayAfterTomorrow.setDate(tomorrow.getDate() + 1);
+    const futureDate = new Date(dayAfterTomorrow);
+    futureDate.setDate(futureDate.getDate()+1);
+
+    console.log("Tasks to categorize:", tasks); // Add logging
+
+    return {
+      pastToday: tasks.filter(task => task.date ? new Date(task.date) <= today : false),
+      tomorrow: tasks.filter(task => task.date ? new Date(task.date).getTime() === tomorrow.getTime() : false),
+      dayAfterTomorrow: tasks.filter(task => task.date ? new Date(task.date).getTime() === dayAfterTomorrow.getTime() : false),
+      future: tasks.filter(task => task.date ? new Date(task.date) > dayAfterTomorrow : false),
+    };
+  };
+
+  const categorizedPonctualTasks = categorizeTasksByDate(ponctualTasks);
 
   const renderFooter = (type: string) => {
     const route = type === 'une tâche ponctuelle' ? `/createPonctualTask?submanagerId=${submanagerId}` : type === 'une tâche' ? `/createTask?submanagerId=${submanagerId}` : `/createReward?id=${submanagerId}`;
@@ -175,43 +247,29 @@ export default function SubmanagerPage() {
         {showTasks ? (
           <>
             <Text style={styles.heading}>Tâches ponctuelles</Text>
-            {ponctualTasks.length > 0 ? (
-              <FlatList
-                data={ponctualTasks}
-                renderItem={({ item }) => renderPonctualTaskItem({ item })}
-                keyExtractor={(item) => item.id.toString()}
-                style={styles.listContainer}
-                ListFooterComponent={() => renderFooter("une tâche ponctuelle")}
-              />
-            ) : (
-              <View style={styles.emptyListContainer}>
-                <Text>Pas de tâches ponctuelles</Text>
-                {renderFooter("une tâche ponctuelle")}
-              </View>
-            )}
-
+            <PonctualTasksTabs tasks={categorizedPonctualTasks} onTaskDone={handleTaskDone} onDeleteTask={handleDeleteTask} renderFooter={renderFooter} />
             <Text style={styles.heading}>Tâches</Text>
             {tasks.length > 0 ? (
               <FlatList
-              data={tasks}
-              renderItem={({ item }) => (
-                <TaskItem
-                  id={item.id}
-                  name={item.name}
-                  coins_number={item.coins_number}
-                  type={item.type}
-                  date={item.date}
-                  isPonctual={false}
-                  onTaskDone={handleTaskDone}
-                  onDeleteTask={handleDeleteTask}
-                  done_today_count={item.done_today_count}
-                  isReward={false}
-                />
-              )}
-              keyExtractor={(item) => item.id.toString()}
-              style={styles.tasksContainer}
-              ListFooterComponent={() => renderFooter("une tâche")}
-            />
+                data={tasks}
+                renderItem={({ item }) => (
+                  <TaskItem
+                    id={item.id}
+                    name={item.name}
+                    coins_number={item.coins_number}
+                    type={item.type}
+                    date={item.date}
+                    isPonctual={false}
+                    onTaskDone={handleTaskDone}
+                    onDeleteTask={handleDeleteTask}
+                    done_today_count={item.done_today_count}
+                    isReward={false}
+                  />
+                )}
+                keyExtractor={(item) => item.id.toString()}
+                style={styles.tasksContainer}
+                ListFooterComponent={() => renderFooter("une tâche")}
+              />
             ) : (
               <View style={styles.emptyListContainer}>
                 <Text>Pas de tâches</Text>
@@ -343,4 +401,23 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
+  tabContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 10,
+  },
+  tabButton: {
+    backgroundColor: '#ddd',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    flex: 1,
+  },
+  activeTabButton: {
+    backgroundColor: '#4CAF50',
+  },
+  tabButtonText: {
+    color: '#333',
+    textAlign: 'center',
+  }
 });
