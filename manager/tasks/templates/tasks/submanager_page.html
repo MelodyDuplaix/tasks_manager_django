@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Task Manager - {{submanager.name}} </title>
+    <title>Task Manager - {{ submanager.name }}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -10,16 +10,16 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #ADD8E6;">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold ms-5" href="{% url 'home' %}"
-           style="font-family: 'Poppins', sans-serif; font-size: 1rem;">Tasks
-            Manager</a>
+        <a class="navbar-brand fw-bold ms-5" href="{% url 'home' %}" style="font-family: 'Poppins', sans-serif; font-size: 1rem;">
+            Tasks Manager
+        </a>
         <div class="dropdown ms-5">
             <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                {{submanager.name}}
+                {{ submanager.name }}
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                 {% for subm in all_submanager %}
-                    <li><a class="dropdown-item" href="{% url 'submanager_page' subm.id %}">{{subm.name}}</a></li>
+                    <li><a class="dropdown-item" href="{% url 'submanager_page' subm.id %}">{{ subm.name }}</a></li>
                 {% endfor %}
             </ul>
         </div>
@@ -32,13 +32,11 @@
                 <li class="nav-item">
                     <a class="nav-link text-primary" href="{% url 'logout' %}" style="font-size: 1rem;">Déconnexion</a>
                 </li>
-                <!--                <li class="nav-item">-->
-                <!--                    <a class="nav-link text-primary" href="" style="font-size: 1rem;">Changer mot de passe</a>-->
-                <!--                </li>-->
             </ul>
         </div>
     </div>
 </nav>
+
 {% if messages %}
 <div class="container mt-3">
     {% for message in messages %}
@@ -50,16 +48,19 @@
 </div>
 {% endif %}
 
-
-<div class="mt-3 d-flex justify-content-center vh-100">
-  <div class="container" style="max-width: 1000px; margin-left: auto; margin-right: auto;">
+<div class="mt-3 d-flex justify-content-center">
+  <div class="container" style="max-width: 1000px;">
     <p class="text-center">
       <a href="{% url 'home' %}" class="btn btn-outline-secondary">Home</a>
     </p>
-    <div class="balance-info">
+    <div class="balance-info text-center">
       <p>Solde : {{ total_coins }} pièces</p>
     </div>
-    <a href="{% url 'create_objective' submanager.id %}"><button class="btn btn-primary mt-3">Décomposer un objectif</button></a>
+    <div class="d-flex justify-content-center">
+    <a href="{% url 'create_objective' submanager.id %}">
+      <button class="btn btn-primary mt-3">Décomposer un objectif</button>
+    </a>
+    </div>
 
     <h1 class="text-center mt-5">{{ submanager.name }}</h1>
 
@@ -75,35 +76,121 @@
     </div>
 
     <h2 class="text-center mt-5">Tâches ponctuelles</h2>
-    <div class="row">
-      <div class="col">
-        <ul class="list-group">
-          {% for task in ponctuals %}
-          <li class="list-group-item d-flex align-items-center position-relative p-2 list-group-item-action">
-            <a href="{% url 'ponctual_task_action' task.id %}" 
-               class="text-dark fw-semibold flex-grow-1 text-center text-decoration-none">
-              {{ task.name }} ({{ task.coins_number }})
-            </a>
-            <div class="btn-group" role="group">
-              <a href="{% url 'update_ponctual_task' submanager.id task.id %}" 
-                 class="btn btn-outline-secondary btn-sm z-1">
-                Modifier
-              </a>
-              <a href="{% url 'confirm_delete_ponctual_task' submanager.id task.id %}" class="btn btn-outline-danger btn-sm z-1">
-                Supprimer
-              </a>
-            </div>
-          </li>
-          {% endfor %}
-          <li class="list-group-item list-group-item-action d-flex align-items-center p-2">
-            <a href="{% url 'add_ponctual_task' submanager.id %}" 
-               class="text-dark fw-semibold flex-grow-1 text-center text-decoration-none">
-              Ajouter une tâche ponctuelle
-            </a>
-          </li>
-        </ul>
+    <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="past-today-tab" data-bs-toggle="tab" data-bs-target="#past-today" type="button" role="tab" aria-controls="past-today" aria-selected="true">Passées et Aujourd'hui</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tomorrow-tab" data-bs-toggle="tab" data-bs-target="#tomorrow" type="button" role="tab" aria-controls="tomorrow" aria-selected="false">Demain</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="dayafter-tab" data-bs-toggle="tab" data-bs-target="#dayafter" type="button" role="tab" aria-controls="dayafter" aria-selected="false">Après-demain</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="future-tab" data-bs-toggle="tab" data-bs-target="#future" type="button" role="tab" aria-controls="future" aria-selected="false">Futures</button>
+      </li>
+    </ul>
+    <div class="tab-content mt-3" id="myTabContent">
+      <div class="tab-pane fade show active" id="past-today" role="tabpanel" aria-labelledby="past-today-tab">
+        <div class="row">
+          <div class="col">
+            <ul class="list-group">
+              {% for task in ponctuals_past %}
+              <li class="list-group-item d-flex align-items-center position-relative p-2 list-group-item-action" style="background-color: #f8d7da;">
+                <a href="{% url 'ponctual_task_action' task.id %}" class="text-danger fw-semibold flex-grow-1 text-center text-decoration-none">
+                  {{ task.name }} ({{ task.coins_number }})
+                </a>
+                <div class="btn-group" role="group">
+                  <span class="date">{{ task.date }}</span>
+                  <a href="{% url 'update_ponctual_task' submanager.id task.id %}" class="btn btn-outline-secondary btn-sm z-1">Modifier</a>
+                  <a href="{% url 'confirm_delete_ponctual_task' submanager.id task.id %}" class="btn btn-outline-danger btn-sm z-1">Supprimer</a>
+                </div>
+              </li>
+              {% endfor %}
+              {% for task in ponctuals_today %}
+              <li class="list-group-item d-flex align-items-center position-relative p-2 list-group-item-action">
+                <a href="{% url 'ponctual_task_action' task.id %}" class="text-dark fw-semibold flex-grow-1 text-center text-decoration-none">
+                  {{ task.name }} ({{ task.coins_number }})
+                </a>
+                <div class="btn-group" role="group">
+                  <span class="date">{{ task.date }}</span>
+                  <a href="{% url 'update_ponctual_task' submanager.id task.id %}" class="btn btn-outline-secondary btn-sm z-1">Modifier</a>
+                  <a href="{% url 'confirm_delete_ponctual_task' submanager.id task.id %}" class="btn btn-outline-danger btn-sm z-1">Supprimer</a>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="tomorrow" role="tabpanel" aria-labelledby="tomorrow-tab">
+        <div class="row">
+          <div class="col">
+            <ul class="list-group">
+              {% for task in ponctuals_tomorrow %}
+              <li class="list-group-item d-flex align-items-center position-relative p-2 list-group-item-action">
+                <a href="{% url 'ponctual_task_action' task.id %}" class="text-dark fw-semibold flex-grow-1 text-center text-decoration-none">
+                  {{ task.name }} ({{ task.coins_number }})
+                </a>
+                <div class="btn-group" role="group">
+                  <span class="date">{{ task.date }}</span>
+                  <a href="{% url 'update_ponctual_task' submanager.id task.id %}" class="btn btn-outline-secondary btn-sm z-1">Modifier</a>
+                  <a href="{% url 'confirm_delete_ponctual_task' submanager.id task.id %}" class="btn btn-outline-danger btn-sm z-1">Supprimer</a>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="dayafter" role="tabpanel" aria-labelledby="dayafter-tab">
+        <div class="row">
+          <div class="col">
+            <ul class="list-group">
+              {% for task in ponctuals_dayafter %}
+              <li class="list-group-item d-flex align-items-center position-relative p-2 list-group-item-action">
+                <a href="{% url 'ponctual_task_action' task.id %}" class="text-dark fw-semibold flex-grow-1 text-center text-decoration-none">
+                  {{ task.name }} ({{ task.coins_number }})
+                </a>
+                <div class="btn-group" role="group">
+                  <span class="date">{{ task.date }}</span>
+                  <a href="{% url 'update_ponctual_task' submanager.id task.id %}" class="btn btn-outline-secondary btn-sm z-1">Modifier</a>
+                  <a href="{% url 'confirm_delete_ponctual_task' submanager.id task.id %}" class="btn btn-outline-danger btn-sm z-1">Supprimer</a>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="future" role="tabpanel" aria-labelledby="future-tab">
+        <div class="row">
+          <div class="col">
+            <ul class="list-group">
+              {% for task in ponctuals_future %}
+              <li class="list-group-item d-flex align-items-center position-relative p-2 list-group-item-action">
+                <a href="{% url 'ponctual_task_action' task.id %}" class="text-dark fw-semibold flex-grow-1 text-center text-decoration-none">
+                  {{ task.name }} ({{ task.coins_number }})
+                </a>
+                <div class="btn-group" role="group">
+                  <span class="date">{{ task.date }}</span>
+                  <a href="{% url 'update_ponctual_task' submanager.id task.id %}" class="btn btn-outline-secondary btn-sm z-1">Modifier</a>
+                  <a href="{% url 'confirm_delete_ponctual_task' submanager.id task.id %}" class="btn btn-outline-danger btn-sm z-1">Supprimer</a>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
+    <ul class="list-group">
+      <li class="list-group-item list-group-item-action d-flex align-items-center p-2">
+          <a href="{% url 'add_ponctual_task' submanager.id %}" class="text-dark fw-semibold flex-grow-1 text-center text-decoration-none">
+            Ajouter une tâche ponctuelle
+          </a>
+        </li>
+    </ul>
 
     <h2 class="text-center mt-5">Tâches</h2>
     <div class="row">
@@ -182,7 +269,16 @@
       font-size: 1.2rem;
     }
   }
-  
+  .list-group-item a {
+    display: flex;
+    align-items: center;
+  }
+  .list-group-item .date {
+    color: gray;
+    font-style: italic;
+    margin-right: 1rem; /* Adjust as needed */
+    white-space: nowrap;
+  }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

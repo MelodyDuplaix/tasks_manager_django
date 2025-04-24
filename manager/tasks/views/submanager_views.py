@@ -1,16 +1,13 @@
 from django.contrib import messages  # type: ignore
 from django.contrib.auth.decorators import login_required  # type: ignore
 from django.shortcuts import render, redirect  # type: ignore
-
-from tasks.forms import SubManagerForm  # type: ignore
-from tasks.models import SubManager  # type: ignore
-from django.contrib import messages  # type: ignore
-from django.contrib.auth.decorators import login_required  # type: ignore
-from django.shortcuts import render, redirect  # type: ignore
 from django.utils import timezone  # type: ignore
 
 from tasks.forms import SubManagerForm  # type: ignore
+from django.utils import timezone
+from datetime import timedelta
 from tasks.models import SubManager, Reward, Action, TaskType, Task, PonctualTask  # type: ignore
+
 
 
 @login_required
@@ -77,20 +74,55 @@ def submanager_page(request, submanager_id):
     rewards = Reward.objects.filter(sub_manager=submanager)
     types = TaskType.objects.filter(sub_manager=submanager)
     historique_total = Action.objects.filter(sub_manager=submanager).values_list('coins_number', flat=True)
-    ponctuals = PonctualTask.objects.filter(sub_manager=submanager)
+    ponctuals = PonctualTask.objects.filter(sub_manager=submanager).order_by('date')
     all_submanager = SubManager.objects.filter(user=request.user)
 
-    return render(request, 'tasks/submanager_page.html',
-                  {'submanager': submanager,
-                   'daily_objectif_percentage': daily_objectif_percentage,
-                   'daily_objectif': daily_objectif,
-                   'total_coins_today': sum(historique),
-                   'tasks': tasks,
-                   'rewards': rewards,
-                   'types': types,
-                   'total_coins': sum(historique_total),
-                   'ponctuals': ponctuals,
-                   'all_submanager': all_submanager})
+    ponctuals = PonctualTask.objects.filter(sub_manager=submanager).order_by('date')
+    all_submanager = SubManager.objects.filter(user=request.user)
+
+    if ponctuals:
+        today = timezone.now().date()
+        tomorrow = today + timedelta(days=1)
+        day_after_tomorrow = today + timedelta(days=2)
+
+        ponctuals_past = [task for task in ponctuals if task.date.date() < today]
+        ponctuals_today = [task for task in ponctuals if task.date.date() == today]
+        ponctuals_tomorrow = [task for task in ponctuals if task.date.date() == tomorrow]
+        ponctuals_dayafter = [task for task in ponctuals if task.date.date() == day_after_tomorrow]
+        ponctuals_future = [task for task in ponctuals if task.date.date() > day_after_tomorrow]
+    else:
+        ponctuals_past = ponctuals_today = ponctuals_tomorrow = ponctuals_dayafter = ponctuals_future = []
+
+    for task in ponctuals_past:
+        task.date = task.date.strftime("%Y-%m-%d") if task.date else "N/A"
+    for task in ponctuals_today:
+        task.date = task.date.strftime("%Y-%m-%d") if task.date else "N/A"
+    for task in ponctuals_tomorrow:
+        task.date = task.date.strftime("%Y-%m-%d") if task.date else "N/A"
+    for task in ponctuals_dayafter:
+        task.date = task.date.strftime("%Y-%m-%d") if task.date else "N/A"
+    for task in ponctuals_future:
+        task.date = task.date.strftime("%Y-%m-%d") if task.date else "N/A"
+
+
+    return render(request, 'tasks/submanager_page.html', {
+        'submanager': submanager,
+        'daily_objectif_percentage': daily_objectif_percentage,
+        'daily_objectif': daily_objectif,
+        'total_coins_today': sum(historique),
+        'tasks': tasks,
+        'rewards': rewards,
+        'types': types,
+        'total_coins': sum(historique_total),
+        'ponctuals_past': ponctuals_past,
+        'ponctuals_today': ponctuals_today,
+        'ponctuals_tomorrow': ponctuals_tomorrow,
+        'ponctuals_dayafter': ponctuals_dayafter,
+        'ponctuals_future': ponctuals_future,
+        'ponctuals': ponctuals,
+        'all_submanager': all_submanager
+    })
+
 
 
 @login_required
