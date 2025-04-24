@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, ScrollView, FlatList, TouchableOpacity, Alert, Platform, SectionList } from "react-native";
+import { Text, View, StyleSheet, ScrollView, FlatList, TouchableOpacity, Alert, Platform, SectionList, StyleProp, TextStyle } from "react-native";
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect, useCallback } from 'react';
 import NavigationBar from "@/components/NavigationBar";
@@ -15,6 +15,8 @@ import { Dialog, Portal, Button } from 'react-native-paper';
 // New component for tabbed punctual tasks
 const PonctualTasksTabs = ({ tasks, onTaskDone, onDeleteTask, renderFooter }: { tasks: { [key: string]: TaskItemProps[] }; onTaskDone: (id: number, isPonctual: boolean) => void; onDeleteTask: (id: number, isPonctual: boolean) => void; renderFooter: (type: string) => JSX.Element }) => {
   const [selectedTab, setSelectedTab] = useState('pastToday');
+
+  const footerElement = renderFooter("une tâche ponctuelle");
 
   return (
     <>
@@ -55,20 +57,23 @@ const PonctualTasksTabs = ({ tasks, onTaskDone, onDeleteTask, renderFooter }: { 
                 onTaskDone={onTaskDone}
                 onDeleteTask={onDeleteTask}
                 done_today_count={0}
+                style={item.date && new Date(item.date) < new Date() ? (new Date(item.date).getDate() === new Date().getDate() ? styles.pastDueTodayTaskText : styles.pastDueTaskText) : null}
               />
             )}
             keyExtractor={(item) => item.id.toString()}
             style={styles.listContainer}
-            ListFooterComponent={renderFooter}
+            ListFooterComponent={footerElement} // Use the pre-rendered element
           />
         ) : (
           <View style={styles.emptyListContainer}>
             <Text>Pas de tâches ponctuelles</Text>
+            {footerElement} {/* Use the pre-rendered element */}
           </View>
         )
       ) : (
         <View style={styles.emptyListContainer}>
           <Text>Erreur de chargement des tâches</Text>
+          {footerElement} {/* Use the pre-rendered element */}
         </View>
       )}
     </>
@@ -202,25 +207,12 @@ export default function SubmanagerPage() {
       </TouchableOpacity>
     );
   };
+  
 
   return (
-    <View>
-      <View style={{ zIndex: 10 }}>
-        <NavigationBar coins={totalCoins} />
-      </View>
-      <Portal>
-        <Dialog visible={deleteDialogVisible} onDismiss={() => setDeleteDialogVisible(false)}>
-          <Dialog.Title>Confirmation</Dialog.Title>
-          <Dialog.Content>
-            <Text>Êtes-vous sûr de vouloir supprimer cette tâche ?</Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setDeleteDialogVisible(false)}>Annuler</Button>
-            <Button onPress={confirmDeleteTask}>Supprimer</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-      <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView>
+      <NavigationBar coins={totalCoins} />
+      <View style={styles.container}>
         <SubmanagerNavigation
           submanagers={submanagers}
           submanagerId={submanagerId}
@@ -253,18 +245,21 @@ export default function SubmanagerPage() {
               <FlatList
                 data={tasks}
                 renderItem={({ item }) => (
-                  <TaskItem
-                    id={item.id}
-                    name={item.name}
-                    coins_number={item.coins_number}
-                    type={item.type}
-                    date={item.date}
-                    isPonctual={false}
-                    onTaskDone={handleTaskDone}
-                    onDeleteTask={handleDeleteTask}
-                    done_today_count={item.done_today_count}
-                    isReward={false}
-                  />
+                  <View style={{ paddingHorizontal: 10 }}> {/* Added padding */}
+                    <TaskItem
+                      id={item.id}
+                      name={item.name}
+                      coins_number={item.coins_number}
+                      type={item.type}
+                      date={item.date}
+                      isPonctual={false}
+                      onTaskDone={handleTaskDone}
+                      onDeleteTask={handleDeleteTask}
+                      done_today_count={item.done_today_count}
+                      isReward={false}
+                      style={item.date && new Date(item.date) < new Date() ? styles.pastDueTaskText : null}
+                    />
+                  </View>
                 )}
                 keyExtractor={(item) => item.id.toString()}
                 style={styles.tasksContainer}
@@ -293,6 +288,7 @@ export default function SubmanagerPage() {
                     onTaskDone={() => validateReward(item.id, handleRewardValidated)}
                     done_today_count={0}
                     isReward={true}
+                    style={item.date && new Date(item.date) < new Date() ? styles.pastDueTaskText : null}
                   />
                 )}
                 keyExtractor={(item) => item.id.toString()}
@@ -307,14 +303,16 @@ export default function SubmanagerPage() {
             )}
           </>
         )}
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
     alignItems: "stretch",
   },
   title: {
@@ -419,5 +417,11 @@ const styles = StyleSheet.create({
   tabButtonText: {
     color: '#333',
     textAlign: 'center',
-  }
+  },
+  pastDueTaskText: {
+    color: 'red',
+  },
+  pastDueTodayTaskText: {
+    color: 'orange',
+  },
 });

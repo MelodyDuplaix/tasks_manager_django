@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, StyleProp, TextStyle } from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import { Menu, IconButton, MD3Colors } from 'react-native-paper';
+import { Menu, IconButton } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 
 interface TaskItemProps {
@@ -12,9 +12,10 @@ interface TaskItemProps {
   date?: string;
   isPonctual?: boolean;
   onTaskDone: (id: number, isPonctual: boolean) => void;
-  onDeleteTask?: (id: number, isPonctual: boolean) => void; // Nouvelle prop
+  onDeleteTask?: (id: number, isPonctual: boolean) => void;
   done_today_count: number;
   isReward?: boolean;
+  style?: StyleProp<TextStyle>;
 }
 
 const TaskItem: React.FC<TaskItemProps> = (props) => {
@@ -37,24 +38,24 @@ const TaskItem: React.FC<TaskItemProps> = (props) => {
       <TouchableOpacity style={styles.checkbox} onPress={handleCheckboxPress}>
         {showCheck && <View style={styles.innerCheckbox} />}
       </TouchableOpacity>
-      <View style={{flex: 1}}>
-        <Text style={styles.text}>{name}</Text>
+      <View style={{ flex: 1 }}>
+        <Text style={[styles.text, props.style]}>{name}</Text>
+        <Text style={styles.dateText}>
+          {date ? date.replace("T", " ").replace("Z", " ") : ""}
+        </Text>
         {type && (
           <Text style={styles.typeText}>
             ({type.name})
           </Text>
         )}
       </View>
-      <View>
-        <Text style={styles.dateText}>{date ? date.replace("T", " ").replace("Z", " ") : ""}</Text>
-      </View>
       <View style={styles.coins}>
-        {(props.done_today_count || 0) > 0 &&  (
+        {(props.done_today_count || 0) > 0 && (
           <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 15, gap: 5 }}>
-          <Text style={{ color: 'green', fontSize: 14 }}>
-            {(props.done_today_count || 0).toString()}
-          </Text>
-          <FontAwesome6 name="check" size={16} color="green" />
+            <Text style={{ color: 'green', fontSize: 14 }}>
+              {(props.done_today_count || 0).toString()}
+            </Text>
+            <FontAwesome6 name="check" size={16} color="green" />
           </View>
         )}
         <Text style={styles.coinsText}>{coins_number}</Text>
@@ -78,7 +79,7 @@ const TaskItem: React.FC<TaskItemProps> = (props) => {
             onDeleteTask(id, isPonctual || false);
           }
         }} title="Supprimer" />
-        </Menu>
+      </Menu>
     </View>
   );
 };
@@ -109,8 +110,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
   },
   text: {
-    flex: 1,
     fontSize: 16,
+    marginBottom: 2,
   },
   typeText: {
     fontSize: 12,
@@ -128,8 +129,8 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 12,
     color: 'gray',
-    marginRight: 10,
-  }
+    marginTop: 2,
+  },
 });
 
 export { TaskItemProps };
