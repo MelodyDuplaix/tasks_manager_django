@@ -16,10 +16,11 @@ interface TaskItemProps {
   done_today_count: number;
   isReward?: boolean;
   style?: StyleProp<TextStyle>;
+  submanagerId?: number;
 }
 
 const TaskItem: React.FC<TaskItemProps> = (props) => {
-  const { id, name, coins_number, type, date, isPonctual, onTaskDone, onDeleteTask, isReward } = props;
+  const { id, name, coins_number, type, date, isPonctual, onTaskDone, onDeleteTask, isReward, submanagerId } = props;
   const router = useRouter();
   const [visible, setVisible] = React.useState(false);
   const [showCheck, setShowCheck] = React.useState(false);
@@ -72,7 +73,10 @@ const TaskItem: React.FC<TaskItemProps> = (props) => {
           />
         }
       >
-        <Menu.Item onPress={() => { closeMenu(); router.push({ pathname: `/editTask`, params: { id: id } }) }} title="Modifier" />
+        <Menu.Item onPress={() => { 
+          closeMenu(); 
+          console.log("submanagerId", submanagerId);
+          router.push({ pathname: `/editTask`, params: { id: submanagerId} }) }} title="Modifier" />
         <Menu.Item onPress={() => {
           closeMenu();
           if (onDeleteTask) {

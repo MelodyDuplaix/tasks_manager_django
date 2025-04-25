@@ -13,7 +13,7 @@ import SubmanagerNavigation from "@/components/SubmanagerNavigation";
 import { Dialog, Portal, Button } from 'react-native-paper';
 
 // New component for tabbed punctual tasks
-const PonctualTasksTabs = ({ tasks, onTaskDone, onDeleteTask, renderFooter }: { tasks: { [key: string]: TaskItemProps[] }; onTaskDone: (id: number, isPonctual: boolean) => void; onDeleteTask: (id: number, isPonctual: boolean) => void; renderFooter: (type: string) => JSX.Element }) => {
+const PonctualTasksTabs = ({ tasks, onTaskDone, onDeleteTask, renderFooter, id }: { tasks: { [key: string]: TaskItemProps[] }; onTaskDone: (id: number, isPonctual: boolean) => void; onDeleteTask: (id: number, isPonctual: boolean) => void; renderFooter: (type: string) => JSX.Element; id: number }) => {
   const [selectedTab, setSelectedTab] = useState('pastToday');
 
   const footerElement = renderFooter("une tâche ponctuelle");
@@ -58,11 +58,12 @@ const PonctualTasksTabs = ({ tasks, onTaskDone, onDeleteTask, renderFooter }: { 
                 onDeleteTask={onDeleteTask}
                 done_today_count={0}
                 style={item.date && new Date(item.date) < new Date() ? (new Date(item.date).getDate() === new Date().getDate() ? styles.pastDueTodayTaskText : styles.pastDueTaskText) : null}
+                submanagerId={id}
               />
             )}
             keyExtractor={(item) => item.id.toString()}
             style={styles.listContainer}
-            ListFooterComponent={footerElement} // Use the pre-rendered element
+            ListFooterComponent={footerElement}
           />
         ) : (
           <View style={styles.emptyListContainer}>
@@ -244,7 +245,7 @@ export default function SubmanagerPage() {
         {showTasks ? (
           <>
             <Text style={styles.heading}>Tâches ponctuelles</Text>
-            <PonctualTasksTabs tasks={categorizedPonctualTasks} onTaskDone={handleTaskDone} onDeleteTask={handleDeleteTask} renderFooter={renderFooter} />
+            <PonctualTasksTabs tasks={categorizedPonctualTasks} onTaskDone={handleTaskDone} onDeleteTask={handleDeleteTask} renderFooter={renderFooter} id={submanagerId} />
             <Text style={styles.heading}>Tâches</Text>
             {tasks.length > 0 ? (
               <FlatList
@@ -263,6 +264,7 @@ export default function SubmanagerPage() {
                       done_today_count={item.done_today_count}
                       isReward={false}
                       style={item.date && new Date(item.date) < new Date() ? styles.pastDueTaskText : null}
+                      submanagerId={submanagerId}
                     />
                   </View>
                 )}
@@ -300,6 +302,7 @@ export default function SubmanagerPage() {
                     done_today_count={0}
                     isReward={true}
                     style={item.date && new Date(item.date) < new Date() ? styles.pastDueTaskText : null}
+                    submanagerId={submanagerId}
                   />
                 )}
                 keyExtractor={(item) => item.id.toString()}
