@@ -208,7 +208,9 @@ export default function SubmanagerPage() {
 
   return (
     <ScrollView>
-      <NavigationBar coins={totalCoins} />
+      <View style={{ zIndex: 200 }}>
+        <NavigationBar coins={totalCoins} />
+      </View>
       <View style={styles.container}>
         <SubmanagerNavigation
           submanagers={submanagers}
@@ -217,8 +219,8 @@ export default function SubmanagerPage() {
         />
         <TouchableOpacity
           style={styles.decomposeButton}
-                  onPress={() => router.push(`/decomposeObjective?submanagerId=${submanagerId}`)}
-                >
+          onPress={() => router.push(`/decomposeObjective?submanagerId=${submanagerId}`)}
+        >
           <Text style={styles.decomposeButtonText}>Décomposer l'objectif</Text>
         </TouchableOpacity>
 

@@ -27,7 +27,7 @@ const NavigationBar = ({ coins }: { coins: number }) => {
         <Menu
           visible={menuVisible}
           onDismiss={closeMenu}
-          style={{ zIndex: 100, position: 'absolute' }}
+          style={styles.menu}
           anchor={
             <Appbar.Action
               icon="dots-vertical"
@@ -90,6 +90,10 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     color: 'white', // Couleur des textes du menu
+  },
+  menu: {
+    zIndex: 100,
+    position: 'absolute',
   },
 });
 
