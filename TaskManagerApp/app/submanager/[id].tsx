@@ -99,7 +99,6 @@ export default function SubmanagerPage() {
 
   const loadData = useCallback(async () => {
     const data = await fetchSubmanagerData(submanagerId);
-    console.log("Data fetched:", data); 
     if (data) {
       setTasks(data.tasks);
       setPonctualTasks(data.ponctual_tasks);
@@ -186,8 +185,6 @@ export default function SubmanagerPage() {
     dayAfterTomorrow.setDate(tomorrow.getDate() + 1);
     const futureDate = new Date(dayAfterTomorrow);
     futureDate.setDate(futureDate.getDate()+1);
-
-    console.log("Tasks to categorize:", tasks); // Add logging
 
     return {
       pastToday: tasks.filter(task => task.date ? new Date(task.date) <= today : false),
