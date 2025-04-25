@@ -110,54 +110,43 @@ erDiagram
         int monthly_objectif
         int yearly_objectif
         boolean active
-        int user_id
     }
     TaskType {
         int id
         string name
-        int sub_manager_id
     }
     Task {
         int id
         string name
         int coins_number
-        int type_id
-        boolean completed
     }
     PonctualTask {
         int id
         string name
         int coins_number
         datetime date
-        int sub_manager_id
-        boolean completed
     }
     Reward {
         int id
         string name
         int coins_number
-        int sub_manager_id
     }
     Action {
         int id
         string name
         datetime date
         int coins_number
-        int task_id
-        int punctual_task_id
-        int reward_id
-        int sub_manager_id
     }
 
-    User ||--o{ SubManager : "manages"
-    SubManager ||--o{ TaskType : "defines"
-    TaskType ||--o{ Task : "categorizes"
-    SubManager ||--o{ PonctualTask : "owns"
-    SubManager ||--o{ Reward : "offers"
-    Task ||--o{ Action : "triggers"
-    PonctualTask ||--o{ Action : "triggers"
-    Reward ||--o{ Action : "redeems"
-    SubManager ||--o{ Action : "tracks"
+    User ||--o{ SubManager : "possède"
+    SubManager ||--o{ TaskType : "définit"
+    SubManager ||--o{ PonctualTask : "contient"
+    SubManager ||--o{ Reward : "propose"
+    TaskType ||--o{ Task : "catégorise"
+    Task ||--o{ Action : "est_enregistrée_dans"
+    PonctualTask ||--o{ Action : "est_enregistrée_dans"
+    Reward ||--o{ Action : "est_réclamée_dans"
+    SubManager ||--o{ Action : "suit"
 ```
 
 ## Parcours utilisateur
