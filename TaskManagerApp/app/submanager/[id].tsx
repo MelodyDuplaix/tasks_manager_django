@@ -218,6 +218,12 @@ export default function SubmanagerPage() {
           submanagerId={submanagerId}
           submanagerName={submanagerName}
         />
+        <TouchableOpacity
+          style={styles.decomposeButton}
+                  onPress={() => router.push(`/decomposeObjective?submanagerId=${submanagerId}`)}
+                >
+          <Text style={styles.decomposeButtonText}>Décomposer l'objectif</Text>
+        </TouchableOpacity>
 
         <Text style={styles.heading}>Objectif quotidien</Text>
         <ProgressBar current={totalCoinsToday} total={dailyObjective} />
@@ -269,6 +275,12 @@ export default function SubmanagerPage() {
               <View style={styles.emptyListContainer}>
                 <Text>Pas de tâches</Text>
                 {renderFooter("une tâche")}
+                <TouchableOpacity
+                  style={styles.decomposeButton}
+                  onPress={() => router.push('/decomposeObjective')}
+                >
+                  <Text style={styles.decomposeButtonText}>Décomposer l'objectif</Text>
+                </TouchableOpacity>
               </View>
             )}
           </>
@@ -423,5 +435,17 @@ const styles = StyleSheet.create({
   },
   pastDueTodayTaskText: {
     color: 'orange',
+  },
+  decomposeButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  decomposeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

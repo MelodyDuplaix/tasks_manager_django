@@ -69,6 +69,10 @@
       {
         "name": "deleteTask",
         "path": "/deleteTask"
+      },
+      {
+        "name": "decomposeObjective",
+        "path": "/decomposeObjective?submanagerId=:submanagerId"
       }
     ]
   }
