@@ -50,8 +50,8 @@ export const deleteTask = async (id: number, onTaskDeleted: (id: number) => void
     }
     
     const endpoint = isPonctual !== undefined 
-      ? `task/delete/${id}?is_ponctual=${isPonctual}` 
-      : `task/delete/${id}`;
+      ? `task/delete/${id}/?is_ponctual=${isPonctual}` 
+      : `task/delete/${id}/`;
     
     const response = await fetchQuery(token, endpoint, true, 'DELETE');
     

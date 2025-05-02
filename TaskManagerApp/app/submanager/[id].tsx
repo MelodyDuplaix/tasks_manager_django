@@ -141,22 +141,14 @@ export default function SubmanagerPage() {
   }, [loadData, loadTotalCoins, loadSubmanagers]);
 
   const handleDeleteTask = async (taskId: number, isPonctual: boolean) => {
-    setTaskToDelete({id: taskId, isPonctual});
-    setDeleteDialogVisible(true);
-  };
-  
-  const confirmDeleteTask = () => {
-    if (taskToDelete) {
-      deleteTask(taskToDelete.id, (deletedId) => {
-        if (taskToDelete.isPonctual) {
-          setPonctualTasks(prevTasks => prevTasks.filter(task => task.id !== deletedId));
-        } else {
-          setTasks(prevTasks => prevTasks.filter(task => task.id !== deletedId));
-        }
-        loadData();
-      });
-    }
-    setDeleteDialogVisible(false);
+    deleteTask(taskId, (deletedId) => {
+      if (isPonctual) {
+        setPonctualTasks(prevTasks => prevTasks.filter(task => task.id !== deletedId));
+      } else {
+        setTasks(prevTasks => prevTasks.filter(task => task.id !== deletedId));
+      }
+      loadData();
+    }, isPonctual);
   };
   
 

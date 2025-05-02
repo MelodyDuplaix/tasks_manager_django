@@ -27,7 +27,11 @@ export const fetchQuery = async (
     }
 
     try {
-        const response = await fetch(`${API_CONFIG.BASE_URL}/${query}/`, fetchOptions);
+        let url = `${API_CONFIG.BASE_URL}/${query}`;
+        if (method !== 'GET' && !query.includes('?')) {
+          url += '/';
+        }
+        const response = await fetch(url, fetchOptions);
         if (response.ok) {
           const contentType = response.headers.get("content-type");
           if (contentType && contentType.includes("application/json")) {
@@ -39,8 +43,9 @@ export const fetchQuery = async (
           }
         } else if (response.status === 401) {
             console.error('Token is invalid:', response.status);
+            // Handle token expiration/invalidation here, e.g., try refreshing the token
         } else {
-          console.error('Failed to fetch query:', response.status);
+          console.error('Failed to fetch query:', response.status, response);
         }
       } catch (error: any) {
         if (error instanceof SyntaxError) {
