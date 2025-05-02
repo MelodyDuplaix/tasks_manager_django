@@ -231,3 +231,26 @@ sequenceDiagram
 ## Contribution
 
 Les contributions sont les bienvenues ! Veuillez soumettre un pull request ou ouvrir une issue pour toute suggestion ou amélioration. Veuillez respecter le style de codage existant et fournir des tests unitaires pour toutes les nouvelles fonctionnalités.
+
+## A faire
+
+### Corrections de bugs
+- [ ] Immédiatement ramener à la page de login si le token n'est plus valide
+- [ ] Mise à jour immédiate des tâches suite à suppression, ajout, modification, sans avoir besoin de passer par un autre submanager
+- [ ] Résolution de l'erreur Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON en console
+
+### Fonctionnalités à Ajouter
+- [ ] Pages de progression des objectifs mensuels, hebdomadaire, quotidiens
+- [ ] Page des gestions des sous manager (ajout, modification des objectifs, suppression)
+- [ ] Envoi de rappels pour les tâches à venir.
+- [ ] Notifications basées sur les priorités et les délais.
+- [ ] Amélioration de l'interface utilisateur
+- [ ] Génération de rapports détaillés sur les performances des utilisateurs.
+- [ ] Partage de tâches et d'objectifs avec d'autres utilisateurs.
+- [ ] Suivi des progrès d'équipe.
+
+### Optimisations Techniques
+- [ ] Migration vers PostgreSQL
+- [ ] Migration d'une IA externe à une IA locale
+- [ ] Tests Unitaires et Intégration Continue
+- [ ] Automatisation des déploiements via une chaîne CI/CD.
