@@ -80,7 +80,7 @@ const TaskItem: React.FC<TaskItemProps> = (props) => {
         <Menu.Item onPress={() => {
           closeMenu();
           if (onDeleteTask) {
-            onDeleteTask(id, isPonctual || false);
+            onDeleteTask(id, isReward ? false : isPonctual || false);
           }
         }} title="Supprimer" />
       </Menu>

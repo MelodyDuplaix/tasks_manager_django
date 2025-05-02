@@ -27,11 +27,7 @@ export const fetchQuery = async (
     }
 
     try {
-        let url = `${API_CONFIG.BASE_URL}/${query}`;
-        if (method !== 'GET' && !query.includes('?')) {
-          url += '/';
-        }
-        const response = await fetch(url, fetchOptions);
+      const response = await fetch(`${API_CONFIG.BASE_URL}/${query}/`, fetchOptions);
         if (response.ok) {
           const contentType = response.headers.get("content-type");
           if (contentType && contentType.includes("application/json")) {

@@ -7,6 +7,7 @@ import MenuItem from "@/components/MenuItem";
 import { fetchSubmanagerData, fetchTotalCoins, fetchSubmanagers } from "@/services/fetchApiInfos";
 import { validateReward } from "@/services/rewardService";
 import { deleteTask, markTaskDone } from "@/services/taskService";
+import { deleteReward } from "@/services/rewardService";
 import TaskItem, { TaskItemProps } from "@/components/TaskItem";
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import SubmanagerNavigation from "@/components/SubmanagerNavigation";
@@ -149,6 +150,18 @@ export default function SubmanagerPage() {
       }
       loadData();
     }, isPonctual);
+  };
+
+  const handleDeleteReward = async (rewardId: number) => {
+    try {
+      await deleteReward(rewardId, () => {
+        setRewards(prevRewards => prevRewards.filter(reward => reward.id !== rewardId));
+        loadData();
+      });
+    } catch (error) {
+      console.error("Error deleting reward:", error);
+      Alert.alert('Error', 'Failed to delete reward');
+    }
   };
   
 
@@ -295,6 +308,7 @@ export default function SubmanagerPage() {
                     isReward={true}
                     style={item.date && new Date(item.date) < new Date() ? styles.pastDueTaskText : null}
                     submanagerId={submanagerId}
+                    onDeleteTask={handleDeleteReward}
                   />
                 )}
                 keyExtractor={(item) => item.id.toString()}
