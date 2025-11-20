@@ -90,7 +90,7 @@ export default function Index() {
   }, []);
 
   return (
-    <View>
+      <View style={{ flex: 1 }}>
       <View style={{zIndex: 10 }}>
         <NavigationBar coins={totalCoins} />
       </View>

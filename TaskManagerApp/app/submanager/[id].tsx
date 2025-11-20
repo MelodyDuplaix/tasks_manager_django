@@ -17,7 +17,7 @@ import { Dialog, Portal, Button } from 'react-native-paper';
 const PonctualTasksTabs = ({ tasks, onTaskDone, onDeleteTask, renderFooter, id }: { tasks: { [key: string]: TaskItemProps[] }; onTaskDone: (id: number, isPonctual: boolean) => void; onDeleteTask: (id: number, isPonctual: boolean) => void; renderFooter: (type: string) => JSX.Element; id: number }) => {
   const [selectedTab, setSelectedTab] = useState('pastToday');
 
-  const footerElement = renderFooter("une tâche ponctuelle");
+  const renderFooterElement = () => renderFooter("une tâche ponctuelle");
 
   return (
     <>
@@ -49,33 +49,32 @@ const PonctualTasksTabs = ({ tasks, onTaskDone, onDeleteTask, renderFooter, id }
       </View>
       {tasks && tasks[selectedTab] && Array.isArray(tasks[selectedTab]) ? (
         tasks[selectedTab].length > 0 ? (
-          <FlatList
-            data={tasks[selectedTab]}
-            renderItem={({ item }) => (
-              <TaskItem
-                {...item}
-                isPonctual={true}
-                onTaskDone={onTaskDone}
-                onDeleteTask={onDeleteTask}
-                done_today_count={0}
-                style={item.date && new Date(item.date) < new Date() ? (new Date(item.date).getDate() === new Date().getDate() ? styles.pastDueTodayTaskText : styles.pastDueTaskText) : null}
-                submanagerId={id}
-              />
-            )}
-            keyExtractor={(item) => item.id.toString()}
-            style={styles.listContainer}
-            ListFooterComponent={footerElement}
-          />
+          <View style={styles.listContainer}>
+            {tasks[selectedTab].map((item) => (
+              <View key={item.id} style={{ paddingHorizontal: 10 }}>
+                <TaskItem
+                  {...item}
+                  isPonctual={true}
+                  onTaskDone={onTaskDone}
+                  onDeleteTask={onDeleteTask}
+                  done_today_count={0}
+                  style={item.date && new Date(item.date) < new Date() ? (new Date(item.date).getDate() === new Date().getDate() ? styles.pastDueTodayTaskText : styles.pastDueTaskText) : null}
+                  submanagerId={id}
+                />
+              </View>
+            ))}
+            {renderFooterElement()}
+          </View>
         ) : (
           <View style={styles.emptyListContainer}>
             <Text>Pas de tâches ponctuelles</Text>
-            {footerElement} {/* Use the pre-rendered element */}
+            {renderFooterElement()}
           </View>
         )
       ) : (
         <View style={styles.emptyListContainer}>
           <Text>Erreur de chargement des tâches</Text>
-          {footerElement} {/* Use the pre-rendered element */}
+          {renderFooterElement()}
         </View>
       )}
     </>
@@ -213,118 +212,120 @@ export default function SubmanagerPage() {
   
 
   return (
-    <ScrollView>
-      <View style={{ zIndex: 200 }}>
-        <NavigationBar coins={totalCoins} />
-      </View>
-      <View style={styles.container}>
-        <SubmanagerNavigation
-          submanagers={submanagers}
-          submanagerId={submanagerId}
-          submanagerName={submanagerName}
-        />
-        <TouchableOpacity
-          style={styles.decomposeButton}
-          onPress={() => router.push(`/decomposeObjective?submanagerId=${submanagerId}`)}
-        >
-          <Text style={styles.decomposeButtonText}>Décomposer l'objectif</Text>
-        </TouchableOpacity>
+    <FlatList
+      data={[1]}
+      keyExtractor={() => 'header'}
+      renderItem={() => null}
+      ListHeaderComponent={() => (
+        <>
+          <View style={{ zIndex: 200 }}>
+            <NavigationBar coins={totalCoins} />
+          </View>
+          <View style={styles.container}>
+            <SubmanagerNavigation
+              submanagers={submanagers}
+              submanagerId={submanagerId}
+              submanagerName={submanagerName}
+            />
+            <TouchableOpacity
+              style={styles.decomposeButton}
+              onPress={() => router.push(`/decomposeObjective?submanagerId=${submanagerId}`)}
+            >
+              <Text style={styles.decomposeButtonText}>Décomposer l'objectif</Text>
+            </TouchableOpacity>
 
-        <Text style={styles.heading}>Objectif quotidien</Text>
-        <ProgressBar current={totalCoinsToday} total={dailyObjective} />
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, showTasks ? styles.activeButton : {}]}
-            onPress={() => setShowTasks(true)}
-          >
-            <Text style={[styles.buttonText, showTasks ? styles.activeButtonText : {}]}>Tâches</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, !showTasks ? styles.activeButton : {}]}
-            onPress={() => setShowTasks(false)}
-          >
-            <Text style={[styles.buttonText, !showTasks ? styles.activeButtonText : {}]}>Récompenses</Text>
-          </TouchableOpacity>
-        </View>
+            <Text style={styles.heading}>Objectif quotidien</Text>
+            <ProgressBar current={totalCoinsToday} total={dailyObjective} />
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[styles.button, showTasks ? styles.activeButton : {}]}
+                onPress={() => setShowTasks(true)}
+              >
+                <Text style={[styles.buttonText, showTasks ? styles.activeButtonText : {}]}>Tâches</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, !showTasks ? styles.activeButton : {}]}
+                onPress={() => setShowTasks(false)}
+              >
+                <Text style={[styles.buttonText, !showTasks ? styles.activeButtonText : {}]}>Récompenses</Text>
+              </TouchableOpacity>
+            </View>
 
-        {showTasks ? (
-          <>
-            <Text style={styles.heading}>Tâches ponctuelles</Text>
-            <PonctualTasksTabs tasks={categorizedPonctualTasks} onTaskDone={handleTaskDone} onDeleteTask={handleDeleteTask} renderFooter={renderFooter} id={submanagerId} />
-            <Text style={styles.heading}>Tâches</Text>
-            {tasks.length > 0 ? (
-              <FlatList
-                data={tasks}
-                renderItem={({ item }) => (
-                  <View style={{ paddingHorizontal: 10 }}> {/* Added padding */}
-                    <TaskItem
-                      id={item.id}
-                      name={item.name}
-                      coins_number={item.coins_number}
-                      type={item.type}
-                      date={item.date}
-                      isPonctual={false}
-                      onTaskDone={handleTaskDone}
-                      onDeleteTask={handleDeleteTask}
-                      done_today_count={item.done_today_count}
-                      isReward={false}
-                      style={item.date && new Date(item.date) < new Date() ? styles.pastDueTaskText : null}
-                      submanagerId={submanagerId}
-                    />
+            {showTasks ? (
+              <>
+                <Text style={styles.heading}>Tâches ponctuelles</Text>
+                <PonctualTasksTabs tasks={categorizedPonctualTasks} onTaskDone={handleTaskDone} onDeleteTask={handleDeleteTask} renderFooter={renderFooter} id={submanagerId} />
+                <Text style={styles.heading}>Tâches</Text>
+                  {tasks.length > 0 ? (
+                    <View style={styles.tasksContainer}>
+                      {tasks.map((item) => (
+                        <View key={item.id} style={{ paddingHorizontal: 10 }}>
+                          <TaskItem
+                            id={item.id}
+                            name={item.name}
+                            coins_number={item.coins_number}
+                            type={item.type}
+                            date={item.date}
+                            isPonctual={false}
+                            onTaskDone={handleTaskDone}
+                            onDeleteTask={handleDeleteTask}
+                            done_today_count={item.done_today_count}
+                            isReward={false}
+                            style={item.date && new Date(item.date) < new Date() ? styles.pastDueTaskText : null}
+                            submanagerId={submanagerId}
+                          />
+                        </View>
+                      ))}
+                      {renderFooter("une tâche")}
+                    </View>
+                  ) : (
+                    <View style={styles.emptyListContainer}>
+                      <Text>Pas de tâches</Text>
+                      {renderFooter("une tâche")}
+                      <TouchableOpacity
+                        style={styles.decomposeButton}
+                        onPress={() => router.push('/decomposeObjective')}
+                      >
+                        <Text style={styles.decomposeButtonText}>Décomposer l'objectif</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+              </>
+            ) : (
+              <>
+                <Text style={styles.heading}>Récompenses</Text>
+                {rewards.length > 0 ? (
+                  <View style={styles.listContainer}>
+                    {rewards.map((item) => (
+                      <TaskItem
+                        key={item.id}
+                        id={item.id}
+                        name={item.name}
+                        coins_number={item.coins_number}
+                        type={item.type}
+                        date={item.date}
+                        onTaskDone={() => validateReward(item.id, handleRewardValidated)}
+                        done_today_count={0}
+                        isReward={true}
+                        style={item.date && new Date(item.date) < new Date() ? styles.pastDueTaskText : null}
+                        submanagerId={submanagerId}
+                        onDeleteTask={handleDeleteReward}
+                      />
+                    ))}
+                    {renderFooter("une récompense")}
+                  </View>
+                ) : (
+                  <View style={styles.emptyListContainer}>
+                    <Text>Pas de récompenses</Text>
+                    {renderFooter("une récompense")}
                   </View>
                 )}
-                keyExtractor={(item) => item.id.toString()}
-                style={styles.tasksContainer}
-                ListFooterComponent={() => renderFooter("une tâche")}
-              />
-            ) : (
-              <View style={styles.emptyListContainer}>
-                <Text>Pas de tâches</Text>
-                {renderFooter("une tâche")}
-                <TouchableOpacity
-                  style={styles.decomposeButton}
-                  onPress={() => router.push('/decomposeObjective')}
-                >
-                  <Text style={styles.decomposeButtonText}>Décomposer l'objectif</Text>
-                </TouchableOpacity>
-              </View>
+              </>
             )}
-          </>
-        ) : (
-          <>
-            <Text style={styles.heading}>Récompenses</Text>
-            {rewards.length > 0 ? (
-              <FlatList
-                data={rewards}
-                renderItem={({ item }) => (
-                  <TaskItem
-                    id={item.id}
-                    name={item.name}
-                    coins_number={item.coins_number}
-                    type={item.type}
-                    date={item.date}
-                    onTaskDone={() => validateReward(item.id, handleRewardValidated)}
-                    done_today_count={0}
-                    isReward={true}
-                    style={item.date && new Date(item.date) < new Date() ? styles.pastDueTaskText : null}
-                    submanagerId={submanagerId}
-                    onDeleteTask={handleDeleteReward}
-                  />
-                )}
-                keyExtractor={(item) => item.id.toString()}
-                style={styles.listContainer}
-                ListFooterComponent={() => renderFooter("une récompense")}
-              />
-            ) : (
-              <View style={styles.emptyListContainer}>
-                <Text>Pas de récompenses</Text>
-                {renderFooter("une récompense")}
-              </View>
-            )}
-          </>
-        )}
-      </View>
-    </ScrollView>
+          </View>
+        </>
+      )}
+    />
   );
 }
 

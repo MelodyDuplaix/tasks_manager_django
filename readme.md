@@ -238,10 +238,14 @@ Les contributions sont les bienvenues ! Veuillez soumettre un pull request ou ou
 - [ ] Immédiatement ramener à la page de login si le token n'est plus valide
 - [ ] Mise à jour immédiate des tâches suite à suppression, ajout, modification, sans avoir besoin de passer par un autre submanager
 - [ ] Résolution de l'erreur Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON en console
+- [ ] résolution des erreurs rendant impossible la modification de mot de passe et l'oubli de mot de passe
 
 ### Fonctionnalités à Ajouter
+- [ ] Page d'historique des tâches complétées
+- [ ] Page des statistiques
 - [ ] Pages de progression des objectifs mensuels, hebdomadaire, quotidiens
 - [ ] Page des gestions des sous manager (ajout, modification des objectifs, suppression)
+- [ ] un moyen de noter facilement des idées via speach to text
 - [ ] Envoi de rappels pour les tâches à venir.
 - [ ] Notifications basées sur les priorités et les délais.
 - [ ] Amélioration de l'interface utilisateur

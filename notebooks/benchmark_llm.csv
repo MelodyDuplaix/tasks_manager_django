@@ -1,0 +1,176 @@
+objectif,modele,reponse
+Créer un portfolio,gemini-1.5-flash-002,"- Rassembler tous les travaux (photos, vidéos, écrits, etc.) à inclure dans le portfolio.
+- Créer un compte sur une plateforme de portfolio en ligne (ex: Behance, Clippings.me, etc.) ou choisir un template pour un site web personnel.
+- Sélectionner 5 à 10 des meilleurs travaux pour une première version du portfolio.
+- Rédiger une courte description pour chaque projet, mettant en avant les compétences utilisées et les résultats obtenus.
+- Choisir des visuels de haute qualité pour illustrer chaque projet.
+- Optimiser le portfolio pour les moteurs de recherche (SEO) en utilisant des mots-clés pertinents.
+-  Créer une page ""À propos"" pour présenter ses compétences et son expérience.
+- Tester le portfolio sur différents supports (ordinateur, tablette, smartphone).
+- Obtenir des retours sur le portfolio auprès de pairs ou de mentors.
+- Publier le portfolio en ligne et partager le lien sur les réseaux sociaux."
+Créer un portfolio,mistralai/mistral-7b-instruct,"- Créez un dossier nommé ""Portfolio"" sur votre ordinateur.
+- Recherchez et sélectionnez vos meilleurs travaux professionnels et les enregistrez dans le dossier ""Portfolio"".
+- Créez une feuille de style pour votre portfolio, avec votre nom, une image de profil et votre adresse web.
+- Créez des pages distinctes pour chaque catégorie de travail (exemple : Web Design, Graphisme, Illustration).
+- Remplissez chaque page avec des images de votre travail, une courte description et des liens vers les pages complètes si nécessaire.
+- Créez une page de contact avec votre numéro de téléphone, adresse email et votre horaire de travail.
+- Testez votre portfolio sur différents navigateurs et dispositifs pour s'assurer qu'il est responsive et fonctionne correctement.
+- Ajoutez un lien vers votre portfolio sur votre page web personnelle, votre réseau social et votre signature électronique.
+- Enregistrez votre portfolio sous forme de fichier zip pour l'envoyer à des clients ou des employeurs potentiels.
+- Mettez à jour votre portfolio régulièrement pour le rendre toujours à jour et attractif."
+Créer un portfolio,meta-llama/llama-2-13b-chat,"Bien sûr ! Voici une liste de 10 tâches concrètes, claires et actionnables pour créer un portfolio :
+
+- Rechercher et sélectionner les meilleures réalisations et experiences professionnelles à inclure dans le portfolio
+- Créer un plan d'organisation et de structure pour le portfolio, en fonction des objectifs et de la cible audience
+- Écrire un résumé succinct et impactant pour présenter le portfolio
+-"
+Créer un portfolio,anthropic/claude-2,Erreur : 'NoneType' object is not subscriptable
+Apprendre React Native,gemini-1.5-flash-002,"- Installer Node.js et npm (ou yarn).
+- Créer un projet React Native vierge à l'aide de `npx react-native init MonPremierProjet`.
+- Exécuter le projet sur un émulateur Android ou iOS.
+- Suivre un tutoriel vidéo de base sur les composants React Native (par exemple, Text, View, Image).
+- Créer un composant personnalisé simple (ex: un bouton personnalisé).
+- Implémenter la navigation entre deux écrans différents.
+- Utiliser une API publique (ex: JSONPlaceholder) pour afficher des données dans l'application.
+- Gérer un état simple à l'aide de useState.
+- Implémenter une fonctionnalité basique de stockage local (ex: AsyncStorage).
+- Tester l'application sur un appareil physique (si possible)."
+Apprendre React Native,mistralai/mistral-7b-instruct,"1. Installer Node.js sur votre ordinateur en suivant les instructions fournies sur le site officiel de Node.js.
+2. Installer la CLI d'exécution de React Native en exécutant la commande `npm install -g react-native-cli`.
+3. Créez un projet React Native en exécutant la commande `react-native init MonProjet`.
+4. Ouvrez le projet créé dans votre éditeur de code préféré.
+5. Familiarisez-vous avec les composants de base de React Native en enregistrant et en rendant visible le composant View.
+6. Créez un composant personalisé en utilisant la syntaxe de composant de React Native.
+7. Ajoutez des styles CSS in-line et des classes de style à vos composants.
+8. Intégrez des fonctionnalités d'interface utilisateur telles que des boutons, des formulaires, des listes déroulantes ou des balises d'image.
+9. Utilisez le cycle de vie de composant de React Native pour gérer les événements tels que le chargement initial du composant, l'appel de la fonction updateComponent et le redémarrage du composant.
+10. Testez votre application en exécutant la commande `react-native run-android` (pour Android) ou `react-native run-ios` (pour iOS) sur une plateforme de développement physique ou simulée."
+Apprendre React Native,meta-llama/llama-2-13b-chat,"Bien sûr ! Voici une liste de 10 tâches concrètes, claires et actionnables pour apprendre React Native :
+
+- Tâche 1 : Configurer un environnement de développement React Native
+	+ Installer Node.js et Android Studio
+	+ Configurer un projet React Native avec Expo
+	+ Déployer le projet sur un appareil mobile
+
+- Tâche 2 : Apprendre les fundamentals de React Native
+	+ Étudier les composants de base de React Native (TouchableOpacity, Text, View, etc.)
+	+ Comprendre les concepts de Virtual DOM et de reconciliation
+	+ Construire une application React Native simple (par exemple, une application de to-do)
+
+- Tâche 3 : Maîtriser les composants de React Native pour la layout
+	+ Utiliser les composants de layout tels que ScrollView, View, et AbsoluteLayout
+	+ Configurer les proportions et les marges des composants
+	+ Utiliser les props pour personnaliser les composants
+
+- Tâche 4 : Utiliser les APIs de React Native pour interagir avec les appareils
+	+ Utiliser les APIs de l'appareil pour accéder à la camera, au microphone, et aux données locales
+	+ Utiliser les APIs de l'opérateur pour gérer les appels et les SMS
+	+ Utiliser les APIs de la géolocalisation pour localiser l'appareil
+
+- Tâche 5 : Apprendre à gérer les événements de React Native
+	+ Comprendre les événements de touche et les événements de movement
+	+ Utiliser les listeners pour gérer les événements de l'utilisateur
+	+ Utiliser les métaprogrammes pour gérer les événements de l'appareil
+
+- Tâche 6 : Maîtriser les techniques de performance pour les applications React Native
+	+ Utiliser les techniques de performance telles que la batching des mises à jour et la suppression des éléments inutiles
+	+ Utiliser les outils de profilage pour identifier les problèmes de performance
+	+ Optimiser les composants pour améliorer les performances
+
+- Tâche 7 : Apprendre à créer des interfaces de React Native pour les appareils mobiles
+	+ Utiliser les composants de React Native pour créer des interfaces de l'appareil
+	+ Configurer les styles et les thèmes pour personnaliser l'interface
+	+ Utiliser les APIs de l'appareil pour accéder aux fonctionnalités de l'appareil
+
+- Tâche 8 : Utiliser les extensions de React Native pour étendre les fonctionnalités
+	+ Utiliser les extensions telles que React Native Web et React Native Print
+	+ Utiliser les plugins tels que React Native Firebase et React Native OneSignal
+	+ Utiliser les outils de développement tels que React Native CLI et React Native Packager
+
+- Tâche 9 : Apprendre à résoudre les problèmes et à debugguer les applications React Native
+	+ Comprendre les erreurs courantes dans les applications React Native
+	+ Utiliser les outils de développement pour debugguer les applications
+	+ Utiliser les méthodes de résolution des problèmes pour diagnostiquer les erreurs
+
+- Tâche 10 : Construire une application React Native complexe
+	+ Utiliser les compétences acquises pour construire une application React Native plus complexe
+	+ Utiliser les composants de React Native pour créer une interface utilisateur convaincante
+	+ Utiliser les APIs de l'appareil pour étendre les fonctionnalités de l'application"
+Apprendre React Native,anthropic/claude-2,Erreur : 'NoneType' object is not subscriptable
+Organiser un déménagement,gemini-1.5-flash-002,"- Réserver un camion de déménagement adapté au volume à transporter.
+- Réaliser un inventaire précis de tous les biens à déménager.
+- Trier les biens :  éliminer, donner, vendre ou conserver.
+- Emballer soigneusement chaque objet dans des cartons appropriés et les identifier clairement.
+- Déconnecter les appareils électroménagers et électroniques.
+- Organiser le changement d’adresse auprès des services concernés (poste, banques, etc.).
+- Prévenir les fournisseurs d’énergie et d’internet du déménagement.
+-  Planifier le chargement et le déchargement du camion, en optimisant l’espace.
+-  Confirmer la réservation du monte-charge si nécessaire.
+- Nettoyer l'ancien logement après le déménagement."
+Organiser un déménagement,mistralai/mistral-7b-instruct,"- Rechercher des fournisseurs de location de camions et de box-tonneaux
+- Contactez les fournisseurs pour obtenir des devis
+- Contactez votre nouvelle adresse pour organiser l'accès et le stationnement des camions
+- Commandez une quantité suffisante de boîtes de déménagement et d'écrans de protection
+- Préparez les objets à emporter en catégories (meubles, vêtements, électroniques, etc.)
+- Désassemblez les meubles et les empaquetez les pièces individuelles
+- Conservez les clés, documents importants et médias électroniques en sécurité
+- Emménagez les objets dans les boîtes et les étiquettez correctement
+- S'assurer que toutes les boîtes sont fermées et bien étiquetées avant le déménagement
+- Validez le devis et confirmez la date de livraison avec le fournisseur de location de camions"
+Organiser un déménagement,meta-llama/llama-2-13b-chat,"Bien sûr ! Voici une liste de 10 tâches concrètes, claires et actionnables pour organiser un déménagement :
+
+-"
+Organiser un déménagement,anthropic/claude-2,Erreur : 'NoneType' object is not subscriptable
+Lancer une chaîne YouTube,gemini-1.5-flash-002,"- Créer un compte YouTube et personnaliser la chaîne (nom, image de profil, bannière).
+- Définir un créneau thématique précis pour la chaîne et identifier son public cible.
+- Rédiger un script pour au moins 3 vidéos, en précisant le contenu de chaque vidéo.
+- Filmer et monter au moins une vidéo pilote.
+- Créer une playlist de référencement sur YouTube.
+- Créer des miniatures attrayantes pour chaque vidéo.
+- Planifier la publication des 3 premières vidéos sur un calendrier éditorial.
+- Définir une stratégie de promotion sur les réseaux sociaux.
+- Rédiger une description optimisée pour chaque vidéo incluant des mots-clés pertinents.
+- Analyser les performances des premières vidéos et adapter la stratégie en conséquence."
+Lancer une chaîne YouTube,mistralai/mistral-7b-instruct,"1. Rechercher un nom de chaîne YouTube disponible et original.
+2. Créer une nouvelle chaîne YouTube en utilisant le nom choisi.
+3. Configurer les paramètres de la chaîne (description, logo, bannières d'arrière-plan, etc.).
+4. Enregistrer une première vidéo pour l'introduction de la chaîne (présentation, objectif de la chaîne, etc.).
+5. Publier la vidéo d'introduction sur la chaîne YouTube.
+6. Créer une vidéo de contenu spécifique (sujet de la chaîne, documentation, tutoriel, etc.).
+7. Publier la vidéo de contenu sur la chaîne YouTube.
+8. Créer une description et des mots-clés pertinents pour chaque vidéo.
+9. Utiliser les réseaux sociaux pour promouvoir le premier contenu de la chaîne YouTube.
+10. Suivre l'évolution des statistiques de la chaîne (abonnés, vues, commentaires, etc.) et adjuster la stratégie en fonction."
+Lancer une chaîne YouTube,meta-llama/llama-2-13b-chat,"- Réalisez des recherches sur les vidéos de lancement de chaîne YouTube les plus populaires et les plus rentables pour en prendre des inspirations.
+- Déterminez le style et le ton de votre chaîne en fonction de votre public cible et de vos objectifs de contenu.
+- Planifiez votre contenu de manière à ce qu'il soit varié et attrayant pour vos téléspectateurs, en prévoyant des épisodes hebdomadaires.
+- Préparez un planning et un calendrier de production pour votre chaîne, y compris les dates de sortie des épisodes et des publicités.
+- configurez votre canal YouTube en fonction de vos besoins, en utilisant des icônes, des bannières et des descriptions détaillées pour chaque épisode.
+- Enregistrez et éditez vos vidéos en utilisant des logiciels de montage de vidéos de haute qualité, en veillant à ce qu'elles soient bien équilibrées et facilement audibles.
+- Promouvez votre chaîne YouTube sur les réseaux sociaux en utilisant des bannières, des publications et des Story pour atteindre un public plus large."
+Lancer une chaîne YouTube,anthropic/claude-2,Erreur : 'NoneType' object is not subscriptable
+Me remettre au sport après 2 ans d'arrêt,gemini-1.5-flash-002,"- Consulter un médecin pour un check-up avant de commencer toute activité physique intense.
+- Définir un objectif sportif réaliste et atteignable à court terme (par exemple, courir 30 minutes sans s'arrêter dans un mois).
+- Acheter une paire de chaussures de sport adaptées à la pratique choisie.
+- Créer un planning d'entraînement hebdomadaire, intégrant 2 à 3 séances de sport par semaine, en commençant par des séances courtes et peu intenses.
+- Télécharger une application de suivi d'activité physique pour enregistrer ses progrès et se motiver.
+- Trouver un partenaire sportif pour s'entraîner ensemble et se motiver mutuellement.
+- Identifier une activité physique agréable et accessible (course à pied, natation, vélo, etc.).
+- Commencer par des exercices de préparation physique générale (étirements, exercices de renforcement musculaire) pendant 15 minutes avant chaque séance.
+- Augmenter progressivement la durée et l'intensité des séances d'entraînement sur plusieurs semaines.
+- Se récompenser après avoir atteint un objectif intermédiaire (par exemple, une nouvelle paire de vêtements de sport après avoir couru 5km sans s'arrêter)."
+Me remettre au sport après 2 ans d'arrêt,mistralai/mistral-7b-instruct,"- 1. Rechercher un entraîneur ou un programme de formation adapté à mon niveau de fitness actuel.
+- 2. Investir dans des équipements de sport appropriés pour ma pratique préférée (ex: maquettes, vêtements, chaussures, etc.).
+- 3. Définir un régime alimentaire équilibré pour fournir l'énergie nécessaire à ma pratique sportive.
+- 4. Planifier une heure précise pour mon entraînement quotidien.
+- 5. Commencer par une session d'entraînement de 30 minutes trois fois par semaine.
+- 6. Documenter mes progrès avec des notes ou des photos pour m'encourager et me donner une vue d'ensemble de mon avancement.
+- 7. Rechercher des conseils et des astuces pour éviter les blessures et améliorer ma technique.
+- 8. Ajouter une activité cardiovasculaire supplémentaire à mon régime de vie (ex: marche quotidienne, cyclisme, etc.)
+- 9. Me fixer un objectif spécifique à atteindre en un certain temps (ex: courir une marathon, monter une colline sans s'arrêter, etc.).
+- 10. Inviter des amis pour pratiquer le sport ensemble et me tenir motivé."
+Me remettre au sport après 2 ans d'arrêt,meta-llama/llama-2-13b-chat,"Bien sûr ! Voici une liste de 10 tâches concrètes, claires et actionnables pour vous aider à reprendre le sport après 2 ans d'arrêt :
+
+ -"
+Me remettre au sport après 2 ans d'arrêt,anthropic/claude-2,Erreur : 'NoneType' object is not subscriptable

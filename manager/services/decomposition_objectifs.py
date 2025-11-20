@@ -12,7 +12,7 @@ OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 prompt_template = """
 Vous êtes un assistant personnel. À partir de l'objectif donné, générez une liste de {nb_tasks} tâches concrètes, claires et réalisables.
 Évitez les généralités. Commencez chaque tâche par un verbe à l'infinitif.
-Formatez la réponse comme une liste à puces non numérotée, comme ceci :
+Formatez la réponse comme une liste à puces non numérotée, comme ceci, sans autre information ou contexte supplémentaire :
 "- [tâche]
 - [tâche]
 - [tâche]

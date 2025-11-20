@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-z#89a^j9^viwq-w+awnvc00@4uxiwprba39-r9+w7z27dn6#cq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["melody37.pythonanywhere.com", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["melody37.pythonanywhere.com", "127.0.0.1", "localhost", "192.168.0.100"]
 
 # Application definition
 

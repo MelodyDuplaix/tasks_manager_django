@@ -1,6 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
-import { NavigationProp, ParamListBase, useNavigation, Link } from "@react-navigation/native";
-import { useEffect } from "react";
+import { useRouter } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 
@@ -27,13 +26,14 @@ const styles = StyleSheet.create({
 });
 
 export default function MenuItem({ name, link }: { name: string; link: string }) {
+    const router = useRouter();
+
     return (
-        <Link href={link} asChild>
         <TouchableOpacity
             style={styles.card}
+            onPress={() => router.push(link)}
         >
             <Text style={styles.text}>{name}</Text>
         </TouchableOpacity>
-        </Link>
     );
 }

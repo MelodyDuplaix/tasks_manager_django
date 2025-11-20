@@ -75,8 +75,10 @@ const TaskItem: React.FC<TaskItemProps> = (props) => {
       >
         <Menu.Item onPress={() => { 
           closeMenu(); 
-          console.log("submanagerId", submanagerId);
-          router.push({ pathname: `/editTask`, params: { id: submanagerId} }) }} title="Modifier" />
+          console.log("edit task", { taskId: id, submanagerId });
+          // navigate using a string URL to avoid object-based navigation issues
+          router.push(`/editTask?id=${id}&submanagerId=${submanagerId}`);
+        }} title="Modifier" />
         <Menu.Item onPress={() => {
           closeMenu();
           if (onDeleteTask) {
